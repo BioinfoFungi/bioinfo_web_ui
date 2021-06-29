@@ -32,7 +32,7 @@ const routes = [
         name: 'Project',
         meta: { title: '项目', icon: 'dashboard' },
 
-        component: () => import(/* webpackChunkName: "Project" */ '../layout/Second.vue'),
+        component: () => import(/* webpackChunkName: "Second" */ '../layout/Second.vue'),
         redirect: "/project/list",
         children: [
           {
@@ -75,7 +75,7 @@ const routes = [
         name: 'Cancer',
         meta: { title: '癌症研究', icon: 'dashboard' },
 
-        component: () => import(/* webpackChunkName: "Project" */ '../layout/Second.vue'),
+        component: () => import(/* webpackChunkName: "Second" */ '../layout/Second.vue'),
         redirect: "/cancer/list",
         children: [
           {
@@ -109,7 +109,39 @@ const routes = [
           }
         ]
 
-      },
+      }, {
+        path: '/RNA',
+        name: 'RNA',
+        meta: { title: '研究对象', icon: 'dashboard' },
+
+        component: () => import(/* webpackChunkName: "Second" */ '../layout/Second.vue'),
+        redirect: "/RNA/mRNA",
+        children: [
+          {
+            path: "/component",
+            meta: { title: '研究对象', icon: 'dashboard' },
+            component: () => import(/* webpackChunkName: "Empty" */ '../layout/Empty.vue'),
+            children: [
+              {
+                path: '/RNA/mRNA',
+                name: 'RNA_MRNA',
+                meta: { title: 'mRNA', icon: 'dashboard', parentPath: "/RNA", display: true },
+                component: () => import(/* webpackChunkName: "RNA_MRNA" */ '../views/RNA/mRNA.vue'),
+              }, {
+                path: '/RNA/lncRNA',
+                name: 'RNA_LNCNRA',
+                meta: { title: 'lncRNA', icon: 'dashboard', parentPath: "/RNA", display: true },
+                component: () => import(/* webpackChunkName: "RNA_LNCNRA" */ '../views/RNA/lncRNA.vue'),
+              }, {
+                path: '/RNA/miRNA',
+                name: 'RNA_MIRNA',
+                meta: { title: 'miRNA', icon: 'dashboard', parentPath: "/RNA", display: true },
+                component: () => import(/* webpackChunkName: "RNA_MIRNA" */ '../views/RNA/miRNA.vue'),
+              }
+            ]
+          }
+        ]
+      }
       // {
       //   path: '/TCGA',
       //   name: 'TCGA',

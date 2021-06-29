@@ -1,6 +1,7 @@
 # bioinfo-ant-ui
 https://www.antdv.com/docs/vue/getting-started-cn/
 
+
 # 组件设计
 ```
 <template>
