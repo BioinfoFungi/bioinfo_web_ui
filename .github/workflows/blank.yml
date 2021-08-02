@@ -37,6 +37,11 @@ jobs:
           npm install
           npm run build
           echo `pwd`
+      - name: Deploy
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./dist
 #       - name: commit
 #         run: |
 #           git config --global user.email 1749748955@qq.com
