@@ -10,7 +10,12 @@ LNCRNAApi.page = (params) =>{
         method: 'get'
     })
 }
-
+LNCRNAApi.init = (name) =>{
+    return service({
+        url: `${baseUrl}/init/${name}`,
+        method: 'get'
+    })
+}
 
 
 export default LNCRNAApi

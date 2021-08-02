@@ -1,8 +1,6 @@
 <template>
   <div class="about">
-    <h1>This is an about page</h1>
-    <a href="http://localhost:8080/websocket/login?username=12345">login</a>
-    <a v-on:click="websocketsend">ssssss w</a>
+    <h1>websock test</h1>
   </div>
 </template>
 <script>
@@ -23,7 +21,7 @@
     methods: {
       initWebSocket(){ //初始化weosocket
       // console.log("init")
-        const wsuri = "ws://127.0.0.1:8080/websocket/socketServer.do";
+        const wsuri = "ws://8.140.164.151:8080/websocket/socketServer.do";
         this.websock = new WebSocket(wsuri);
         this.websock.onmessage = this.websocketonmessage;
         this.websock.onopen = this.websocketonopen;
@@ -41,14 +39,14 @@
       },
       websocketonmessage(e){ //数据接收
         // const redata = JSON.parse(e.data);
-        // console.log(e)
+        console.log(e)
       },
       websocketsend(Data){//数据发送
       // console.log(Data)
         this.websock.send(Data);
       },
       websocketclose(e){  //关闭
-        // console.log('断开连接',e);
+        console.log('断开连接',e);
       },
     },
   }

@@ -52,24 +52,32 @@
   </div>
 </template>
 <script>
-import LNCRNAAPi from "@/api/lncRNA.js";
+import AttachmentApi from "@/api/attachment.js";
 const columns = [
   {
-    title: "基因ID",
-    dataIndex: "geneId"
+    title: "id",
+    dataIndex: "id"
   },
   {
-    title: "基因名称",
-    dataIndex: "name"
+    title: "文件名称",
+    dataIndex: "fileName"
     // scopedSlots: { customRender: "name" }
   },
   {
-    title: "基因类型",
-    dataIndex: "geneType"
+    title: "英文名",
+    dataIndex: "enName"
   },
   {
-    title: "别名",
-    dataIndex: "alias"
+    title: "文件类型",
+    dataIndex: "fileType"
+  },
+  {
+    title: "绝对路径",
+    dataIndex: "absolutePath"
+  },
+  {
+    title: "相对路径",
+    dataIndex: "relativePath"
   }
 
   //   {
@@ -127,7 +135,7 @@ export default {
       this.queryParam.sort = this.pagination.sort;
       this.queryParam.keyword = this.pagination.keyword;
       this.loading = true;
-      LNCRNAAPi.page(this.queryParam).then(resp => {
+      AttachmentApi.page(this.queryParam).then(resp => {
         // console.log(resp);
 
         this.data = resp.data.data.content;
@@ -142,7 +150,7 @@ export default {
       });
     },
     delProject(id) {
-      LNCRNAAPi.del(id).then(resp => {
+      AttachmentApi.del(id).then(resp => {
         this.$notification["success"]({
           message: resp.data.data.name + ":删除成功!"
         });

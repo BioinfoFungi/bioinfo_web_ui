@@ -11,6 +11,14 @@ CancerStudyApi.page = (params) =>{
     })
 }
 
+
+CancerStudyApi.listByCancerId = (id) =>{
+    return service({
+        url: `${baseUrl}/listByCancerId/${id}`,
+        method: 'get'
+    })
+}
+
 CancerStudyApi.del = (id) => {
     return service({
         url: `${baseUrl}/del/${id}`,

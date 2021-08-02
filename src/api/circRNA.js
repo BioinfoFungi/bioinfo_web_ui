@@ -1,16 +1,16 @@
 import service from '@/utils/service'
-const baseUrl = '/api/mRNA'
+const baseUrl = '/api/circRNA'
 
-const MRNAApi = {}
+const circRNAApi = {}
 
-MRNAApi.page = (params) =>{
+circRNAApi.page = (params) =>{
     return service({
         url: `${baseUrl}`,
         params: params,
         method: 'get'
     })
 }
-MRNAApi.init = (name) =>{
+circRNAApi.init = (name) =>{
     return service({
         url: `${baseUrl}/init/${name}`,
         method: 'get'
@@ -18,4 +18,4 @@ MRNAApi.init = (name) =>{
 }
 
 
-export default MRNAApi
+export default circRNAApi

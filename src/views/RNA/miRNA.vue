@@ -54,37 +54,24 @@
 <script>
 import MIRNAAPi from "@/api/miRNA.js";
 const columns = [
-  // {
-  //   title: "id",
-  //   dataIndex: "id"
-  // },
+  {
+    title: "基因ID",
+    dataIndex: "geneId"
+  },
   {
     title: "基因名称",
     dataIndex: "name"
     // scopedSlots: { customRender: "name" }
   },
   {
-    title: "描述",
-    dataIndex: "description"
+    title: "基因类型",
+    dataIndex: "geneType"
+  },
+  {
+    title: "别名",
+    dataIndex: "alias"
   }
-
-  //   {
-  //     title: "创建日期",
-  //     dataIndex: "createDate"
-  //   }
-  //   {
-  //     title: "截止日期",
-  //     dataIndex: "deadline"
-  //   },
-  //   {
-  //     title: "Action",
-  //     key: "action",
-  //     fixed: "right",
-  //     //   width: 200,
-  //     scopedSlots: { customRender: "action" }
-  //   }
 ];
-
 export default {
   data() {
     return {

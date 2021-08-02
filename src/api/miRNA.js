@@ -11,6 +11,11 @@ MIRNAApi.page = (params) =>{
     })
 }
 
-
+MIRNAApi.init = (name) =>{
+    return service({
+        url: `${baseUrl}/init/${name}`,
+        method: 'get'
+    })
+}
 
 export default MIRNAApi

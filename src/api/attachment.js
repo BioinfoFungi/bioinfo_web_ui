@@ -2,6 +2,15 @@ import service from '@/utils/service'
 const baseUrl = '/api/attachment'
 
 const AttachmentApi = {}
+AttachmentApi.page = (params) =>{
+    return service({
+        url: `${baseUrl}`,
+        params: params,
+        method: 'get'
+    })
+}
+
+
 
 AttachmentApi.pageByPId = (id,params) =>{
     return service({

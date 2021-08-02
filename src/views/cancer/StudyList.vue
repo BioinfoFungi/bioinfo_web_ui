@@ -1,5 +1,7 @@
 <template>
   <div>
+    <a-input-search placeholder="input search text" style="width: 200px" @search="onSearch" />
+
     <a-table
       :columns="columns"
       :row-key="record => record.id"
@@ -89,7 +91,8 @@ export default {
       pagination: {
         page: 1,
         size: 10,
-        sort: null
+        sort: null,
+        keyword: null
       },
       queryParam: {
         page: 0,
@@ -113,11 +116,12 @@ export default {
       this.pagination.size = pageSize;
       this.loadData();
     },
-   
+
     loadData() {
       this.queryParam.page = this.pagination.page - 1;
       this.queryParam.size = this.pagination.size;
       this.queryParam.sort = this.pagination.sort;
+      this.queryParam.keyword = this.pagination.keyword;
       this.loading = true;
       StudyAPi.page(this.queryParam).then(resp => {
         // console.log(resp);
@@ -143,9 +147,14 @@ export default {
     },
     detial(id) {
       this.$router.push({
-        name: "cancer_cancer_study",
+        name: "file_cancer_study",
         query: { studyId: id }
       });
+    },
+    onSearch(value) {
+      this.pagination.keyword = value;
+      this.loadData();
+      //   console.log(value);
     }
   }
 };

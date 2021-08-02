@@ -1,5 +1,7 @@
 <template>
   <div>
+    <a-input-search placeholder="input search text" style="width: 200px" @search="onSearch" />
+
     <a-table
       :columns="columns"
       :row-key="record => record.id"
@@ -69,18 +71,18 @@ const columns = [
   {
     title: "创建日期",
     dataIndex: "createDate"
-  },
-//   {
-//     title: "截止日期",
-//     dataIndex: "deadline"
-//   },
-//   {
-//     title: "Action",
-//     key: "action",
-//     fixed: "right",
-//     //   width: 200,
-//     scopedSlots: { customRender: "action" }
-//   }
+  }
+  //   {
+  //     title: "截止日期",
+  //     dataIndex: "deadline"
+  //   },
+  //   {
+  //     title: "Action",
+  //     key: "action",
+  //     fixed: "right",
+  //     //   width: 200,
+  //     scopedSlots: { customRender: "action" }
+  //   }
 ];
 
 export default {
@@ -89,7 +91,8 @@ export default {
       pagination: {
         page: 1,
         size: 10,
-        sort: null
+        sort: null,
+        keyword: null
       },
       queryParam: {
         page: 0,
@@ -117,6 +120,7 @@ export default {
       this.queryParam.page = this.pagination.page - 1;
       this.queryParam.size = this.pagination.size;
       this.queryParam.sort = this.pagination.sort;
+      this.queryParam.keyword = this.pagination.keyword;
       this.loading = true;
       DataOriginApi.page(this.queryParam).then(resp => {
         // console.log(resp);
@@ -135,16 +139,21 @@ export default {
     delProject(id) {
       DataOriginApi.del(id).then(resp => {
         this.$notification["success"]({
-          message: resp.data.data.name +":删除成功!" 
+          message: resp.data.data.name + ":删除成功!"
         });
-         this.loadData();
+        this.loadData();
       });
     },
     detial(id) {
       this.$router.push({
-        name: "cancer_cancer_study",
+        name: "file_cancer_study",
         query: { dataOriginId: id }
       });
+    },
+    onSearch(value) {
+      this.pagination.keyword = value;
+      this.loadData();
+      //   console.log(value);
     }
   }
 };

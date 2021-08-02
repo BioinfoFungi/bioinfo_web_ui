@@ -84,24 +84,13 @@ const columns = [
     // scopedSlots: { customRender: "cancer" }
   },
   {
-    title: "资源路径",
-    dataIndex: "networkPath"
+    title: "绝对路径",
+    dataIndex: "absolutePath"
   },
   {
     title: "创建日期",
     dataIndex: "createDate"
   }
-  //   {
-  //     title: "截止日期",
-  //     dataIndex: "deadline"
-  //   },
-  //   {
-  //     title: "Action",
-  //     key: "action",
-  //     fixed: "right",
-  //     //   width: 200,
-  //     scopedSlots: { customRender: "action" }
-  //   }
 ];
 
 export default {

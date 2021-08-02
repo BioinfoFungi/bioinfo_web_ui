@@ -1,7 +1,6 @@
 <template>
   <div>
     <a-input-search placeholder="input search text" style="width: 200px" @search="onSearch" />
-
     <a-table
       :columns="columns"
       :row-key="record => record.id"
@@ -52,7 +51,7 @@
   </div>
 </template>
 <script>
-import LNCRNAAPi from "@/api/lncRNA.js";
+import circRNAAPi from "@/api/circRNA.js";
 const columns = [
   {
     title: "基因ID",
@@ -67,26 +66,10 @@ const columns = [
     title: "基因类型",
     dataIndex: "geneType"
   },
-  {
+   {
     title: "别名",
     dataIndex: "alias"
   }
-
-  //   {
-  //     title: "创建日期",
-  //     dataIndex: "createDate"
-  //   }
-  //   {
-  //     title: "截止日期",
-  //     dataIndex: "deadline"
-  //   },
-  //   {
-  //     title: "Action",
-  //     key: "action",
-  //     fixed: "right",
-  //     //   width: 200,
-  //     scopedSlots: { customRender: "action" }
-  //   }
 ];
 
 export default {
@@ -127,7 +110,7 @@ export default {
       this.queryParam.sort = this.pagination.sort;
       this.queryParam.keyword = this.pagination.keyword;
       this.loading = true;
-      LNCRNAAPi.page(this.queryParam).then(resp => {
+      circRNAAPi.page(this.queryParam).then(resp => {
         // console.log(resp);
 
         this.data = resp.data.data.content;
@@ -142,7 +125,7 @@ export default {
       });
     },
     delProject(id) {
-      LNCRNAAPi.del(id).then(resp => {
+      circRNAAPi.del(id).then(resp => {
         this.$notification["success"]({
           message: resp.data.data.name + ":删除成功!"
         });

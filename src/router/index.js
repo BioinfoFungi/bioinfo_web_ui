@@ -26,6 +26,15 @@ const routes = [
         component: () => import(/* webpackChunkName: "Home" */ '../views/Home.vue'),
         meta: { title: '主页', icon: 'home' },
 
+      }, {
+        path: '/WebSocket',
+        name: 'WebSocket',
+        // route level code-splitting
+        // this generates a separate chunk (about.[hash].js) for this route
+        // which is lazy-loaded when the route is visited.
+        component: () => import(/* webpackChunkName: "Home" */ '../views/About.vue'),
+        meta: { title: 'WebSocket', icon: 'home' },
+
       },
       {
         path: '/project',
@@ -99,14 +108,14 @@ const routes = [
                 name: 'dataOrigin',
                 meta: { title: '数据来源', icon: 'dashboard', parentPath: "/cancer", display: true },
                 component: () => import(/* webpackChunkName: "dataOrigin" */ '../views/cancer/DataOrigin.vue'),
-              }, {
-                path: '/cancer/cancer_study',
-                name: 'cancer_cancer_study',
-                meta: { title: '癌症研究列表资源', icon: 'dashboard', parentPath: "/cancer", display: false },
-                component: () => import(/* webpackChunkName: "cancer_cancer_study" */ '../views/cancer/CancerStudyList.vue'),
+              },{
+                path: '/cancer/cancer_detial',
+                name: 'cancer_cancer_detial',
+                meta: { title: '癌症分析', icon: 'dashboard', parentPath: "/cancer", display: false },
+                component: () => import(/* webpackChunkName: "cancer_detial" */ '../views/cancer/CancerDetial.vue'),
               }
             ]
-          }
+          },
         ]
 
       }, {
@@ -137,10 +146,60 @@ const routes = [
                 name: 'RNA_MIRNA',
                 meta: { title: 'miRNA', icon: 'dashboard', parentPath: "/RNA", display: true },
                 component: () => import(/* webpackChunkName: "RNA_MIRNA" */ '../views/RNA/miRNA.vue'),
+              },
+              {
+                path: '/RNA/circRNA',
+                name: 'RNA_circRNA',
+                meta: { title: 'circRNA', icon: 'dashboard', parentPath: "/RNA", display: true },
+                component: () => import(/* webpackChunkName: "RNA_circRNA" */ '../views/RNA/circRNA.vue'),
+              }
+            ]
+          }, {
+            path: "/component",
+            meta: { title: '初始化', icon: 'dashboard' },
+            component: () => import(/* webpackChunkName: "Empty" */ '../layout/Empty.vue'),
+            children: [
+              {
+                path: '/RNA/init',
+                name: 'RNA_init',
+                meta: { title: '初始化', icon: 'dashboard', parentPath: "/RNA", display: true },
+                component: () => import(/* webpackChunkName: "RNA_init" */ '../views/RNA/init.vue'),
               }
             ]
           }
         ]
+      },{
+        path: '/file',
+        name: 'FILE',
+        meta: { title: '文件管理', icon: 'dashboard' },
+        component: () => import(/* webpackChunkName: "Second" */ '../layout/Second.vue'),
+        redirect: "/file/organize",
+        children:[
+          {
+            path: "/component",
+            meta: { title: '文件管理', icon: 'dashboard' },
+            component: () => import(/* webpackChunkName: "Empty" */ '../layout/Empty.vue'),
+            children: [
+              {
+                path: '/file/organize',
+                name: 'file_organize',
+                meta: { title: '文件归档', icon: 'dashboard', parentPath: "/file", display: true },
+                component: () => import(/* webpackChunkName: "file_organize" */ '../views/file/organize.vue'),
+              },{
+                path: '/file/cancer_study',
+                name: 'file_cancer_study',
+                meta: { title: '资源文件', icon: 'dashboard', parentPath: "/file", display: true },
+                component: () => import(/* webpackChunkName: "file_cancer_study" */ '../views/file/CancerStudyList.vue'),
+              },{
+                path: '/file/attachment',
+                name: 'file_attachment',
+                meta: { title: '附件管理', icon: 'dashboard', parentPath: "/file", display: true },
+                component: () => import(/* webpackChunkName: "file_attachment" */ '../views/file/attachment.vue'),
+              }
+            ]
+          }
+        ]
+
       }
       // {
       //   path: '/TCGA',
