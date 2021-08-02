@@ -36,3 +36,13 @@ jobs:
         run: |
           npm install
           npm run build
+      - name: commit
+        run: |
+          git config --global user.email 1749748955@qq.com
+          git config --global user.name YangWang
+          git add .
+          git commit -m "update" -a
+      - name: Push changes
+        uses: ad-m/github-push-action@master
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
