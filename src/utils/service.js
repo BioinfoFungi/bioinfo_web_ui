@@ -5,7 +5,7 @@ import router from '@/router'
 import { message } from 'ant-design-vue'
 
 const service = axios.create({
-    baseURL: `https://${Golbal.baseUrl}:${Golbal.port}/`,
+    baseURL: `http://${Golbal.baseUrl}:${Golbal.port}/`,
     timeout: 30000,
     // withCredentials: true,
 })
