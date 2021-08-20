@@ -57,7 +57,7 @@ export default {
       visible: false,
       confirmLoading: false,
       host:{
-        url:"localhost",
+        url:"http://localhost",
         port:8080
       }
       
@@ -66,7 +66,7 @@ export default {
     let local_url_port = localStorage.getItem("url_port");
     local_url_port = JSON.parse(local_url_port)
     this.host.url=local_url_port.url
-    this.host.port.port=local_url_port.port
+    this.host.port=local_url_port.port
 
   },
   methods: {
