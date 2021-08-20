@@ -1,5 +1,7 @@
 <template>
   <div>
+    <a-input-search placeholder="input search text" style="width: 200px" @search="onSearch" />
+
     <a-table
       :columns="columns"
       :row-key="record => record.id"
@@ -8,9 +10,9 @@
       :loading="loading"
       @change="handleTableChange"
     >
-      <!-- <div slot="name" slot-scope="name,record">
-        <a href="javascript:;" @click="detial(record.id)">{{record}}</a>
-      </div> -->
+      <div slot="name" slot-scope="name,record">
+        <a href="javascript:;" @click="detial(record.id)">{{name}}</a>
+      </div>
       <span slot="action" slot-scope="text, record">
         <!-- <a href="javascript:;">Invite 一 {{record.name}}</a>
         <a-divider type="vertical" />-->
@@ -50,47 +52,37 @@
   </div>
 </template>
 <script>
-import CancerStudyAPi from "@/api/CancerStudy.js";
+import AnalysisSoftwareApi from "@/api/analysis_software.js";
 const columns = [
-  {
-    title: "id",
-    dataIndex: "id"
-  },
-  {
-    title: "癌症名称",
-    dataIndex: "cancer.name",
-    // scopedSlots: { customRender: "cancer" }
-  },
-   {
-    title: "英文名称",
-    dataIndex: "cancer.enName",
-    // scopedSlots: { customRender: "cancer" }
-  },
+  // {
+  //   title: "id",
+  //   dataIndex: "id"
+  // },
   {
     title: "研究名称",
-    dataIndex: "study.name"
-  },
-    {
-    title: "英文名称",
-    dataIndex: "study.enName",
-    // scopedSlots: { customRender: "cancer" }
-  },{
-    title: "数据来源",
-    dataIndex: "dataOrigin.name"
-  },
-    {
-    title: "英文名称",
-    dataIndex: "dataOrigin.enName",
-    // scopedSlots: { customRender: "cancer" }
+    dataIndex: "name",
+    scopedSlots: { customRender: "name" }
   },
   {
-    title: "绝对路径",
-    dataIndex: "absolutePath"
+    title: "英文名称",
+    dataIndex: "enName"
   },
+
   {
     title: "创建日期",
     dataIndex: "createDate"
   }
+  //   {
+  //     title: "截止日期",
+  //     dataIndex: "deadline"
+  //   },
+  //   {
+  //     title: "Action",
+  //     key: "action",
+  //     fixed: "right",
+  //     //   width: 200,
+  //     scopedSlots: { customRender: "action" }
+  //   }
 ];
 
 export default {
@@ -99,7 +91,8 @@ export default {
       pagination: {
         page: 1,
         size: 10,
-        sort: null
+        sort: null,
+        keyword: null
       },
       queryParam: {
         page: 0,
@@ -111,21 +104,9 @@ export default {
       },
       data: [],
       loading: false,
-      columns,
-      cancerId:null
+      columns
     };
   },
-//   beforeRouteEnter(to, from, next) {
-//     // Get post id from query
-//     const cancerId = to.query.cancerId;
-
-//     next(vm => {
-//       if (cancerId) {
-//         vm.cancerId = cancerId;
-//         vm.loadData(cancerId);
-//       }
-//     });
-//   },
   mounted() {
     this.loadData();
   },
@@ -135,25 +116,14 @@ export default {
       this.pagination.size = pageSize;
       this.loadData();
     },
+
     loadData() {
       this.queryParam.page = this.pagination.page - 1;
       this.queryParam.size = this.pagination.size;
       this.queryParam.sort = this.pagination.sort;
-
-      const cancerId = this.$route.query.cancerId;
-      const studyId = this.$route.query.studyId;
-      const dataOriginId = this.$route.query.dataOriginId;
-      const dataCategoryId = this.$route.query.dataCategoryId
-      const analysisSoftwareId = this.$route.query.analysisSoftwareId
-
-      this.queryParam.cancerId = cancerId
-      this.queryParam.studyId = studyId
-      this.queryParam.dataOriginId = dataOriginId
-      this.queryParam.dataCategoryId = dataCategoryId
-      this.queryParam.analysisSoftwareId = analysisSoftwareId
-      
+      this.queryParam.keyword = this.pagination.keyword;
       this.loading = true;
-      CancerStudyAPi.page(this.queryParam).then(resp => {
+      AnalysisSoftwareApi.page(this.queryParam).then(resp => {
         // console.log(resp);
 
         this.data = resp.data.data.content;
@@ -168,7 +138,7 @@ export default {
       });
     },
     delProject(id) {
-      CancerStudyAPi.del(id).then(resp => {
+      AnalysisSoftwareApi.del(id).then(resp => {
         this.$notification["success"]({
           message: resp.data.data.name + ":删除成功!"
         });
@@ -177,9 +147,14 @@ export default {
     },
     detial(id) {
       this.$router.push({
-        name: "cancer_cancer_study",
-        query: { cancerId: id }
+        name: "cancer_cancer_detial",
+        query: { analysisSoftwareId: id }
       });
+    },
+    onSearch(value) {
+      this.pagination.keyword = value;
+      this.loadData();
+      //   console.log(value);
     }
   }
 };

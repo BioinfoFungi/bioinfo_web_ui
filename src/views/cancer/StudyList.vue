@@ -147,7 +147,7 @@ export default {
     },
     detial(id) {
       this.$router.push({
-        name: "file_cancer_study",
+        name: "cancer_cancer_detial",
         query: { studyId: id }
       });
     },

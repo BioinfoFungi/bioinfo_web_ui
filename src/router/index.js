@@ -109,6 +109,18 @@ const routes = [
                 meta: { title: '数据来源', icon: 'dashboard', parentPath: "/cancer", display: true },
                 component: () => import(/* webpackChunkName: "dataOrigin" */ '../views/cancer/DataOrigin.vue'),
               },{
+                path: '/cancer/data_category',
+                name: 'data_category',
+                meta: { title: '数据分类', icon: 'dashboard', parentPath: "/cancer", display: true },
+                component: () => import(/* webpackChunkName: "dataOrigin" */ '../views/cancer/DataCategory.vue'),
+              },
+              {
+                path: '/cancer/analysis_software',
+                name: 'analysis_software',
+                meta: { title: '分析软件', icon: 'dashboard', parentPath: "/cancer", display: true },
+                component: () => import(/* webpackChunkName: "dataOrigin" */ '../views/cancer/AnalysisSoftware.vue'),
+              }
+              ,{
                 path: '/cancer/cancer_detial',
                 name: 'cancer_cancer_detial',
                 meta: { title: '癌症分析', icon: 'dashboard', parentPath: "/cancer", display: false },
