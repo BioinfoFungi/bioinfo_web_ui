@@ -26,27 +26,6 @@
         </a-form-item>
         <a-button @click="showLog(CancerStudyDetial.id)">查看日志</a-button>
         <a-button>重新下载</a-button>
-        <a-divider />
-
-        <a-button
-          type="link"
-          v-for="item in codeList"
-          :key="item.id"
-          @click="runTask(CancerStudyDetial.id, item.id)"
-        >
-          {{ item.name }}
-        </a-button>
-
-        <div>
-          <a-table
-            :columns="task_columns"
-            :data-source="taskList"
-            bordered
-            :pagination="false"
-            :row-key="(record) => record.id"
-          >
-          </a-table>
-        </div>
       </div>
     </a-drawer>
 
@@ -61,9 +40,7 @@
       <!-- <div slot="name" slot-scope="name,record">
         <a href="javascript:;" @click="detial(record.id)">{{record}}</a>
       </div> -->
-      <span slot="absolutePath" slot-scope="text, record">
-        <a href="javascript:;" @click="updateCancerStudy(record.id)">位置</a>
-      </span>
+
       <span slot="action" slot-scope="text, record">
         <!-- <a href="javascript:;">Invite 一 {{record.name}}</a>
         <a-divider type="vertical" />-->
@@ -76,7 +53,7 @@
         <a-divider type="vertical" />
         <a href="javascript:;" @click="showDrawer(record)">更多</a>
         <a-divider type="vertical" />
-        <a href="javascript:;" @click="updateCancerStudy(record.id)">编辑</a>
+        <a href="javascript:;" @click="updateCode(record.id)">编辑</a>
         <a-divider type="vertical" />
         <a href="javascript:;" @click="delCancerStudy(record.id)">删除</a>
         <!-- <a href="javascript:;" @click="articleSettings(record.id)">设置</a>
@@ -108,27 +85,18 @@
   </div>
 </template>
 <script>
-import CancerStudyAPi from "@/api/CancerStudy.js";
-import CodeApi from "@/api/code.js";
-import TaskApi from "@/api/task.js";
-const task_columns = [
-  {
-    title: "id",
-    dataIndex: "id",
-  },
-  {
-    title: "taskStatus",
-    dataIndex: "taskStatus",
-  },
-  {
-    title: "isSuccess",
-    dataIndex: "isSuccess",
-  },
-];
+import CodeAPi from "@/api/code.js";
+// import TaskApi from "@/api/task.js";
+
 const columns = [
   {
     title: "id",
     dataIndex: "id",
+  },
+   {
+    title: "name",
+    dataIndex: "name",
+    // scopedSlots: { customRender: "cancer" }
   },
   {
     title: "癌症名称",
@@ -189,12 +157,9 @@ export default {
       tasks: [],
       loading: false,
       columns,
-      task_columns,
       cancerId: null,
       visible: false,
       CancerStudyDetial: undefined,
-      codeList: [],
-      taskList: [],
     };
   },
   //   beforeRouteEnter(to, from, next) {
@@ -235,7 +200,7 @@ export default {
       this.queryParam.analysisSoftwareId = analysisSoftwareId;
 
       this.loading = true;
-      CancerStudyAPi.page(this.queryParam, true).then((resp) => {
+      CodeAPi.page(this.queryParam, true).then((resp) => {
         // console.log(resp);
 
         this.data = resp.data.data.content;
@@ -243,34 +208,20 @@ export default {
         this.loading = false;
       });
     },
-    updateProject(id) {
+    updateCode(id) {
       this.$router.push({
-        name: "cancer_cancer_study",
-        query: { projectId: id },
-      });
-    },
-    delProject(id) {
-      CancerStudyAPi.del(id).then((resp) => {
-        this.$notification["success"]({
-          message: resp.data.data.name + ":删除成功!",
-        });
-        this.loadData();
-      });
-    },
-    updateCancerStudy(id) {
-      this.$router.push({
-        name: "update_cancer_study",
-        query: { cancerStudyId: id },
+        name: "update_code",
+        query: { codeId: id },
       });
     },
     delCancerStudy(id) {
       let loadData = this.loadData;
       let notification = this.$notification["success"];
       this.$confirm({
-        title: "删除癌症数据",
-        content: "您确定要删除该癌症数据吗?",
+        title: "删除Code数据",
+        content: "您确定要删除该Code数据吗?",
         onOk() {
-          CancerStudyAPi.del(id).then((resp) => {
+          CodeAPi.del(id).then((resp) => {
             loadData();
             notification({
               message: "删除成功!" + resp.data.message,
@@ -280,18 +231,9 @@ export default {
         onCancel() {},
       });
     },
-    loadTask(id) {
-      TaskApi.page({ cancerStudyId: id }).then((resp) => {
-        this.taskList = resp.data.data.content;
-      });
-    },
     showDrawer(data) {
       this.CancerStudyDetial = data;
-      CodeApi.findByCan(data.id).then((resp) => {
-        // console.log(resp);
-        this.codeList = resp.data.data;
-      });
-      this.loadTask(data.id);
+
       // console.log(data);
       this.visible = true;
     },
@@ -302,7 +244,7 @@ export default {
       let loadData = this.loadData;
       let notification = this.$notification["success"];
       let notification_error = this.$notification["error"];
-      CancerStudyAPi.checkFileExist(id).then((resp) => {
+      CodeAPi.checkFileExist(id).then((resp) => {
         loadData();
         if (resp.data.data.status) {
           notification({
@@ -316,23 +258,10 @@ export default {
       });
     },
     showLog(id) {
-      this.$router.push({
+       this.$router.push({
         name: "cancer_study_task",
-        query: { cancerStudyId: id },
+        query: { objId: id },
       });
-    },
-    runTask(cancerStudyId, codeId) {
-      // console.log(cancerStudyId, codeId);
-      TaskApi.run({ cancerStudyId: cancerStudyId, codeId: codeId }).then(
-        (resp) => {
-          this.loadTask(cancerStudyId);
-          this.$message.success(resp.data.data.name + "创建成功");
-
-          //  this.$notification["success"]({
-          //     message: "运行成功!" + resp.data.message,
-          //   });
-        }
-      );
     },
   },
 };

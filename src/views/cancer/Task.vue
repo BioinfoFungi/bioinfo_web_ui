@@ -1,0 +1,183 @@
+<template>
+  <div>
+    <a-drawer
+      title="癌症研究"
+      placement="right"
+      :closable="false"
+      :visible="visible"
+      width="520"
+      @close="onClose"
+    >
+      <div v-if="TaskDetail">
+        <a-textarea
+          v-model="TaskDetail.runMsg"
+          placeholder="run log"
+          :auto-size="{ minRows: 3, maxRows: 20 }"
+        />
+      </div>
+    </a-drawer>
+
+    <a-table
+      :columns="task_columns"
+      :row-key="(record) => record.id"
+      :data-source="data"
+      :pagination="false"
+      :loading="loading"
+      @change="handleTableChange"
+    >
+      <span slot="isSuccess" slot-scope="text">
+        <a href="javascript:;">{{ text }}</a>
+      </span>
+      <span slot="action" slot-scope="text, record">
+        <a href="javascript:;" @click="showDrawer(record)">日志</a>
+        <a-divider type="vertical" />
+        <a href="javascript:;" @click="delTask(record.id)">删除</a>
+      </span>
+      <template slot="footer">
+        <div class="page-wrapper" :style="{ textAlign: 'right' }">
+          <a-pagination
+            class="pagination"
+            :current="pagination.page"
+            :total="pagination.total"
+            :defaultPageSize="pagination.size"
+            :pageSizeOptions="['5', '10', '20', '50', '100']"
+            showSizeChanger
+            @showSizeChange="handleTableChange"
+            @change="handleTableChange"
+          />
+        </div>
+      </template>
+    </a-table>
+  </div>
+</template>
+<script>
+import TaskApi from "@/api/task.js";
+const task_columns = [
+  {
+    title: "id",
+    dataIndex: "id",
+  },
+  {
+    title: "name",
+    dataIndex: "name",
+  },
+  {
+    title: "taskStatus",
+    dataIndex: "taskStatus",
+  },
+  {
+    title: "threadName",
+    dataIndex: "threadName",
+  },
+  {
+    title: "isSuccess",
+    dataIndex: "isSuccess",
+    scopedSlots: { customRender: "isSuccess" },
+  },
+  {
+    title: "Action",
+    key: "action",
+    // fixed: "right",
+    //   width: 200,
+    scopedSlots: { customRender: "action" },
+  },
+];
+
+export default {
+  data() {
+    return {
+      pagination: {
+        page: 1,
+        size: 10,
+        sort: null,
+      },
+      queryParam: {
+        page: 0,
+        size: 10,
+        sort: null,
+        keyword: null,
+        categoryId: null,
+        status: null,
+      },
+      data: [],
+      loading: false,
+      task_columns,
+      cancerId: null,
+      visible: false,
+      TaskDetail: undefined,
+    };
+  },
+  //   beforeRouteEnter(to, from, next) {
+  //     // Get post id from query
+  //     const cancerId = to.query.cancerId;
+
+  //     next(vm => {
+  //       if (cancerId) {
+  //         vm.cancerId = cancerId;
+  //         vm.loadData(cancerId);
+  //       }
+  //     });
+  //   },
+  mounted() {
+    this.loadData();
+  },
+  methods: {
+    handleTableChange(page, pageSize) {
+      this.pagination.page = page;
+      this.pagination.size = pageSize;
+      this.loadData();
+    },
+    loadData() {
+      this.queryParam.page = this.pagination.page - 1;
+      this.queryParam.size = this.pagination.size;
+      this.queryParam.sort = this.pagination.sort;
+
+      //   const cancerId = this.$route.query.cancerId;
+      //   const studyId = this.$route.query.studyId;
+      //   const dataOriginId = this.$route.query.dataOriginId;
+      //   const dataCategoryId = this.$route.query.dataCategoryId;
+        const cancerStudyId = this.$route.query.cancerStudyId;
+
+        this.queryParam.cancerStudyId = cancerStudyId;
+      //   this.queryParam.studyId = studyId;
+      //   this.queryParam.dataOriginId = dataOriginId;
+      //   this.queryParam.dataCategoryId = dataCategoryId;
+      //   this.queryParam.analysisSoftwareId = analysisSoftwareId;
+
+      this.loading = true;
+      TaskApi.page(this.queryParam).then((resp) => {
+        // console.log(resp);
+
+        this.data = resp.data.data.content;
+        this.pagination.total = parseInt(resp.data.data.totalElements);
+        this.loading = false;
+      });
+    },
+    delTask(id) {
+      let loadData = this.loadData;
+      let notification = this.$notification["success"];
+      this.$confirm({
+        title: "删除Task数据",
+        content: "您确定要删除该Task数据吗?",
+        onOk() {
+          TaskApi.del(id).then((resp) => {
+            loadData();
+            notification({
+              message: "删除成功!" + resp.data.message,
+            });
+          });
+        },
+        onCancel() {},
+      });
+    },
+    showDrawer(data) {
+      this.TaskDetail = data;
+    //   console.log(data);
+      this.visible = true;
+    },
+    onClose() {
+      this.visible = false;
+    },
+  },
+};
+</script>

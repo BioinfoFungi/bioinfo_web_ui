@@ -1,9 +1,9 @@
 import service from '@/utils/service'
-const baseUrl = '/api/cancer_study'
+const baseUrl = '/api/code'
 
-const CancerStudyApi = {}
+const CodeApi = {}
 
-CancerStudyApi.page = (params,more=false) =>{
+CodeApi.page = (params,more=false) =>{
     return service({
         url: `${baseUrl}?more=${more}`,
         params: params,
@@ -12,21 +12,13 @@ CancerStudyApi.page = (params,more=false) =>{
 }
 
 
-CancerStudyApi.listByCancerId = (id) =>{
+CodeApi.findByCan = (id) => {
     return service({
-        url: `${baseUrl}/listByCancerId/${id}`,
+        url: `${baseUrl}/findByCan/${id}`,
         method: 'get'
     })
 }
-
-CancerStudyApi.del = (id) => {
-    return service({
-        url: `${baseUrl}/del/${id}`,
-        method: 'get'
-    })
-}
-
-CancerStudyApi.checkFileExist = (id) => {
+CodeApi.checkFileExist = (id) => {
     return service({
         url: `${baseUrl}/checkFile/${id}`,
         method: 'get'
@@ -34,14 +26,22 @@ CancerStudyApi.checkFileExist = (id) => {
 }
 
 
-CancerStudyApi.add = (params) => {
+CodeApi.del = (id) => {
+    return service({
+        url: `${baseUrl}/del/${id}`,
+        method: 'get'
+    })
+}
+
+CodeApi.add = (params) => {
     return service({
         url: baseUrl,
         data: params,
         method: 'post'
     })
 }
-CancerStudyApi.update = (id,params) => {
+
+CodeApi.update = (id,params) => {
     return service({
         url: `${baseUrl}/update/${id}`,
         data: params,
@@ -50,11 +50,11 @@ CancerStudyApi.update = (id,params) => {
 }
 
 
-CancerStudyApi.findById = (id,params) => {
+CodeApi.findById = (id,params) => {
     return service({
         url: `${baseUrl}/findById/${id}`,
         params:params,
         method: 'get'
     })
 }
-export default CancerStudyApi
+export default CodeApi

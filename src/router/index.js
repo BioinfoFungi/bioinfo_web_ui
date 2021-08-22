@@ -87,9 +87,10 @@ const routes = [
         component: () => import(/* webpackChunkName: "Second" */ '../layout/Second.vue'),
         redirect: "/cancer/list",
         children: [
+
           {
             path: "/component",
-            meta: { title: '癌症管理', icon: 'dashboard' },
+            meta: { title: '癌症查询', icon: 'dashboard' },
             component: () => import(/* webpackChunkName: "Empty" */ '../layout/Empty.vue'),
             children: [
               {
@@ -108,7 +109,7 @@ const routes = [
                 name: 'dataOrigin',
                 meta: { title: '数据来源', icon: 'dashboard', parentPath: "/cancer", display: true },
                 component: () => import(/* webpackChunkName: "dataOrigin" */ '../views/cancer/DataOrigin.vue'),
-              },{
+              }, {
                 path: '/cancer/data_category',
                 name: 'data_category',
                 meta: { title: '数据分类', icon: 'dashboard', parentPath: "/cancer", display: true },
@@ -120,14 +121,65 @@ const routes = [
                 meta: { title: '分析软件', icon: 'dashboard', parentPath: "/cancer", display: true },
                 component: () => import(/* webpackChunkName: "dataOrigin" */ '../views/cancer/AnalysisSoftware.vue'),
               }
-              ,{
+              , {
                 path: '/cancer/cancer_detial',
                 name: 'cancer_cancer_detial',
                 meta: { title: '癌症分析', icon: 'dashboard', parentPath: "/cancer", display: false },
                 component: () => import(/* webpackChunkName: "cancer_detial" */ '../views/cancer/CancerDetial.vue'),
               }
             ]
-          },
+          }, {
+            path: "/component",
+            meta: { title: '癌症管理', icon: 'dashboard' },
+            component: () => import(/* webpackChunkName: "Empty" */ '../layout/Empty.vue'),
+            children: [
+              {
+                path: '/cancer/addCancerStudy',
+                name: 'add_cancer_study',
+                meta: { title: '添加癌症研究', icon: 'dashboard', parentPath: "/cancer", display: true },
+                component: () => import(/* webpackChunkName: "cancer_list" */ '../views/cancer/addCancer.vue'),
+              },   {
+                path: '/cancer/updateCancerStudy',
+                name: 'update_cancer_study',
+                meta: { title: '更新癌症研究', icon: 'dashboard', parentPath: "/cancer", display: false },
+                component: () => import(/* webpackChunkName: "cancer_list" */ '../views/cancer/updateCancer.vue'),
+              }, 
+            ]
+          }, {
+            path: "/component",
+            meta: { title: '代码管理', icon: 'dashboard' },
+            component: () => import(/* webpackChunkName: "Empty" */ '../layout/Empty.vue'),
+            children: [
+              {
+                path: '/cancer/addCode',
+                name: 'code_add',
+                meta: { title: '添加Code', icon: 'dashboard', parentPath: "/cancer", display: true },
+                component: () => import(/* webpackChunkName: "cancer_list" */ '../views/cancer/addCode.vue'),
+              },{
+                path: '/cancer/updateCode',
+                name: 'update_code',
+                meta: { title: '更新Code', icon: 'dashboard', parentPath: "/cancer", display: false },
+                component: () => import(/* webpackChunkName: "cancer_list" */ '../views/cancer/updateCode.vue'),
+              },{
+                path: '/cancer/codeList',
+                name: 'code_list',
+                meta: { title: 'CodeList', icon: 'dashboard', parentPath: "/cancer", display: true },
+                component: () => import(/* webpackChunkName: "cancer_list" */ '../views/cancer/codeList.vue'),
+              },
+            ]
+          }, {
+            path: "/component",
+            meta: { title: '任务管理', icon: 'dashboard' },
+            component: () => import(/* webpackChunkName: "Empty" */ '../layout/Empty.vue'),
+            children: [
+              {
+                path: '/cancer/Task',
+                name: 'cancer_study_task',
+                meta: { title: '任务管理', icon: 'dashboard', parentPath: "/cancer", display: true },
+                component: () => import(/* webpackChunkName: "cancer_list" */ '../views/cancer/Task.vue'),
+              },
+            ]
+          }
         ]
 
       }, {
@@ -180,13 +232,13 @@ const routes = [
             ]
           }
         ]
-      },{
+      }, {
         path: '/file',
         name: 'FILE',
         meta: { title: '文件管理', icon: 'dashboard' },
         component: () => import(/* webpackChunkName: "Second" */ '../layout/Second.vue'),
         redirect: "/file/organize",
-        children:[
+        children: [
           {
             path: "/component",
             meta: { title: '文件管理', icon: 'dashboard' },
@@ -197,12 +249,12 @@ const routes = [
                 name: 'file_organize',
                 meta: { title: '文件归档', icon: 'dashboard', parentPath: "/file", display: true },
                 component: () => import(/* webpackChunkName: "file_organize" */ '../views/file/organize.vue'),
-              },{
+              }, {
                 path: '/file/cancer_study',
                 name: 'file_cancer_study',
                 meta: { title: '资源文件', icon: 'dashboard', parentPath: "/file", display: true },
                 component: () => import(/* webpackChunkName: "file_cancer_study" */ '../views/file/CancerStudyList.vue'),
-              },{
+              }, {
                 path: '/file/attachment',
                 name: 'file_attachment',
                 meta: { title: '附件管理', icon: 'dashboard', parentPath: "/file", display: true },
