@@ -8,13 +8,16 @@ if(local_url_port!=null){
     local_url_port = JSON.parse(local_url_port)
     url_port.baseUrl=local_url_port.url
     url_port.port=local_url_port.port
+    url_port.protocol = local_url_port.protocol
     // console.log(local_url_port)
 }
 
 const baseUrl = url_port.baseUrl
 const port = url_port.port
+const protocol = url_port.protocol
 // const port = 9090
 export default{
     baseUrl,
-    port
+    port,
+    protocol
 }

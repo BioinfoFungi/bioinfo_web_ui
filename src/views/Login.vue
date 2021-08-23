@@ -21,9 +21,7 @@
         </a-form-item>
       </a-form>
 
-      <a-button type="primary" @click="showModal">
-        配置网络
-      </a-button>
+      <a-button type="primary" @click="showModal"> 配置网络 </a-button>
       <a-modal
         title="网络配置"
         :visible="visible"
@@ -31,14 +29,8 @@
         @ok="handleOk"
         @cancel="handleCancel"
       >
-         <a-input
-            v-model="host.url"
-            placeholder="Please input url"
-          ></a-input>
-              <a-input
-            v-model="host.port"
-            placeholder="Please input port"
-          ></a-input>
+        <a-input v-model="host.url" placeholder="Please input url"></a-input>
+        <a-input v-model="host.port" placeholder="Please input port"></a-input>
       </a-modal>
     </a-card>
   </div>
@@ -56,18 +48,19 @@ export default {
       form: this.$form.createForm(this, { name: "horizontal_login" }),
       visible: false,
       confirmLoading: false,
-      host:{
-        url:"http://localhost",
-        port:8080
-      }
-      
+      host: {
+        url: "http://localhost",
+        port: 8080,
+      },
     };
-  },mounted(){
+  },
+  mounted() {
     let local_url_port = localStorage.getItem("url_port");
-    local_url_port = JSON.parse(local_url_port)
-    this.host.url=local_url_port.url
-    this.host.port=local_url_port.port
-
+    if (local_url_port) {
+      local_url_port = JSON.parse(local_url_port);
+      this.host.url = local_url_port.url;
+      this.host.port = local_url_port.port;
+    }
   },
   methods: {
     submit() {
@@ -93,7 +86,7 @@ export default {
       //   this.confirmLoading = false;
       // }, 2000);
       // console.log(this.url+this.port)
-      localStorage.setItem("url_port",JSON.stringify(this.host));
+      localStorage.setItem("url_port", JSON.stringify(this.host));
       this.visible = false;
     },
     handleCancel() {

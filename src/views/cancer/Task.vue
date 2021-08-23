@@ -9,6 +9,9 @@
       @close="onClose"
     >
       <div v-if="TaskDetail">
+        <div>
+          {{TaskDetail.result}}
+        </div>
         <a-textarea
           v-model="TaskDetail.runMsg"
           placeholder="run log"
@@ -29,7 +32,9 @@
         <a href="javascript:;">{{ text }}</a>
       </span>
       <span slot="action" slot-scope="text, record">
-        <a href="javascript:;" @click="showDrawer(record)">日志</a>
+         <a href="javascript:;" @click="runTask(record.id)">运行</a>
+        <a-divider type="vertical" />
+        <a href="javascript:;" @click="showDrawer(record)">结果</a>
         <a-divider type="vertical" />
         <a href="javascript:;" @click="delTask(record.id)">删除</a>
       </span>
@@ -120,6 +125,12 @@ export default {
   //   },
   mounted() {
     this.loadData();
+    // console.log(this.$websock)
+    this.$websock.onmessage = ()=>{
+      // let data = JSON.parse(e.data);
+      // console.log(data)
+      this.loadData()
+    }
   },
   methods: {
     handleTableChange(page, pageSize) {
@@ -177,7 +188,15 @@ export default {
     },
     onClose() {
       this.visible = false;
-    },
+    },runTask(id){
+      TaskApi.runOne(id).then(resp=>{
+        this.loadData()
+        // console.log(resp)
+        this.$message.success(resp.data.data.name + "运行成功");
+
+      })
+      
+    }
   },
 };
 </script>

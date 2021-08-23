@@ -82,6 +82,10 @@ Vue.prototype.$confirm = Modal.confirm;
 
 Vue.config.productionTip = false
 // Vue.prototype.$message = message;
+
+
+
+// console.log(websock)
 new Vue({
   router,
   render: h => h(App)

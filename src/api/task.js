@@ -18,6 +18,14 @@ TaskApi.run = (params) =>{
         method: 'get'
     })
 }
+
+TaskApi.runOne = (id) =>{
+    return service({
+        url: `${baseUrl}/run/${id}`,
+        method: 'get'
+    })
+}
+
 TaskApi.del = (id) => {
     return service({
         url: `${baseUrl}/del/${id}`,

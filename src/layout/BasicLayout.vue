@@ -24,10 +24,10 @@
           </a-menu-item>
         </a-sub-menu>
         -->
-        <a-menu-item v-for="(item) in routes" :key="item.name">
+        <a-menu-item v-for="item in routes" :key="item.name">
           <router-link :to="item.path">
             <a-icon :type="item.meta.icon" />
-            <span>{{item.meta.title}}</span>
+            <span>{{ item.meta.title }}</span>
           </router-link>
         </a-menu-item>
         <!-- <a-menu-item key="2"><router-link to="/TCGA">TCGA</router-link> </a-menu-item>
@@ -37,10 +37,9 @@
 
       <div class="logo">
         <!-- <a-button @click="openHtml()">静态首页</a-button> -->
-很多时候的发放的
+        很多时候的发放的
       </div>
     </a-layout-header>
-   
 
     <a-layout-content style="padding: 0 50px">
       <a-breadcrumb style="margin: 16px 0">
@@ -59,7 +58,9 @@
         <router-view />
       </a-layout>
     </a-layout-content>
-    <a-layout-footer style="text-align: center">©2021 WANGYANG Bioinformatics analysis</a-layout-footer>
+    <a-layout-footer style="text-align: center"
+      >©2021 WANGYANG Bioinformatics analysis</a-layout-footer
+    >
   </a-layout>
 </template>
 
@@ -81,6 +82,8 @@
 }
 </style>
 <script>
+import Golbal from "@/api/global_variable.js";
+import Vue from 'vue'
 export default {
   computed: {
     routes() {
@@ -91,7 +94,7 @@ export default {
     childrenRoutes() {
       var parentPath = this.$route.meta.parentPath;
       var childrenPath = this.$router.options.routes[1].children.find(
-        i => i.path == parentPath
+        (i) => i.path == parentPath
       );
       var children_routes = [];
       if (childrenPath) {
@@ -99,9 +102,22 @@ export default {
         // console.log(childrenPath.children);
       }
       return children_routes;
-    }
+    },
   },
-  mounted() {
+  created() {
+    const wsuri = `ws:/${Golbal.baseUrl}:${Golbal.port}/websocket/socketServer.do`;
+    let websock = new WebSocket(wsuri);
+
+    websock.onopen = () => {
+      //数据接收
+      // const redata = JSON.parse(e.data);
+      // console.log(e);
+      this.$message.success("socket已成功连接");
+    };
+    // websock.onmessage = ()=>{
+    //   console.log("sdddd")
+    // }
+    Vue.prototype.$websock =  websock
     // console.log()
     //  var routes = {
     //   children: this.$router.options.routes[1].children
@@ -114,6 +130,6 @@ export default {
     //   // routes.children.find((e) => (console.log(e.name)))
     //   // routes = routes.children.find((e) => (e.name == route[i].name));
     // }
-  }
+  },
 };
 </script>

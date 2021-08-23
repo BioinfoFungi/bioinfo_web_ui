@@ -26,16 +26,17 @@ const routes = [
         component: () => import(/* webpackChunkName: "Home" */ '../views/Home.vue'),
         meta: { title: '主页', icon: 'home' },
 
-      }, {
-        path: '/WebSocket',
-        name: 'WebSocket',
-        // route level code-splitting
-        // this generates a separate chunk (about.[hash].js) for this route
-        // which is lazy-loaded when the route is visited.
-        component: () => import(/* webpackChunkName: "Home" */ '../views/About.vue'),
-        meta: { title: 'WebSocket', icon: 'home' },
-
       },
+      //  {
+      //   path: '/WebSocket',
+      //   name: 'WebSocket',
+      //   // route level code-splitting
+      //   // this generates a separate chunk (about.[hash].js) for this route
+      //   // which is lazy-loaded when the route is visited.
+      //   component: () => import(/* webpackChunkName: "Home" */ '../views/About.vue'),
+      //   meta: { title: 'WebSocket', icon: 'home' },
+
+      // },
       {
         path: '/project',
         name: 'Project',
