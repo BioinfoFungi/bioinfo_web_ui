@@ -49,8 +49,10 @@ export default {
       visible: false,
       confirmLoading: false,
       host: {
-        url: "http://localhost",
+        url: "localhost",
         port: 8080,
+        protocol:"http"
+
       },
     };
   },
@@ -60,6 +62,7 @@ export default {
       local_url_port = JSON.parse(local_url_port);
       this.host.url = local_url_port.url;
       this.host.port = local_url_port.port;
+      this.protocol = local_url_port.protocol;
     }
   },
   methods: {
