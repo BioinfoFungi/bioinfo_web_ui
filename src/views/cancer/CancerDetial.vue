@@ -24,8 +24,7 @@
         <a-form-item label="uuid">
           <a-input :value="CancerStudyDetial.uuid" />
         </a-form-item>
-        <a-button @click="showLog(CancerStudyDetial.id)">查看日志</a-button>
-        <a-button>重新下载</a-button>
+
         <a-divider />
 
         <a-button
@@ -37,6 +36,13 @@
           {{ item.name }}
         </a-button>
 
+        <a-textarea
+          v-if="runMsg"
+          v-model="runMsg"
+          placeholder="run log"
+          :auto-size="{ minRows: 3, maxRows: 20 }"
+        />
+
         <div>
           <a-table
             :columns="task_columns"
@@ -47,6 +53,7 @@
           >
           </a-table>
         </div>
+        <a-button @click="showLog(CancerStudyDetial.id)">查看更多</a-button>
       </div>
     </a-drawer>
 
@@ -193,6 +200,7 @@ export default {
       cancerId: null,
       visible: false,
       CancerStudyDetial: undefined,
+      runMsg:undefined,
       codeList: [],
       taskList: [],
     };
@@ -210,6 +218,16 @@ export default {
   //   },
   mounted() {
     this.loadData();
+    this.$websock.onmessage = (e) => {
+     
+      let data = JSON.parse(e.data);
+      if(data.cancerStudyId==this.CancerStudyDetial.id){
+        // console.log(this.CancerStudyDetial)
+        this.runMsg = data.runMsg
+      }
+      // console.log(data)
+      this.loadData();
+    };
   },
   methods: {
     handleTableChange(page, pageSize) {
@@ -297,6 +315,7 @@ export default {
     },
     onClose() {
       this.visible = false;
+      this.runMsg=undefined
     },
     checkFileExist(id) {
       let loadData = this.loadData;
@@ -322,6 +341,9 @@ export default {
       });
     },
     runTask(cancerStudyId, codeId) {
+      if(this.runMsg){
+        this.runMsg=""
+      }
       // console.log(cancerStudyId, codeId);
       TaskApi.run({ cancerStudyId: cancerStudyId, codeId: codeId }).then(
         (resp) => {
