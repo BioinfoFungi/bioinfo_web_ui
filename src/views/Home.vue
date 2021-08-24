@@ -1,6 +1,6 @@
 <template>
   <div class="home">
-    {{user.username}}
+    {{ user.username }}
     <button @click="logout">退出</button>
     <h3>使用方法</h3>
     <ol>
@@ -12,6 +12,7 @@
       <li>图片上传到本地和oss</li>
       <li>基本的权限管理</li>
     </ol>
+    <a-button @click="initData()">初始化</a-button>
     <!-- <img alt="Vue logo" src="../assets/logo.png"> -->
     <!-- <HelloWorld msg="Welcome to Your Vue.js App"/> -->
   </div>
@@ -21,19 +22,20 @@
 // @ is an alias to /src
 // import HelloWorld from '@/components/HelloWorld.vue'
 
+import DataImportApi from "@/api/dataImport.js";
 export default {
   // name: 'Home',
   // components: {
   //   HelloWorld
   // }
-  data(){
-    return{
-      user:null,
-    }
+  data() {
+    return {
+      user: null,
+    };
   },
-  created(){
+  created() {
     let user = JSON.parse(localStorage.getItem("user"));
-    this.user=user;
+    this.user = user;
   },
   methods: {
     logout() {
@@ -41,7 +43,15 @@ export default {
       localStorage.removeItem("user");
       localStorage.removeItem("global_config");
       this.$router.push("/login");
-    }
-  }
+    },
+    initData() {
+      DataImportApi.init().then((resp) => {
+        this.$notification["success"]({
+              message: resp.data.data,
+            });
+        console.log(resp.data.data);
+      });
+    },
+  },
 };
 </script>

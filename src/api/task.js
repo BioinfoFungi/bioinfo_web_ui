@@ -26,6 +26,13 @@ TaskApi.runOne = (id) =>{
     })
 }
 
+TaskApi.shutdown = (id) =>{
+    return service({
+        url: `${baseUrl}/shutdown/${id}`,
+        method: 'get'
+    })
+}
+
 TaskApi.del = (id) => {
     return service({
         url: `${baseUrl}/del/${id}`,

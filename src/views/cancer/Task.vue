@@ -32,6 +32,8 @@
         <a href="javascript:;">{{ text }}</a>
       </span>
       <span slot="action" slot-scope="text, record">
+        <a href="javascript:;" @click="shutdownTask(record.id)">结束</a>
+        <a-divider type="vertical" />
          <a href="javascript:;" @click="runTask(record.id)">运行</a>
         <a-divider type="vertical" />
         <a href="javascript:;" @click="showDrawer(record)">结果</a>
@@ -196,6 +198,13 @@ export default {
 
       })
       
+    },shutdownTask(id){
+        TaskApi.shutdown(id).then(resp=>{
+        this.loadData()
+        // console.log(resp)
+        this.$message.success(resp.data.data.name + "已经结束");
+
+      })
     }
   },
 };
