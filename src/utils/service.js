@@ -1,7 +1,7 @@
 import axios from 'axios'
 import Golbal from '@/api/global_variable.js'
 // import Vue from 'vue'
-import router from '@/router'
+// import router from '@/router'
 import { message } from 'ant-design-vue'
 
 const service = axios.create({
@@ -51,9 +51,9 @@ service.interceptors.response.use(
         const data = response ? response.data : null
         if (data) {
             if (data.status === 401) {
-                localStorage.removeItem('jwtToken');
-                localStorage.removeItem("user");
-                router.push("/login")
+                // localStorage.removeItem('jwtToken');
+                // localStorage.removeItem("user");
+                // router.push("/login")
                 message.error(data.message);
             }else {
                 if (data.message) {

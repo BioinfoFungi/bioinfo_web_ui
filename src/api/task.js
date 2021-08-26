@@ -19,6 +19,14 @@ TaskApi.run = (params) =>{
     })
 }
 
+TaskApi.log = (params) =>{
+    return service({
+        url: `${baseUrl}/log`,
+        params: params,
+        method: 'get'
+    })
+}
+
 TaskApi.runOne = (id) =>{
     return service({
         url: `${baseUrl}/run/${id}`,
@@ -39,5 +47,6 @@ TaskApi.del = (id) => {
         method: 'get'
     })
 }
+
 
 export default TaskApi

@@ -28,13 +28,13 @@
   </div>
 </template>
 <script>
-import UserApi from "@/api/User.js";
+import ResourceApi from "@/api/resource.js";
 const columns = [
   {
     title: "id",
     dataIndex: "id"
   },{
-    title:"username",
+    title:"name",
     dataIndex:"username"
   },
   {
@@ -78,11 +78,11 @@ export default {
       this.queryParam.size = this.pagination.size;
       this.queryParam.sort = this.pagination.sort;
       this.loading = true;
-      UserApi.page(this.queryParam).then(resp => {
+      ResourceApi.page(this.queryParam).then(resp => {
         // console.log(resp);
         // console.log(resp.data.data.totalPages);
         this.data = resp.data.data.content;
-        this.pagination.total = resp.data.data.totalPages;
+        this.pagination.total =  parseInt(resp.data.data.totalElements)
         this.loading = false;
       });
     },

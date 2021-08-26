@@ -10,10 +10,21 @@
     >
       <div v-if="TaskDetail">
         <div>
-          {{TaskDetail.result}}
+          {{ TaskDetail.result }}
         </div>
         <a-textarea
           v-model="TaskDetail.runMsg"
+          placeholder="run log"
+          :auto-size="{ minRows: 3, maxRows: 20 }"
+        />
+      </div>
+
+      <div v-if="Log">
+        <!-- <div>
+          {{ TaskDetail.result }}
+        </div> -->
+        <a-textarea
+          v-model="Log"
           placeholder="run log"
           :auto-size="{ minRows: 3, maxRows: 20 }"
         />
@@ -34,7 +45,9 @@
       <span slot="action" slot-scope="text, record">
         <a href="javascript:;" @click="shutdownTask(record.id)">结束</a>
         <a-divider type="vertical" />
-         <a href="javascript:;" @click="runTask(record.id)">运行</a>
+        <a href="javascript:;" @click="runTask(record.id)">运行</a>
+        <a-divider type="vertical" />
+        <a href="javascript:;" @click="showLog(record.id)">Log </a>
         <a-divider type="vertical" />
         <a href="javascript:;" @click="showDrawer(record)">结果</a>
         <a-divider type="vertical" />
@@ -112,6 +125,8 @@ export default {
       cancerId: null,
       visible: false,
       TaskDetail: undefined,
+      Log: undefined,
+      setIntervaStatus:undefined,
     };
   },
   //   beforeRouteEnter(to, from, next) {
@@ -128,11 +143,11 @@ export default {
   mounted() {
     this.loadData();
     // console.log(this.$websock)
-    this.$websock.onmessage = ()=>{
+    this.$websock.onmessage = () => {
       // let data = JSON.parse(e.data);
       // console.log(data)
-      this.loadData()
-    }
+      this.loadData();
+    };
   },
   methods: {
     handleTableChange(page, pageSize) {
@@ -149,9 +164,9 @@ export default {
       //   const studyId = this.$route.query.studyId;
       //   const dataOriginId = this.$route.query.dataOriginId;
       //   const dataCategoryId = this.$route.query.dataCategoryId;
-        const cancerStudyId = this.$route.query.cancerStudyId;
+      const cancerStudyId = this.$route.query.cancerStudyId;
 
-        this.queryParam.cancerStudyId = cancerStudyId;
+      this.queryParam.cancerStudyId = cancerStudyId;
       //   this.queryParam.studyId = studyId;
       //   this.queryParam.dataOriginId = dataOriginId;
       //   this.queryParam.dataCategoryId = dataCategoryId;
@@ -185,27 +200,40 @@ export default {
     },
     showDrawer(data) {
       this.TaskDetail = data;
-    //   console.log(data);
+      //   console.log(data);
       this.visible = true;
+    },
+    loadLog(id){
+      TaskApi.log({ taskId: id }).then((resp) => {
+        // console.log(resp.data.data);
+        this.Log=resp.data.data
+      });
+    },
+    showLog(id) {
+      this.visible = true;
+      let loadLogFun = this.loadLog
+      loadLogFun(id)
+      this.setIntervaStatus = setInterval(function(){  loadLogFun(id) }, 1000);
+     
     },
     onClose() {
       this.visible = false;
-    },runTask(id){
-      TaskApi.runOne(id).then(resp=>{
-        this.loadData()
+      clearInterval(this.setIntervaStatus)
+    },
+    runTask(id) {
+      TaskApi.runOne(id).then((resp) => {
+        this.loadData();
         // console.log(resp)
         this.$message.success(resp.data.data.name + "运行成功");
-
-      })
-      
-    },shutdownTask(id){
-        TaskApi.shutdown(id).then(resp=>{
-        this.loadData()
+      });
+    },
+    shutdownTask(id) {
+      TaskApi.shutdown(id).then((resp) => {
+        this.loadData();
         // console.log(resp)
         this.$message.success(resp.data.data.name + "已经结束");
-
-      })
-    }
+      });
+    },
   },
 };
 </script>

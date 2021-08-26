@@ -265,6 +265,37 @@ const routes = [
           }
         ]
 
+      }, {
+        path: '/user',
+        name: 'User',
+        meta: { title: '用户管理', icon: 'dashboard' },
+        component: () => import(/* webpackChunkName: "Second" */ '../layout/Second.vue'),
+        redirect: "/user/list",
+        children: [
+          {
+            path: "/component",
+            meta: { title: '用户管理', icon: 'dashboard' },
+            component: () => import(/* webpackChunkName: "Empty" */ '../layout/Empty.vue'),
+            children: [
+              {
+                path: '/user/list',
+                name: 'userList',
+                meta: { title: '用户列表', icon: 'dashboard', parentPath: "/user", display: true },
+                component: () => import(/* webpackChunkName: "userList" */ '../views/User/userList.vue'),
+              },  {
+                path: '/user/role',
+                name: 'roleList',
+                meta: { title: '角色列表', icon: 'dashboard', parentPath: "/user", display: true },
+                component: () => import(/* webpackChunkName: "roleList" */ '../views/User/roleList.vue'),
+              },  {
+                path: '/user/resource',
+                name: 'rsourceList',
+                meta: { title: '资源列表', icon: 'dashboard', parentPath: "/user", display: true },
+                component: () => import(/* webpackChunkName: "rsourceList" */ '../views/User/resourceList.vue'),
+              }, 
+            ]
+          }
+        ]
       }
       // {
       //   path: '/TCGA',
@@ -298,26 +329,26 @@ const routes = [
     ]
   },
 
-  {
-    path: '/user',
-    name: 'User',
-    component: () => import(/* webpackChunkName: "TCGA" */ '../views/User.vue'),
-    children: [
-      {
-        path: 'user_list',
-        name: 'user_list',
-        component: () => import(/* webpackChunkName: "user_list" */ '../views/User/user_list.vue'),
-      }, {
-        path: 'role_list',
-        name: 'role_list',
-        component: () => import(/* webpackChunkName: "role_list" */ '../views/User/role_list.vue'),
-      }, {
-        path: 'Test',
-        name: 'TCGA_test',
-        component: () => import(/* webpackChunkName: "Test" */ '../views/User/Test.vue'),
-      }
-    ]
-  },
+  // {
+  //   path: '/user',
+  //   name: 'User',
+  //   component: () => import(/* webpackChunkName: "TCGA" */ '../views/User.vue'),
+  //   children: [
+  //     {
+  //       path: 'user_list',
+  //       name: 'user_list',
+  //       component: () => import(/* webpackChunkName: "user_list" */ '../views/User/user_list.vue'),
+  //     }, {
+  //       path: 'role_list',
+  //       name: 'role_list',
+  //       component: () => import(/* webpackChunkName: "role_list" */ '../views/User/role_list.vue'),
+  //     }, {
+  //       path: 'Test',
+  //       name: 'TCGA_test',
+  //       component: () => import(/* webpackChunkName: "Test" */ '../views/User/Test.vue'),
+  //     }
+  //   ]
+  // },
 
 ]
 
