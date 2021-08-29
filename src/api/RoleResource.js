@@ -11,4 +11,11 @@ RoleResourceApi.add = (params) => {
         method: 'post'
     })
 }
+RoleResourceApi.del = (id) => {
+    return service({
+        url: `${baseUrl}/del/${id}`,
+        method: 'get'
+    })
+}
+
 export default RoleResourceApi

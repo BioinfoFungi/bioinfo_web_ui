@@ -11,4 +11,17 @@ UserRoleApi.add = (params) => {
         method: 'post'
     })
 }
+UserRoleApi.del = (id) => {
+    return service({
+        url: `${baseUrl}/del/${id}`,
+        method: 'get'
+    })
+}
+UserRoleApi.del = (id) => {
+    return service({
+        url: `${baseUrl}/del/${id}`,
+        method: 'get'
+    })
+}
+
 export default UserRoleApi

@@ -292,6 +292,11 @@ const routes = [
                 name: 'rsourceList',
                 meta: { title: '资源列表', icon: 'dashboard', parentPath: "/user", display: true },
                 component: () => import(/* webpackChunkName: "rsourceList" */ '../views/User/resourceList.vue'),
+              }, {
+                path: '/user/system',
+                name: 'system',
+                meta: { title: '系统设置', icon: 'dashboard', parentPath: "/user", display: true },
+                component: () => import(/* webpackChunkName: "rsourceList" */ '../views/User/system.vue'),
               }, 
             ]
           }
@@ -364,10 +369,10 @@ const router = new VueRouter({
 router.beforeEach((to, from, next) => {
   var token = localStorage.getItem("jwtToken");
 
-  if (token == null && to.name != 'Login') {
-    next('/login')
-    return
-  }
+  // if (token == null && to.name != 'Login') {
+  //   next('/login')
+  //   return
+  // }
   // 已登录状态；当路由到 UserLogIn 时，跳转至 Home
   if (to.name === 'Login') {
     if (token != null) {

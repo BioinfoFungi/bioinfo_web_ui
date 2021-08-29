@@ -1,5 +1,20 @@
 <template>
   <div>
+    <a-button type="primary" @click="addUser"> 添加用户</a-button>
+    <a-modal v-model="modal_visible" title="Basic Modal" @ok="handleOk">
+      <a-form-model ref="ruleForm" :model="form">
+        <a-form-model-item ref="username" label="username" prop="username">
+          <a-input v-model="form.username" />
+        </a-form-model-item>
+        <a-form-model-item ref="password" label="password" prop="password">
+          <a-input v-model="form.password" />
+        </a-form-model-item>
+        <a-form-model-item ref="email" label="email" prop="email">
+          <a-input v-model="form.email" />
+        </a-form-model-item>
+      </a-form-model>
+    </a-modal>
+
     <a-drawer
       title="用户管理"
       placement="right"
@@ -9,7 +24,7 @@
       @close="onClose"
     >
       <div v-if="cur_user">
-        {{ cur_user }}
+        <!-- {{ cur_user }} -->
       </div>
       <div>
         <a-select size="default" style="width: 200px" v-model="selectedRole">
@@ -25,6 +40,10 @@
           :pagination="false"
           :row-key="(record) => record.id"
         >
+          <span slot="action" slot-scope="text, record">
+            <a-divider type="vertical" />
+            <a href="javascript:;" @click="delUserRole(record)">删除</a>
+          </span>
         </a-table>
       </div>
     </a-drawer>
@@ -39,6 +58,10 @@
       <span slot="action" slot-scope="text, record">
         <a-divider type="vertical" />
         <a href="javascript:;" @click="showDrawer(record)">更多</a>
+        <a-divider type="vertical" />
+        <a href="javascript:;" @click="delUser(record.id)">删除</a>
+        <a-divider type="vertical" />
+        <a href="javascript:;" @click="updateUser(record)">更新</a>
       </span>
       <template slot="footer">
         <div class="page-wrapper" :style="{ textAlign: 'right' }">
@@ -65,12 +88,20 @@ const roleListColumns = [
   {
     title: "id",
     dataIndex: "id",
-  }, {
+  },
+  {
     title: "name",
     dataIndex: "name",
-  }, {
+  },
+  {
     title: "enName",
     dataIndex: "enName",
+  },
+
+  {
+    title: "Action",
+    key: "action",
+    scopedSlots: { customRender: "action" },
   },
 ];
 const columns = [
@@ -83,9 +114,14 @@ const columns = [
     dataIndex: "username",
   },
   {
-    title: "enName",
-    dataIndex: "enName",
+    title: "gender",
+    dataIndex: "gender",
   },
+  {
+    title: "email",
+    dataIndex: "email",
+  },
+
   {
     title: "Action",
     key: "action",
@@ -113,11 +149,14 @@ export default {
       loading: false,
       columns,
       visible: false,
+      modal_visible: false,
       cur_user: undefined,
       roles: [],
       roleList: [],
       selectedRole: "",
       roleListColumns,
+      form: {},
+      isUpdate: false,
     };
   },
   mounted() {
@@ -143,19 +182,22 @@ export default {
       });
     },
     loadRole(id) {
-      RoleApi.findByRoleId(id).then((resp) => {
+      RoleApi.findByUserId(id).then((resp) => {
         this.roleList = resp.data.data;
         // console.log(resp)
+      });
+    },
+    loadWithoutAddRole(id) {
+      RoleApi.findByWithoutUserId(id).then((resp) => {
+        // console.log(resp);
+        this.roles = resp.data.data;
       });
     },
     showDrawer(data) {
       this.cur_user = data;
       this.visible = true;
-      RoleApi.listAll().then((resp) => {
-        // console.log(resp);
-        this.roles = resp.data.data;
-      });
-      this.loadRole(data.id)
+      this.loadWithoutAddRole(data.id);
+      this.loadRole(data.id);
     },
     onClose() {
       this.visible = false;
@@ -168,11 +210,62 @@ export default {
         userId: this.cur_user.id,
         roleId: this.selectedRole,
       }).then((resp) => {
-        this.loadRole(this.cur_user.id)
+        this.loadRole(this.cur_user.id);
         this.$notification["success"]({
           message: "添加成功" + resp.data.message,
         });
       });
+    },
+    delUserRole(data) {
+      UserRoleApi.del(data.userRoleId).then((resp) => {
+        this.loadWithoutAddRole(this.cur_user.id);
+        this.loadRole(this.cur_user.id);
+        this.$notification["success"]({
+          message: "删除成功" + resp.data.message,
+        });
+      });
+    },
+    handleOk() {
+      if (this.isUpdate) {
+        // console.log(this.form);
+        UserApi.update(this.form.id,this.form).then(resp=>{
+          this.modal_visible = false;
+          // console.log(resp)
+          this.loadData();
+          this.from = {};
+          this.$notification["success"]({
+            message: "更新成功" + resp.data.message,
+          });
+        })
+      } else {
+        // console.log(this.form);
+        UserApi.add(this.form).then((resp) => {
+          this.modal_visible = false;
+          // console.log(resp)
+          this.loadData();
+          this.from = {};
+          this.$notification["success"]({
+            message: "添加成功" + resp.data.message,
+          });
+        });
+      }
+    },
+    delUser(id) {
+      // console.log(data);
+      UserApi.del(id).then((resp) => {
+        this.loadData();
+        this.$notification["success"]({
+          message: "删除成功" + resp.data.message,
+        });
+      });
+    },addUser(){
+      this.modal_visible = true;
+      this.isUpdate = false;
+    },
+    updateUser(data) {
+      this.form = data;
+      this.modal_visible = true;
+      this.isUpdate = true;
     },
   },
 };

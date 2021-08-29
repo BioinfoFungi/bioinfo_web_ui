@@ -23,4 +23,10 @@ ResourceApi.findByRoleId = (id) =>{
         method: 'get'
     })
 }
+ResourceApi.findByWithoutRoleId = (id) =>{
+    return service({
+        url: `${baseUrl}/findByWithoutRoleId/${id}`,
+        method: 'get'
+    })
+}
 export default ResourceApi

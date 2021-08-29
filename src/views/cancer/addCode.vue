@@ -122,8 +122,31 @@
       label="absolutePath"
       prop="absolutePath"
     >
-      <a-input v-model="form.absolutePath" />
+      <a-select
+        show-search
+        placeholder="Select a person"
+        option-filter-prop="children"
+  
+        @focus="absolutePath"
+        v-model="form.absolutePath"
+      >
+        <a-select-option
+          :value="item.absolutePath"
+          v-for="item in files"
+          :key="item.fileName"
+        >
+          {{ item.fileName }}
+        </a-select-option>
+      </a-select>
     </a-form-model-item>
+
+    <!-- <a-form-model-item
+      ref="absolutePath"
+      label="absolutePath"
+      prop="absolutePath"
+    >
+      <a-input v-model="form.absolutePath" />
+    </a-form-model-item> -->
 
     <a-form-model-item :wrapper-col="{ span: 14, offset: 4 }">
       <a-button type="primary" @click="onSubmit">添加Code</a-button>
@@ -133,6 +156,7 @@
 </template>
 <script>
 import CancerApi from "@/api/cancer.js";
+import FileApi from "@/api/file.js";
 import StudyAPi from "@/api/Study.js";
 import DataOriginApi from "@/api/DataOrigin.js";
 import DataCategoryApi from "@/api/data_category.js";
@@ -152,6 +176,7 @@ export default {
       dataOriginList: [],
       dataCategoryList: [],
       analysisSoftwareList: [],
+      files: [],
       form: {
         cancer: undefined,
         study: undefined,
@@ -164,11 +189,11 @@ export default {
       rules: {
         name: [
           { required: true, message: "请输入Term名称", trigger: "change" },
-        ]
+        ],
       },
     };
   },
-  created() {
+  mounted() {
     // ENUMApi.projectStatuses().then((resp) => {
     //   this.projectStatuses = resp.data.data;
     //   // console.log(resp.data.data)
@@ -217,8 +242,7 @@ export default {
             this.$notification["success"]({
               message: "添加建成功!" + resp.data.message,
             });
-            this.$router.push(
-              "/cancer/codeList");
+            this.$router.push("/cancer/codeList");
           });
         } else {
           // console.log("error submit!!");
@@ -263,6 +287,13 @@ export default {
     },
     analysisSoftwareSearch(input) {
       this.loadAnalysisSoftware({ keyword: input });
+    },
+    absolutePath() {
+      // console.log("sddd");
+      FileApi.list("TCGADOWNLOAD/R").then((resp) => {
+        // console.log(resp)
+        this.files = resp.data.data;
+      });
     },
   },
 };

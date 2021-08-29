@@ -10,7 +10,20 @@ UserApi.page = (params) =>{
         method: 'get'
     })
 }
-
+UserApi.add = (params) => {
+    return service({
+        url: baseUrl,
+        data: params,
+        method: 'post'
+    })
+}
+UserApi.update = (id,params) => {
+    return service({
+        url: `${baseUrl}/update/${id}`,
+        data: params,
+        method: 'post'
+    })
+}
 UserApi.login = (data)=>{
     return service({
         url:`${baseUrl}/login`,
@@ -25,5 +38,12 @@ UserApi.listAll = () =>{
         method: 'get'
     })
 }
+UserApi.del = (id) => {
+    return service({
+        url: `${baseUrl}/del/${id}`,
+        method: 'get'
+    })
+}
+
 
 export default UserApi

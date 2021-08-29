@@ -19,11 +19,7 @@
         v-model="form.cancer"
         @search="cancerSearch"
       >
-      <a-select-option
-          value=""
-        >
-        不选择
-      </a-select-option>
+        <a-select-option value=""> 不选择 </a-select-option>
         <a-select-option
           :value="item.enName"
           v-for="item in cancerList"
@@ -127,7 +123,21 @@
       label="absolutePath"
       prop="absolutePath"
     >
-      <a-input v-model="form.absolutePath" />
+      <a-select
+        show-search
+        placeholder="Select a person"
+        option-filter-prop="children"
+        @focus="absolutePath"
+        v-model="form.absolutePath"
+      >
+        <a-select-option
+          :value="item.absolutePath"
+          v-for="item in files"
+          :key="item.fileName"
+        >
+          {{ item.fileName }}
+        </a-select-option>
+      </a-select>
     </a-form-model-item>
 
     <a-form-model-item :wrapper-col="{ span: 14, offset: 4 }">
@@ -143,6 +153,8 @@ import DataOriginApi from "@/api/DataOrigin.js";
 import DataCategoryApi from "@/api/data_category.js";
 import AnalysisSoftwareApi from "@/api/analysis_software.js";
 import CodeAPi from "@/api/code.js";
+import FileApi from "@/api/file.js";
+
 export default {
   data() {
     return {
@@ -157,6 +169,7 @@ export default {
       dataOriginList: [],
       dataCategoryList: [],
       analysisSoftwareList: [],
+      files: [],
       form: {
         cancer: undefined,
         study: undefined,
@@ -169,22 +182,24 @@ export default {
       rules: {
         name: [
           { required: true, message: "请输入Term名称", trigger: "change" },
-        ]
+        ],
       },
     };
   },
-  created() {
+  mounted() {
     const cancerStudyId = this.$route.query.codeId;
+    this.absolutePath()
     CodeAPi.findById(cancerStudyId, { more: true }).then((resp) => {
       let data = resp.data.data;
-      
+     
       if (data.absolutePath) {
-        this.form.absolutePath = data.absolutePath;
+        // let strFileName =  data.absolutePath.substring(data.absolutePath.lastIndexOf("/")+1); 
+        this.form.absolutePath = data.absolutePath
+        // console.log(strFileName)
       }
 
       if (data.name) {
-       this.form.name =data.name;
-      
+        this.form.name = data.name;
       }
 
       if (data.cancer) {
@@ -295,6 +310,12 @@ export default {
     },
     analysisSoftwareSearch(input) {
       this.loadAnalysisSoftware({ keyword: input });
+    },absolutePath() {
+      // console.log("sddd");
+      FileApi.list("TCGADOWNLOAD/R").then((resp) => {
+        // console.log(resp)
+        this.files = resp.data.data;
+      });
     },
   },
 };

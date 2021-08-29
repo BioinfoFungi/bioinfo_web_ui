@@ -2,11 +2,8 @@
   <div class="home">
     <div v-if="user">
       {{ user ? user.username : null }}
-      <button @click="logout">退出</button>
     </div>
-    <div v-if="!user">
-    <button @click="login">登录</button>
-     </div>
+
     <h3>使用方法</h3>
     <ol>
       <li></li>
@@ -17,6 +14,7 @@
       <li>图片上传到本地和oss</li>
       <li>基本的权限管理</li>
     </ol>
+    <a-button @click="initData()">初始化</a-button>
     <!-- <img alt="Vue logo" src="../assets/logo.png"> -->
     <!-- <HelloWorld msg="Welcome to Your Vue.js App"/> -->
   </div>
@@ -25,6 +23,8 @@
 <script>
 // @ is an alias to /src
 // import HelloWorld from '@/components/HelloWorld.vue'
+
+import DataImportApi from "@/api/dataImport.js";
 export default {
   // name: 'Home',
   // components: {
@@ -40,21 +40,14 @@ export default {
     this.user = user;
   },
   methods: {
-    logout() {
-      localStorage.removeItem("jwtToken");
-      localStorage.removeItem("user");
-      localStorage.removeItem("global_config");
-      this.$router.replace("/Home");
-      this.user=null;
-      // location.reload();
-    },login(){
-      this.$router.push("/login");
-    }
+    initData() {
+      DataImportApi.init().then((resp) => {
+        this.$notification["success"]({
+          message: resp.data.data,
+        });
+        // console.log(resp.data.data);
+      });
+    },
   },
 };
 </script>
-<style>
-.home{
-  margin: 20px;
-}
-</style>
