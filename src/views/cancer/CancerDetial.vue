@@ -80,6 +80,9 @@
         <a href="javascript:;" @click="checkFileExist(record.id)">{{
           record.status
         }}</a>
+
+        <a-divider type="vertical" v-if="record.status" />
+        <a href="javascript:;" @click="downlaod(record)" v-if="record.status">下载</a>
         <a-divider type="vertical" />
         <a href="javascript:;" @click="showDrawer(record)">更多</a>
         <a-divider type="vertical" />
@@ -158,6 +161,10 @@ const columns = [
   {
     title: "分析软件",
     dataIndex: "analysisSoftware.name",
+  },
+  {
+    title: "GSE",
+    dataIndex: "gse",
   },
   {
     title: "大小",
@@ -356,6 +363,9 @@ export default {
           //   });
         }
       );
+    },
+    downlaod() {
+      // console.log(record)
     },
   },
 };
