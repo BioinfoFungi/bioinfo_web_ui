@@ -3,7 +3,7 @@ const baseUrl = "8.140.164.151"
 // const port = 9090
 // const baseUrl ="localhost"
 // const baseUrl="bioinfo.online"
-const port = 8082
+const port = 8080
 const protocol="http"
 export default{
     baseUrl,
