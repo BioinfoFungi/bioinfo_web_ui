@@ -9,6 +9,43 @@
     <a-form-model-item ref="name" label="name" prop="name">
       <a-input v-model="form.name" />
     </a-form-model-item>
+
+   <a-form-model-item ref="taskType" label="taskType" prop="taskType">
+      <a-select
+        show-search
+        placeholder="Select a person"
+        option-filter-prop="children"
+        style="width: 200px"
+        v-model="form.taskType"
+      >
+        <a-select-option
+          :value="item.key"
+          v-for="item in taskTypeList"
+          :key="item.key"
+        >
+          {{ item.value }}
+        </a-select-option>
+      </a-select>
+    </a-form-model-item>
+
+   <a-form-model-item ref="codeType" label="codeType" prop="codeType">
+      <a-select
+        show-search
+        placeholder="Select a person"
+        option-filter-prop="children"
+        style="width: 200px"
+        v-model="form.codeType"
+      >
+        <a-select-option
+          :value="item.key"
+          v-for="item in codeTypeList"
+          :key="item.key"
+        >
+          {{ item.value }}
+        </a-select-option>
+      </a-select>
+    </a-form-model-item>
+
     <a-form-model-item ref="Cancer" label="Cancer" prop="cancer">
       <a-select
         show-search
@@ -161,6 +198,7 @@ import StudyAPi from "@/api/Study.js";
 import DataOriginApi from "@/api/DataOrigin.js";
 import DataCategoryApi from "@/api/data_category.js";
 import AnalysisSoftwareApi from "@/api/analysis_software.js";
+import ENUMApi from "@/api/ENUM.js";
 import CodeAPi from "@/api/code.js";
 export default {
   data() {
@@ -176,6 +214,8 @@ export default {
       dataOriginList: [],
       dataCategoryList: [],
       analysisSoftwareList: [],
+      codeTypeList:[],
+      taskTypeList:[],
       files: [],
       form: {
         cancer: undefined,
@@ -185,6 +225,8 @@ export default {
         analysisSoftware: undefined,
         absolutePath: undefined,
         name: undefined,
+        codeType:undefined,
+        taskType:undefined
       },
       rules: {
         name: [
@@ -194,10 +236,13 @@ export default {
     };
   },
   mounted() {
-    // ENUMApi.projectStatuses().then((resp) => {
-    //   this.projectStatuses = resp.data.data;
-    //   // console.log(resp.data.data)
-    // });
+    ENUMApi.codeType().then((resp) => {
+      this.codeTypeList = resp.data.data;
+    });
+      ENUMApi.taskType().then((resp) => {
+      this.taskTypeList = resp.data.data;
+      // console.log(this.taskTypeList )
+    });
     // UserAPi.listAll().then((resp) => {
     //   // console.log(resp)
     //   this.users = resp.data.data;

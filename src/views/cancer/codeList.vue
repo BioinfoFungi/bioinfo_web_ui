@@ -115,10 +115,16 @@ const columns = [
   {
     title: "数据分类",
     dataIndex: "dataCategory.name",
-  },
-  {
+  },{
     title: "分析软件",
     dataIndex: "analysisSoftware.name",
+  },
+  {
+    title: "执行脚本",
+    dataIndex: "codeType",
+  },  {
+    title: "任务类型",
+    dataIndex: "taskType",
   },
   {
     title: "大小",

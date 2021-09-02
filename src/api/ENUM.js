@@ -10,4 +10,17 @@ ENUMApi.projectStatuses = () =>{
     })
 }
 
+ENUMApi.codeType = () =>{
+    return service({
+        url: `${baseUrl}/codeType`,
+        method: 'get'
+    })
+}
+ENUMApi.taskType = () =>{
+    return service({
+        url: `${baseUrl}/taskType`,
+        method: 'get'
+    })
+}
+
 export default ENUMApi

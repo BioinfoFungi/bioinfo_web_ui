@@ -49,11 +49,16 @@ CodeApi.update = (id,params) => {
     })
 }
 
-
 CodeApi.findById = (id,params) => {
     return service({
         url: `${baseUrl}/findById/${id}`,
         params:params,
+        method: 'get'
+    })
+}
+CodeApi.listAllAnnTask = () => {
+    return service({
+        url: `${baseUrl}/listAllAnnTask`,
         method: 'get'
     })
 }

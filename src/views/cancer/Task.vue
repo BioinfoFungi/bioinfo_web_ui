@@ -164,9 +164,9 @@ export default {
       //   const studyId = this.$route.query.studyId;
       //   const dataOriginId = this.$route.query.dataOriginId;
       //   const dataCategoryId = this.$route.query.dataCategoryId;
-      const cancerStudyId = this.$route.query.cancerStudyId;
+      const objId = this.$route.query.objId;
 
-      this.queryParam.cancerStudyId = cancerStudyId;
+      this.queryParam.objId = objId;
       //   this.queryParam.studyId = studyId;
       //   this.queryParam.dataOriginId = dataOriginId;
       //   this.queryParam.dataCategoryId = dataCategoryId;

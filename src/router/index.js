@@ -139,12 +139,12 @@ const routes = [
                 name: 'add_cancer_study',
                 meta: { title: '添加癌症研究', icon: 'dashboard', parentPath: "/cancer", display: true },
                 component: () => import(/* webpackChunkName: "cancer_list" */ '../views/cancer/addCancer.vue'),
-              },   {
+              }, {
                 path: '/cancer/updateCancerStudy',
                 name: 'update_cancer_study',
                 meta: { title: '更新癌症研究', icon: 'dashboard', parentPath: "/cancer", display: false },
                 component: () => import(/* webpackChunkName: "cancer_list" */ '../views/cancer/updateCancer.vue'),
-              }, 
+              },
             ]
           }, {
             path: "/component",
@@ -156,19 +156,31 @@ const routes = [
                 name: 'code_add',
                 meta: { title: '添加Code', icon: 'dashboard', parentPath: "/cancer", display: true },
                 component: () => import(/* webpackChunkName: "cancer_list" */ '../views/cancer/addCode.vue'),
-              },{
+              }, {
                 path: '/cancer/updateCode',
                 name: 'update_code',
                 meta: { title: '更新Code', icon: 'dashboard', parentPath: "/cancer", display: false },
                 component: () => import(/* webpackChunkName: "cancer_list" */ '../views/cancer/updateCode.vue'),
-              },{
+              }, {
                 path: '/cancer/codeList',
                 name: 'code_list',
                 meta: { title: 'CodeList', icon: 'dashboard', parentPath: "/cancer", display: true },
                 component: () => import(/* webpackChunkName: "cancer_list" */ '../views/cancer/codeList.vue'),
               },
             ]
-          }, {
+          },  {
+            path: "/component",
+            meta: { title: '注释文件', icon: 'dashboard' },
+            component: () => import(/* webpackChunkName: "Empty" */ '../layout/Empty.vue'),
+            children: [
+              {
+                path: '/cancer/Annotation',
+                name: 'cancer_study_annotation',
+                meta: { title: '注释文件', icon: 'dashboard', parentPath: "/cancer", display: true },
+                component: () => import(/* webpackChunkName: "cancer_list" */ '../views/cancer/Annotation.vue'),
+              },
+            ]
+          },{
             path: "/component",
             meta: { title: '任务管理', icon: 'dashboard' },
             component: () => import(/* webpackChunkName: "Empty" */ '../layout/Empty.vue'),
@@ -180,7 +192,7 @@ const routes = [
                 component: () => import(/* webpackChunkName: "cancer_list" */ '../views/cancer/Task.vue'),
               },
             ]
-          }
+          },
         ]
 
       }, {
@@ -282,12 +294,12 @@ const routes = [
                 name: 'userList',
                 meta: { title: '用户列表', icon: 'dashboard', parentPath: "/user", display: true },
                 component: () => import(/* webpackChunkName: "userList" */ '../views/User/userList.vue'),
-              },  {
+              }, {
                 path: '/user/role',
                 name: 'roleList',
                 meta: { title: '角色列表', icon: 'dashboard', parentPath: "/user", display: true },
                 component: () => import(/* webpackChunkName: "roleList" */ '../views/User/roleList.vue'),
-              },  {
+              }, {
                 path: '/user/resource',
                 name: 'rsourceList',
                 meta: { title: '资源列表', icon: 'dashboard', parentPath: "/user", display: true },
@@ -297,7 +309,7 @@ const routes = [
                 name: 'system',
                 meta: { title: '系统设置', icon: 'dashboard', parentPath: "/user", display: true },
                 component: () => import(/* webpackChunkName: "rsourceList" */ '../views/User/system.vue'),
-              }, 
+              },
             ]
           }
         ]

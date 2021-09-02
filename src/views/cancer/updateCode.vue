@@ -9,6 +9,42 @@
     <a-form-model-item ref="Name" label="Name" prop="name">
       <a-input v-model="form.name" />
     </a-form-model-item>
+    <a-form-model-item ref="taskType" label="taskType" prop="taskType">
+      <a-select
+        show-search
+        placeholder="Select a person"
+        option-filter-prop="children"
+        style="width: 200px"
+        v-model="form.taskType"
+      >
+        <a-select-option
+          :value="item.key"
+          v-for="item in taskTypeList"
+          :key="item.key"
+        >
+          {{ item.value }}
+        </a-select-option>
+      </a-select>
+    </a-form-model-item>
+
+    <a-form-model-item ref="codeType" label="codeType" prop="codeType">
+      <a-select
+        show-search
+        placeholder="Select a person"
+        option-filter-prop="children"
+        style="width: 200px"
+        v-model="form.codeType"
+      >
+        <a-select-option
+          :value="item.key"
+          v-for="item in codeTypeList"
+          :key="item.key"
+        >
+          {{ item.value }}
+        </a-select-option>
+      </a-select>
+    </a-form-model-item>
+
     <a-form-model-item ref="Cancer" label="Cancer" prop="cancer">
       <a-select
         show-search
@@ -154,6 +190,7 @@ import DataCategoryApi from "@/api/data_category.js";
 import AnalysisSoftwareApi from "@/api/analysis_software.js";
 import CodeAPi from "@/api/code.js";
 import FileApi from "@/api/file.js";
+import ENUMApi from "@/api/ENUM.js";
 
 export default {
   data() {
@@ -170,6 +207,8 @@ export default {
       dataCategoryList: [],
       analysisSoftwareList: [],
       files: [],
+      codeTypeList: [],
+      taskTypeList: [],
       form: {
         cancer: undefined,
         study: undefined,
@@ -178,6 +217,8 @@ export default {
         analysisSoftware: undefined,
         absolutePath: undefined,
         name: undefined,
+        codeType: undefined,
+        taskType: undefined,
       },
       rules: {
         name: [
@@ -187,14 +228,22 @@ export default {
     };
   },
   mounted() {
+    ENUMApi.codeType().then((resp) => {
+      this.codeTypeList = resp.data.data;
+    });
+    ENUMApi.taskType().then((resp) => {
+      this.taskTypeList = resp.data.data;
+    });
     const cancerStudyId = this.$route.query.codeId;
-    this.absolutePath()
+    this.absolutePath();
     CodeAPi.findById(cancerStudyId, { more: true }).then((resp) => {
       let data = resp.data.data;
-     
+      // console.log(data.codeType)
+      this.form.codeType = data.codeType;
+      this.form.taskType = data.taskType;
       if (data.absolutePath) {
-        // let strFileName =  data.absolutePath.substring(data.absolutePath.lastIndexOf("/")+1); 
-        this.form.absolutePath = data.absolutePath
+        // let strFileName =  data.absolutePath.substring(data.absolutePath.lastIndexOf("/")+1);
+        this.form.absolutePath = data.absolutePath;
         // console.log(strFileName)
       }
 
@@ -310,7 +359,8 @@ export default {
     },
     analysisSoftwareSearch(input) {
       this.loadAnalysisSoftware({ keyword: input });
-    },absolutePath() {
+    },
+    absolutePath() {
       // console.log("sddd");
       FileApi.list("TCGADOWNLOAD/R").then((resp) => {
         // console.log(resp)
