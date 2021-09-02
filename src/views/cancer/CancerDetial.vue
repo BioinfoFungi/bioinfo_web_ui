@@ -353,7 +353,7 @@ export default {
         this.runMsg = "";
       }
       // console.log(cancerStudyId, codeId);
-      TaskApi.run({ objId: cancerStudyId, codeId: codeId }).then(
+      TaskApi.run({ objId: cancerStudyId, codeId: codeId ,taskType:"CANCER_STUDY"}).then(
         (resp) => {
           this.loadTask(cancerStudyId);
           this.$message.success(resp.data.data.name + "创建成功");
@@ -364,8 +364,9 @@ export default {
         }
       );
     },
-    downlaod() {
-      // console.log(record)
+    downlaod(data) {
+       let download_url = JSON.parse(localStorage.getItem("global_config"));
+      window.location.href=download_url.download_url+"/"+data.relativePath
     },
   },
 };

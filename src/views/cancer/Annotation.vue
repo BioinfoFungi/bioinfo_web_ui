@@ -65,16 +65,9 @@
           <a-input :value="CancerStudyDetial.uuid" />
         </a-form-item>
 
-        <a-divider />
+        <a :href="CancerStudyDetial.relativePath" target="_black">点击下载</a>
 
-        <a-button
-          type="link"
-          v-for="item in codeList"
-          :key="item.id"
-          @click="runTask(CancerStudyDetial.id, item.id)"
-        >
-          {{ item.name }}
-        </a-button>
+        <a-divider />
 
         <a-textarea
           v-if="runMsg"
@@ -328,16 +321,12 @@ export default {
       });
     },
     loadTask(id) {
-      TaskApi.page({ cancerStudyId: id }).then((resp) => {
+      TaskApi.page({ cancerStudyId: id ,taskType: "ANNOTATION"}).then((resp) => {
         this.taskList = resp.data.data.content;
       });
     },
     showDrawer(data) {
       this.CancerStudyDetial = data;
-      CodeApi.findByCan(data.id).then((resp) => {
-        // console.log(resp);
-        this.codeList = resp.data.data;
-      });
       this.loadTask(data.id);
       // console.log(data);
       this.visible = true;
@@ -376,15 +365,17 @@ export default {
       // console.log(cancerStudyId, codeId);
       TaskApi.run({ objId: cancerStudyId, codeId: codeId }).then((resp) => {
         this.loadTask(cancerStudyId);
-        this.$message.success(resp.data.data.name + "创建成功");
+        this.$message.success(resp.data.data.enName + "创建成功");
 
         //  this.$notification["success"]({
         //     message: "运行成功!" + resp.data.message,
         //   });
       });
     },
-    downlaod() {
-      // console.log(record)
+    downlaod(data) {
+      let download_url = JSON.parse(localStorage.getItem("global_config"));
+      // console.log(download_url.download_url+"/"+data.relativePath)
+      window.location.href=download_url.download_url+"/"+data.relativePath
     },
     showModal() {
       this.laodCodes();
@@ -408,7 +399,11 @@ export default {
     },
     runCode(data) {
       console.log(data);
-      TaskApi.run({ objId: data.id, codeId: data.codeId }).then((resp) => {
+      TaskApi.run({
+        objId: data.id,
+        codeId: data.codeId,
+        taskType: "ANNOTATION",
+      }).then((resp) => {
         // this.loadTask(cancerStudyId);
         this.$message.success(resp.data.data.enName + "创建成功");
       });
