@@ -10,7 +10,7 @@
       <a-input v-model="form.name" />
     </a-form-model-item>
 
-   <a-form-model-item ref="taskType" label="taskType" prop="taskType">
+    <a-form-model-item ref="taskType" label="taskType" prop="taskType">
       <a-select
         show-search
         placeholder="Select a person"
@@ -28,7 +28,7 @@
       </a-select>
     </a-form-model-item>
 
-   <a-form-model-item ref="codeType" label="codeType" prop="codeType">
+    <a-form-model-item ref="codeType" label="codeType" prop="codeType">
       <a-select
         show-search
         placeholder="Select a person"
@@ -163,7 +163,6 @@
         show-search
         placeholder="Select a person"
         option-filter-prop="children"
-  
         @focus="absolutePath"
         v-model="form.absolutePath"
       >
@@ -175,6 +174,17 @@
           {{ item.fileName }}
         </a-select-option>
       </a-select>
+    </a-form-model-item>
+    <a-form-model-item label="haveParentId">
+      <a-switch v-model="form.haveParentId" />
+    </a-form-model-item>
+
+    <a-form-model-item label="haveExpr">
+      <a-switch v-model="form.haveExpr" />
+    </a-form-model-item>
+
+    <a-form-model-item label="haveMetadata">
+      <a-switch v-model="form.haveMetadata" />
     </a-form-model-item>
 
     <!-- <a-form-model-item
@@ -214,8 +224,8 @@ export default {
       dataOriginList: [],
       dataCategoryList: [],
       analysisSoftwareList: [],
-      codeTypeList:[],
-      taskTypeList:[],
+      codeTypeList: [],
+      taskTypeList: [],
       files: [],
       form: {
         cancer: undefined,
@@ -225,8 +235,11 @@ export default {
         analysisSoftware: undefined,
         absolutePath: undefined,
         name: undefined,
-        codeType:undefined,
-        taskType:undefined
+        codeType: undefined,
+        taskType: undefined,
+        haveParentId:false,
+        haveExpr:false,
+        haveMetadata:false,
       },
       rules: {
         name: [
@@ -239,7 +252,7 @@ export default {
     ENUMApi.codeType().then((resp) => {
       this.codeTypeList = resp.data.data;
     });
-      ENUMApi.taskType().then((resp) => {
+    ENUMApi.taskType().then((resp) => {
       this.taskTypeList = resp.data.data;
       // console.log(this.taskTypeList )
     });

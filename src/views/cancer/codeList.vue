@@ -29,6 +29,8 @@
       </div>
     </a-drawer>
 
+    <a-button @click="createTSVFile">导出CSV</a-button>
+       <a-button @click="initTSV">导入CSV</a-button>
     <a-table
       :columns="columns"
       :row-key="(record) => record.id"
@@ -93,7 +95,7 @@ const columns = [
     title: "id",
     dataIndex: "id",
   },
-   {
+  {
     title: "name",
     dataIndex: "name",
     // scopedSlots: { customRender: "cancer" }
@@ -115,14 +117,16 @@ const columns = [
   {
     title: "数据分类",
     dataIndex: "dataCategory.name",
-  },{
+  },
+  {
     title: "分析软件",
     dataIndex: "analysisSoftware.name",
   },
   {
     title: "执行脚本",
     dataIndex: "codeType",
-  },  {
+  },
+  {
     title: "任务类型",
     dataIndex: "taskType",
   },
@@ -264,11 +268,38 @@ export default {
       });
     },
     showLog(id) {
-       this.$router.push({
+      this.$router.push({
         name: "cancer_study_task",
         query: { objId: id },
       });
     },
+    createTSVFile() {
+      CodeAPi.createTSVFile().then((res) => {
+        var blob = res.data;
+        var reader = new FileReader();
+        reader.readAsDataURL(blob);
+        reader.onload = function (e) {
+          var a = document.createElement("a");
+          // 获取文件名fileName
+          // console.log(res)
+          // var fileName = res.headers["Content-Disposition"]
+          // fileName = fileName[fileName.length - 1];
+          // fileName = fileName.replace(/"/g, "");
+          a.download = "export.tsv";
+          a.href = e.target.result;
+          document.body.appendChild(a);
+          a.click();
+          document.body.removeChild(a);
+        };
+      });
+    },initTSV(){
+      CodeAPi.init(null).then(resp=>{
+        // console.log(resp)
+        this.$notification["success"]({
+            message: "文件不存在" + resp.data.message,
+          });
+      })
+    }
   },
 };
 </script>

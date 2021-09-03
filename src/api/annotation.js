@@ -31,5 +31,12 @@ AnnotationApi.add = (params) => {
         method: 'post'
     })
 }
+AnnotationApi.update = (id,params) => {
+    return service({
+        url: `${baseUrl}/update/${id}`,
+        data: params,
+        method: 'post'
+    })
+}
 
 export default AnnotationApi

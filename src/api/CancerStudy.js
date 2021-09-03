@@ -57,4 +57,13 @@ CancerStudyApi.findById = (id,params) => {
         method: 'get'
     })
 }
+
+
+CancerStudyApi.createTSVFile = () => {
+    return service({
+        url: `${baseUrl}/createTSVFile`,
+        method: 'post',
+        responseType: 'blob'
+    })
+}
 export default CancerStudyApi

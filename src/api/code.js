@@ -62,4 +62,20 @@ CodeApi.listAllAnnTask = () => {
         method: 'get'
     })
 }
+
+CodeApi.createTSVFile = () => {
+    return service({
+        url: `${baseUrl}/createTSVFile`,
+        method: 'post',
+        responseType: 'blob'
+    })
+}
+
+CodeApi.init = (path) => {
+    return service({
+        url: `${baseUrl}/init`,
+        params:{path:path},
+        method: 'get',
+    })
+}
 export default CodeApi

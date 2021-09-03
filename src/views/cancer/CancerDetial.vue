@@ -24,18 +24,39 @@
         <a-form-item label="uuid">
           <a-input :value="CancerStudyDetial.uuid" />
         </a-form-item>
+        <div v-if="CancerStudyDetial.parentId != -1">
+          <a-form-item label="expr">
+            <a-input :value="CancerStudyDetial.expr" />
+          </a-form-item>
+          <a
+            href="javascript:;"
+            @click="downlaod(CancerStudyDetial.exprRelative)"
+            v-if="CancerStudyDetial.exprStatus"
+            >下载</a
+          >
 
+          <a-form-item label="metadata">
+            <a-input :value="CancerStudyDetial.metadata" />
+          </a-form-item>
+          <a
+            href="javascript:;"
+            @click="downlaod(CancerStudyDetial.metadataRelative)"
+            v-if="CancerStudyDetial.metadataStatus"
+            >下载</a
+          >
+        </div>
         <a-divider />
 
-        <a-button
-          type="link"
-          v-for="item in codeList"
-          :key="item.id"
-          @click="runTask(CancerStudyDetial.id, item.id)"
-        >
-          {{ item.name }}
-        </a-button>
-
+        <div>
+          <a-button
+            type="link"
+            v-for="item in codeList"
+            :key="item.id"
+            @click="runTask(CancerStudyDetial.id, item.id)"
+          >
+            {{ item.name }}
+          </a-button>
+        </div>
         <a-textarea
           v-if="runMsg"
           v-model="runMsg"
@@ -56,6 +77,12 @@
         <a-button @click="showLog(CancerStudyDetial.id)">查看更多</a-button>
       </div>
     </a-drawer>
+    <a-button @click="createTSVFile">导出CSV</a-button>
+    <a-input-search
+      placeholder="input search text"
+      style="width: 200px"
+      @search="onSearch"
+    />
 
     <a-table
       :columns="columns"
@@ -82,7 +109,12 @@
         }}</a>
 
         <a-divider type="vertical" v-if="record.status" />
-        <a href="javascript:;" @click="downlaod(record)" v-if="record.status">下载</a>
+        <a
+          href="javascript:;"
+          @click="downlaod(record.relativePath)"
+          v-if="record.status"
+          >下载</a
+        >
         <a-divider type="vertical" />
         <a href="javascript:;" @click="showDrawer(record)">更多</a>
         <a-divider type="vertical" />
@@ -131,6 +163,10 @@ const task_columns = [
     dataIndex: "taskStatus",
   },
   {
+    title: "name",
+    dataIndex: "name",
+  },
+  {
     title: "isSuccess",
     dataIndex: "isSuccess",
   },
@@ -163,8 +199,20 @@ const columns = [
     dataIndex: "analysisSoftware.name",
   },
   {
+    title: "annotationId",
+    dataIndex: "analysisSoftware.annotationId",
+  },
+  {
     title: "GSE",
     dataIndex: "gse",
+  },
+  {
+    title: "parentId",
+    dataIndex: "parentId",
+  },
+  {
+    title: "codeId",
+    dataIndex: "codeId",
   },
   {
     title: "大小",
@@ -190,6 +238,7 @@ export default {
         page: 1,
         size: 10,
         sort: null,
+          keyword: null
       },
       queryParam: {
         page: 0,
@@ -247,6 +296,7 @@ export default {
       this.queryParam.page = this.pagination.page - 1;
       this.queryParam.size = this.pagination.size;
       this.queryParam.sort = this.pagination.sort;
+      this.queryParam.keyword = this.pagination.keyword;
 
       const cancerId = this.$route.query.cancerId;
       const studyId = this.$route.query.studyId;
@@ -307,7 +357,7 @@ export default {
       });
     },
     loadTask(id) {
-      TaskApi.page({ objId: id,taskType:"CANCER_STUDY" }).then((resp) => {
+      TaskApi.page({ objId: id, taskType: "CANCER_STUDY" }).then((resp) => {
         this.taskList = resp.data.data.content;
       });
     },
@@ -353,21 +403,46 @@ export default {
         this.runMsg = "";
       }
       // console.log(cancerStudyId, codeId);
-      TaskApi.run({ objId: cancerStudyId, codeId: codeId ,taskType:"CANCER_STUDY"}).then(
-        (resp) => {
-          this.loadTask(cancerStudyId);
-          this.$message.success(resp.data.data.name + "创建成功");
+      TaskApi.run({
+        objId: cancerStudyId,
+        codeId: codeId,
+        taskType: "CANCER_STUDY",
+      }).then((resp) => {
+        this.loadTask(cancerStudyId);
+        this.$message.success(resp.data.data.name + "创建成功");
 
-          //  this.$notification["success"]({
-          //     message: "运行成功!" + resp.data.message,
-          //   });
-        }
-      );
+        //  this.$notification["success"]({
+        //     message: "运行成功!" + resp.data.message,
+        //   });
+      });
     },
-    downlaod(data) {
-       let download_url = JSON.parse(localStorage.getItem("global_config"));
-      window.location.href=download_url.download_url+"/"+data.relativePath
+    downlaod(path) {
+      let download_url = JSON.parse(localStorage.getItem("global_config"));
+      window.location.href = download_url.download_url + "/" + path;
     },
+    createTSVFile() {
+      CancerStudyAPi.createTSVFile().then((res) => {
+        var blob = res.data;
+        var reader = new FileReader();
+        reader.readAsDataURL(blob);
+        reader.onload = function (e) {
+          var a = document.createElement("a");
+          // 获取文件名fileName
+          console.log(res);
+          // var fileName = res.headers["Content-Disposition"]
+          // fileName = fileName[fileName.length - 1];
+          // fileName = fileName.replace(/"/g, "");
+          a.download = "export.tsv";
+          a.href = e.target.result;
+          document.body.appendChild(a);
+          a.click();
+          document.body.removeChild(a);
+        };
+      });
+    },onSearch(value){
+       this.pagination.keyword = value;
+      this.loadData();
+    }
   },
 };
 </script>

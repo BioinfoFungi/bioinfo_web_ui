@@ -21,7 +21,15 @@
           <a-input v-model="form.absolutePath" />
         </a-form-model-item>
 
-        <a-form-model-item ref="code" label="code" prop="code">
+        <a-form-model-item ref="symbol" label="symbol" prop="symbol">
+          <a-input v-model="form.symbol" />
+        </a-form-model-item>
+
+        <a-form-model-item ref="probeId" label="probeId" prop="probeId">
+          <a-input v-model="form.probeId" />
+        </a-form-model-item>
+
+        <!-- <a-form-model-item ref="code" label="code" prop="code">
           <a-select
             show-search
             placeholder="Select a code"
@@ -37,7 +45,7 @@
               {{ item.name }}
             </a-select-option>
           </a-select>
-        </a-form-model-item>
+        </a-form-model-item> -->
       </a-form-model>
     </a-modal>
     <a-drawer
@@ -65,7 +73,14 @@
           <a-input :value="CancerStudyDetial.uuid" />
         </a-form-item>
 
-        <a :href="CancerStudyDetial.relativePath" target="_black">点击下载</a>
+        <a-button
+          type="link"
+          v-for="item in codes"
+          :key="item.id"
+          @click="runTask(CancerStudyDetial.id, item.id)"
+        >
+          {{ item.name }}
+        </a-button>
 
         <a-divider />
 
@@ -101,9 +116,9 @@
       <!-- <div slot="name" slot-scope="name,record">
         <a href="javascript:;" @click="detial(record.id)">{{record}}</a>
       </div> -->
-      <span slot="absolutePath" slot-scope="text, record">
-        <a href="javascript:;" @click="updateCancerStudy(record.id)">位置</a>
-      </span>
+      <!-- <span slot="absolutePath" slot-scope="text, record">
+        <a href="javascript:;" @click="updateAnnotationEdit(record.id)">位置</a>
+      </span> -->
       <span slot="action" slot-scope="text, record">
         <!-- <a href="javascript:;">Invite 一 {{record.name}}</a>
         <a-divider type="vertical" />-->
@@ -121,9 +136,9 @@
         <a-divider type="vertical" />
         <a href="javascript:;" @click="showDrawer(record)">更多</a>
         <a-divider type="vertical" />
-        <a href="javascript:;" @click="updateCancerStudy(record.id)">编辑</a>
-        <a-divider type="vertical" />
-        <a href="javascript:;" @click="runCode(record)">执行code</a>
+        <a href="javascript:;" @click="updateAnnotationEdit(record)">编辑</a>
+        <!-- <a-divider type="vertical" />
+        <a href="javascript:;" @click="runCode(record)">执行code</a> -->
         <a-divider type="vertical" />
         <a href="javascript:;" @click="delCancerStudy(record.id)">删除</a>
         <!-- <a href="javascript:;" @click="articleSettings(record.id)">设置</a>
@@ -158,10 +173,15 @@
 import AnnotationApi from "@/api/annotation.js";
 import CodeApi from "@/api/code.js";
 import TaskApi from "@/api/task.js";
+
 const task_columns = [
   {
     title: "id",
     dataIndex: "id",
+  },
+  {
+    title: "name",
+    dataIndex: "name",
   },
   {
     title: "taskStatus",
@@ -188,6 +208,18 @@ const columns = [
   {
     title: "codeId",
     dataIndex: "codeId",
+  },
+  {
+    title: "parentId",
+    dataIndex: "parentId",
+  },
+  {
+    title: "symbol",
+    dataIndex: "symbol",
+  },
+  {
+    title: "probeId",
+    dataIndex: "probeId",
   },
   {
     title: "大小",
@@ -227,7 +259,8 @@ export default {
       form: {
         enName: undefined,
         absolutePath: undefined,
-        codeId: undefined,
+        symbol: undefined,
+        probeId: undefined,
       },
       data: [],
       codes: [],
@@ -241,6 +274,7 @@ export default {
       CancerStudyDetial: undefined,
       runMsg: undefined,
       taskList: [],
+      isUpdate: false,
       rules: {
         enName: [{ required: true, message: "请输入名称", trigger: "change" }],
       },
@@ -293,14 +327,36 @@ export default {
     },
     laodCodes() {
       CodeApi.listAllAnnTask().then((resp) => {
-        console.log(resp);
+        // console.log(resp);
         this.codes = resp.data.data;
       });
     },
-    updateCancerStudy(id) {
-      this.$router.push({
-        name: "update_cancer_study",
-        query: { cancerStudyId: id },
+    updateAnnotationEdit(data) {
+      // this.$router.push({
+      //   name: "update_cancer_study",
+      //   query: { cancerStudyId: id },
+      // });
+      this.visibleDialog = true;
+      this.form = data;
+      this.isUpdate = true;
+      // console.log(data)
+    },
+    updateAnnotation() {
+      AnnotationApi.update(this.form.id, this.form).then((resp) => {
+        this.$notification["success"]({
+          message: resp.data.data.enName + ":更新成功!",
+        });
+        this.visibleDialog = false;
+        this.loadData();
+      });
+    },
+    addAnnotation() {
+      AnnotationApi.add(this.form).then((resp) => {
+        this.$notification["success"]({
+          message: resp.data.data.enName + ":添加成功!",
+        });
+        this.visibleDialog = false;
+        this.loadData();
       });
     },
     delCancerStudy(id) {
@@ -321,14 +377,18 @@ export default {
       });
     },
     loadTask(id) {
-      TaskApi.page({ cancerStudyId: id ,taskType: "ANNOTATION"}).then((resp) => {
-        this.taskList = resp.data.data.content;
-      });
+      TaskApi.page({ objId: id, taskType: "ANNOTATION" }).then(
+        (resp) => {
+          this.taskList = resp.data.data.content;
+          // console.log(resp)
+        }
+      );
     },
     showDrawer(data) {
       this.CancerStudyDetial = data;
+      this.isUpdate = false;
       this.loadTask(data.id);
-      // console.log(data);
+      this.laodCodes();
       this.visible = true;
     },
     onClose() {
@@ -358,54 +418,53 @@ export default {
         query: { cancerStudyId: id },
       });
     },
-    runTask(cancerStudyId, codeId) {
-      if (this.runMsg) {
-        this.runMsg = "";
-      }
-      // console.log(cancerStudyId, codeId);
-      TaskApi.run({ objId: cancerStudyId, codeId: codeId }).then((resp) => {
-        this.loadTask(cancerStudyId);
-        this.$message.success(resp.data.data.enName + "创建成功");
+    // runTask(cancerStudyId, codeId) {
+    //   if (this.runMsg) {
+    //     this.runMsg = "";
+    //   }
+    //   // console.log(cancerStudyId, codeId);
+    //   TaskApi.run({ objId: cancerStudyId, codeId: codeId }).then((resp) => {
+    //     this.loadTask(cancerStudyId);
+    //     this.$message.success(resp.data.data.enName + "创建成功");
 
-        //  this.$notification["success"]({
-        //     message: "运行成功!" + resp.data.message,
-        //   });
-      });
-    },
+    //     //  this.$notification["success"]({
+    //     //     message: "运行成功!" + resp.data.message,
+    //     //   });
+    //   });
+    // },
     downlaod(data) {
       let download_url = JSON.parse(localStorage.getItem("global_config"));
       // console.log(download_url.download_url+"/"+data.relativePath)
-      window.location.href=download_url.download_url+"/"+data.relativePath
+      window.location.href =
+        download_url.download_url + "/" + data.relativePath;
     },
     showModal() {
-      this.laodCodes();
       this.visibleDialog = true;
     },
     handleOk() {
       this.$refs.ruleForm.validate((valid) => {
         if (valid) {
-          AnnotationApi.add(this.form).then((resp) => {
-            this.$notification["success"]({
-              message: resp.data.data.enName + ":添加成功!",
-            });
-            this.visibleDialog = false;
-            this.loadData();
-          });
+          if (this.isUpdate) {
+            this.updateAnnotation();
+          } else {
+            this.addAnnotation();
+          }
         } else {
           // console.log("error submit!!");
           return false;
         }
       });
     },
-    runCode(data) {
-      console.log(data);
+    runTask(annotationId, codeId) {
+      // console.log(annotationId,codeId)
       TaskApi.run({
-        objId: data.id,
-        codeId: data.codeId,
+        objId: annotationId,
+        codeId: codeId,
         taskType: "ANNOTATION",
       }).then((resp) => {
         // this.loadTask(cancerStudyId);
-        this.$message.success(resp.data.data.enName + "创建成功");
+        // console.log(resp);
+        this.$message.success(resp.data.data.name + "创建成功");
       });
     },
   },

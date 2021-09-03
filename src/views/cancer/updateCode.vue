@@ -176,6 +176,18 @@
       </a-select>
     </a-form-model-item>
 
+    <a-form-model-item label="haveParentId">
+      <a-switch v-model="form.haveParentId" />
+    </a-form-model-item>
+
+    <a-form-model-item label="haveExpr">
+      <a-switch v-model="form.haveExpr" />
+    </a-form-model-item>
+
+    <a-form-model-item label="haveMetadata">
+      <a-switch v-model="form.haveMetadata" />
+    </a-form-model-item>
+
     <a-form-model-item :wrapper-col="{ span: 14, offset: 4 }">
       <a-button type="primary" @click="onSubmit">更新Code</a-button>
       <a-button style="margin-left: 10px" @click="resetForm">重置</a-button>
@@ -219,6 +231,9 @@ export default {
         name: undefined,
         codeType: undefined,
         taskType: undefined,
+        haveParentId: false,
+        haveExpr: false,
+        haveMetadata: false,
       },
       rules: {
         name: [
@@ -238,9 +253,13 @@ export default {
     this.absolutePath();
     CodeAPi.findById(cancerStudyId, { more: true }).then((resp) => {
       let data = resp.data.data;
-      // console.log(data.codeType)
+      console.log(data);
       this.form.codeType = data.codeType;
       this.form.taskType = data.taskType;
+      this.form.haveParentId = data.haveParentId;
+      this.form.haveExpr = data.haveExpr;
+      this.form.haveMetadata = data.haveMetadata;
+
       if (data.absolutePath) {
         // let strFileName =  data.absolutePath.substring(data.absolutePath.lastIndexOf("/")+1);
         this.form.absolutePath = data.absolutePath;
