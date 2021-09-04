@@ -1,5 +1,6 @@
-## git page
+## 演示地址
 + <http://git.bioinfofungi.com/>
++ <http://bioinfofungi.gitee.io/web>
 
 ## Project setup
 ```
