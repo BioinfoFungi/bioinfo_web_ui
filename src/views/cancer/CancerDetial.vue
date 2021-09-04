@@ -5,18 +5,18 @@
       placement="right"
       :closable="false"
       :visible="visible"
-      width="520"
+      width="50%"
       @close="onClose"
     >
       <div v-if="CancerStudyDetial">
+        <a-form-item label="createDate">
+          <a-input :value="CancerStudyDetial.createDate" />
+        </a-form-item>
         <a-form-item label="fileName">
           <a-input :value="CancerStudyDetial.fileName" />
         </a-form-item>
         <a-form-item label="fileType">
           <a-input :value="CancerStudyDetial.fileType" />
-        </a-form-item>
-        <a-form-item label="absolutePath">
-          <a-input :value="CancerStudyDetial.absolutePath" />
         </a-form-item>
         <a-form-item label="location">
           <a-input :value="CancerStudyDetial.location" />
@@ -24,7 +24,16 @@
         <a-form-item label="uuid">
           <a-input :value="CancerStudyDetial.uuid" />
         </a-form-item>
-        <div v-if="CancerStudyDetial.parentId != -1">
+        <a-form-item label="原始数据">
+          <a-input :value="CancerStudyDetial.absolutePath" />
+        </a-form-item>
+        <a
+          href="javascript:;"
+          @click="downlaod(CancerStudyDetial.relativePath)"
+          v-if="CancerStudyDetial.status"
+          >下载</a
+        >
+        <div>
           <a-form-item label="expr">
             <a-input :value="CancerStudyDetial.expr" />
           </a-form-item>
@@ -57,12 +66,6 @@
             {{ item.name }}
           </a-button>
         </div>
-        <a-textarea
-          v-if="runMsg"
-          v-model="runMsg"
-          placeholder="run log"
-          :auto-size="{ minRows: 3, maxRows: 20 }"
-        />
 
         <div>
           <a-table
@@ -72,9 +75,23 @@
             :pagination="false"
             :row-key="(record) => record.id"
           >
+            <span slot="action" slot-scope="text, record">
+              <a href="javascript:;" @click="runTaskById(record.id)"
+                >运行任务</a
+              >
+              <a-divider type="vertical" />
+              <a href="javascript:;" @click="showLog(record)">LOG</a>
+            </span>
           </a-table>
         </div>
-        <a-button @click="showLog(CancerStudyDetial.id)">查看更多</a-button>
+        <span v-if="currentLogName">current Log:{{ currentLogName }}</span>
+        <a-textarea
+          v-model="Log"
+          placeholder="run log"
+          :auto-size="{ minRows: 3, maxRows: 20 }"
+        />
+
+        <a-button @click="moreInfo(CancerStudyDetial.id)">查看更多</a-button>
       </div>
     </a-drawer>
     <a-button @click="createTSVFile">导出CSV</a-button>
@@ -91,29 +108,42 @@
       :pagination="false"
       :loading="loading"
       @change="handleTableChange"
+      :scroll="{ x: 1500 }"
     >
-      <!-- <div slot="name" slot-scope="name,record">
-        <a href="javascript:;" @click="detial(record.id)">{{record}}</a>
-      </div> -->
-      <span slot="absolutePath" slot-scope="text, record">
-        <a href="javascript:;" @click="updateCancerStudy(record.id)">位置</a>
-      </span>
+      <!-- @expand="rowChannge" -->
+      <div slot="id_link" slot-scope="id">
+        <a href="javascript:;">{{ id }}</a>
+      </div>
+
       <span slot="action" slot-scope="text, record">
         <!-- <a href="javascript:;">Invite 一 {{record.name}}</a>
         <a-divider type="vertical" />-->
         <!-- <a href="javascript:;" @click="generateHtml(record.id)">生成HTML</a> -->
         <!-- <a-divider type="vertical" /> -->
         <!-- <a href="javascript:;" @click="updateProject(record.id)">编辑</a> -->
-        <a href="javascript:;" @click="checkFileExist(record.id)">{{
-          record.status
-        }}</a>
+        <a href="javascript:;" @click="checkFileExist(record.id)"> 检测 </a>
 
+        <a-divider type="vertical" v-if="record.exprStatus" />
+        <a
+          href="javascript:;"
+          @click="downlaod(record.exprRelative)"
+          v-if="record.exprStatus"
+          >表达矩阵</a
+        >
+        <a-divider type="vertical" v-if="record.metadataRelative" />
+        <a
+          href="javascript:;"
+          @click="downlaod(record.metadataRelative)"
+          v-if="record.metadataStatus"
+          >样品信息</a
+        >
         <a-divider type="vertical" v-if="record.status" />
+
         <a
           href="javascript:;"
           @click="downlaod(record.relativePath)"
           v-if="record.status"
-          >下载</a
+          >原始数据</a
         >
         <a-divider type="vertical" />
         <a href="javascript:;" @click="showDrawer(record)">更多</a>
@@ -170,11 +200,21 @@ const task_columns = [
     title: "isSuccess",
     dataIndex: "isSuccess",
   },
+  {
+    title: "Action",
+    key: "action",
+    // fixed: "right",
+    //   width: 200,
+    fixed: "right",
+    scopedSlots: { customRender: "action" },
+  },
 ];
 const columns = [
   {
-    title: "id",
+    title: "ID",
     dataIndex: "id",
+    scopedSlots: { customRender: "id_link" },
+    fixed: "left",
   },
   {
     title: "癌症名称",
@@ -195,11 +235,11 @@ const columns = [
     dataIndex: "dataCategory.name",
   },
   {
-    title: "分析软件",
+    title: "处理流程",
     dataIndex: "analysisSoftware.name",
   },
   {
-    title: "annotationId",
+    title: "基因注释",
     dataIndex: "analysisSoftware.annotationId",
   },
   {
@@ -219,14 +259,11 @@ const columns = [
     dataIndex: "size",
   },
   {
-    title: "日期",
-    dataIndex: "createDate",
-  },
-  {
     title: "Action",
     key: "action",
     // fixed: "right",
     //   width: 200,
+    fixed: "right",
     scopedSlots: { customRender: "action" },
   },
 ];
@@ -238,7 +275,7 @@ export default {
         page: 1,
         size: 10,
         sort: null,
-          keyword: null
+        keyword: null,
       },
       queryParam: {
         page: 0,
@@ -256,9 +293,11 @@ export default {
       cancerId: null,
       visible: false,
       CancerStudyDetial: undefined,
-      runMsg: undefined,
       codeList: [],
       taskList: [],
+      Log: "",
+      setIntervaStatus: undefined,
+      currentLogName: undefined,
     };
   },
   //   beforeRouteEnter(to, from, next) {
@@ -275,14 +314,13 @@ export default {
   mounted() {
     this.loadData();
     if (this.$websock) {
-      this.$websock.onmessage = (e) => {
-        let data = JSON.parse(e.data);
-        if (data.cancerStudyId == this.CancerStudyDetial.id) {
-          // console.log(this.CancerStudyDetial)
-          this.runMsg = data.runMsg;
-        }
+      this.$websock.onmessage = () => {
+        // let data = JSON.parse(e.data);
         // console.log(data)
         this.loadData();
+        if (this.CancerStudyDetial) {
+          this.loadTask(this.CancerStudyDetial.id);
+        }
       };
     }
   },
@@ -309,6 +347,7 @@ export default {
       this.queryParam.dataOriginId = dataOriginId;
       this.queryParam.dataCategoryId = dataCategoryId;
       this.queryParam.analysisSoftwareId = analysisSoftwareId;
+      // this.queryParam.parentId = -1;
 
       this.loading = true;
       CancerStudyAPi.page(this.queryParam, true).then((resp) => {
@@ -361,19 +400,25 @@ export default {
         this.taskList = resp.data.data.content;
       });
     },
-    showDrawer(data) {
-      this.CancerStudyDetial = data;
-      CodeApi.findByCan(data.id).then((resp) => {
+    loadCode(id) {
+      CodeApi.findByCan(id).then((resp) => {
         // console.log(resp);
         this.codeList = resp.data.data;
       });
-      this.loadTask(data.id);
-      // console.log(data);
+    },
+    showDrawer(data) {
       this.visible = true;
+      this.CancerStudyDetial = data;
+      this.loadCode(data.id);
+      this.loadTask(data.id);
     },
     onClose() {
       this.visible = false;
-      this.runMsg = undefined;
+      this.CancerStudyDetial = undefined;
+      this.Log=""
+      if (this.setIntervaStatus) {
+        clearInterval(this.setIntervaStatus);
+      }
     },
     checkFileExist(id) {
       let loadData = this.loadData;
@@ -392,16 +437,39 @@ export default {
         }
       });
     },
-    showLog(id) {
+    moreInfo(id) {
       this.$router.push({
         name: "cancer_study_task",
         query: { objId: id },
       });
     },
-    runTask(cancerStudyId, codeId) {
-      if (this.runMsg) {
-        this.runMsg = "";
+    loadLog(id) {
+      TaskApi.log({ taskId: id }).then((resp) => {
+        // console.log(resp.data.data);
+        this.Log = resp.data.data;
+      });
+    },
+    showLog(data) {
+      this.visible = true;
+      let loadLogFun = this.loadLog;
+      loadLogFun(data.id);
+      this.currentLogName = data.name;
+      if (this.setIntervaStatus) {
+        clearInterval(this.setIntervaStatus);
       }
+      this.setIntervaStatus = setInterval(function () {
+        loadLogFun(data.id);
+      }, 1000);
+    },
+    runTaskById(id) {
+      TaskApi.runOne(id).then((resp) => {
+        this.loadData();
+        this.$message.success(resp.data.data.name + "运行成功");
+        this.loadTask(this.CancerStudyDetial.id);
+        this.showLog(resp.data.data);
+      });
+    },
+    runTask(cancerStudyId, codeId) {
       // console.log(cancerStudyId, codeId);
       TaskApi.run({
         objId: cancerStudyId,
@@ -410,7 +478,8 @@ export default {
       }).then((resp) => {
         this.loadTask(cancerStudyId);
         this.$message.success(resp.data.data.name + "创建成功");
-
+        this.showLog(resp.data.data);
+        this.loadCode(cancerStudyId);
         //  this.$notification["success"]({
         //     message: "运行成功!" + resp.data.message,
         //   });
@@ -439,10 +508,22 @@ export default {
           document.body.removeChild(a);
         };
       });
-    },onSearch(value){
-       this.pagination.keyword = value;
+    },
+    onSearch(value) {
+      this.pagination.keyword = value;
       this.loadData();
-    }
+    },
+    rowChannge(expand, record) {
+      // console.log(expand, record);
+      if (expand) {
+        CancerStudyAPi.list({ parentId: record.id }).then((resp) => {
+          // console.log(resp);
+          this.innerData = resp.data.data;
+        });
+      } else {
+        this.innerData = [];
+      }
+    },
   },
 };
 </script>

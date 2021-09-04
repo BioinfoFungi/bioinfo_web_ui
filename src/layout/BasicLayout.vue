@@ -83,6 +83,8 @@
 </style>
 <script>
 import Golbal from "@/api/global_variable.js";
+import GlobalApi from "@/api/Global.js";
+
 import Vue from "vue";
 export default {
   computed: {
@@ -107,7 +109,14 @@ export default {
   created() {
     var token = localStorage.getItem("jwtToken");
     if (token) {
-      this.createWebsock(token)
+      this.createWebsock(token);
+    }
+    let global_config = localStorage.getItem("global_config");
+    if (!global_config) {
+      GlobalApi.globalConfig().then((resp) => {
+        localStorage.setItem("global_config", JSON.stringify(resp.data.data));
+        this.$router.replace("/");
+      });
     }
 
     // console.log()
@@ -122,23 +131,23 @@ export default {
     //   // routes.children.find((e) => (console.log(e.name)))
     //   // routes = routes.children.find((e) => (e.name == route[i].name));
     // }
-  },methods:{
-    createWebsock(token) {
-    const wsuri = `ws:/${Golbal.baseUrl}:${Golbal.port}/ws/${token}`;
-    let websock = new WebSocket(wsuri);
-
-    websock.onopen = () => {
-      //数据接收
-      // const redata = JSON.parse(e.data);
-      // console.log(e);
-      this.$message.success("socket已成功连接");
-    };
-    // websock.onmessage = ()=>{
-    //   console.log("sdddd")
-    // }
-    Vue.prototype.$websock = websock;
   },
-  }
-  
+  methods: {
+    createWebsock(token) {
+      const wsuri = `ws:/${Golbal.baseUrl}:${Golbal.port}/ws/${token}`;
+      let websock = new WebSocket(wsuri);
+
+      websock.onopen = () => {
+        //数据接收
+        // const redata = JSON.parse(e.data);
+        // console.log(e);
+        this.$message.success("socket已成功连接");
+      };
+      // websock.onmessage = ()=>{
+      //   console.log("sdddd")
+      // }
+      Vue.prototype.$websock = websock;
+    },
+  },
 };
 </script>

@@ -10,6 +10,13 @@ CancerStudyApi.page = (params,more=false) =>{
         method: 'get'
     })
 }
+CancerStudyApi.list = (params,more=false) =>{
+    return service({
+        url: `${baseUrl}/list?more=${more}`,
+        params: params,
+        method: 'get'
+    })
+}
 
 
 CancerStudyApi.listByCancerId = (id) =>{

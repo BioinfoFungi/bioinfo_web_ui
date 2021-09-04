@@ -37,7 +37,6 @@
 </template>
 <script>
 import UserApi from "@/api/User.js";
-import GlobalApi from "@/api/Global.js";
 export default {
   data() {
     return {
@@ -72,10 +71,7 @@ export default {
         this.$message.success("登录成功!!" + response.data.message);
         localStorage.setItem("jwtToken", response.data.data.token);
         localStorage.setItem("user", JSON.stringify(response.data.data));
-        GlobalApi.globalConfig().then((resp) => {
-          localStorage.setItem("global_config", JSON.stringify(resp.data.data));
-          this.$router.replace("/");
-        });
+        this.$router.replace("/");
       });
     },
     showModal() {

@@ -216,6 +216,7 @@ export default {
       this.setIntervaStatus = setInterval(function(){  loadLogFun(id) }, 1000);
      
     },
+    
     onClose() {
       this.visible = false;
       clearInterval(this.setIntervaStatus)
