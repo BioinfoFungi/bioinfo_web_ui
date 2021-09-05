@@ -113,7 +113,9 @@
         </a-select-option>
       </a-select>
     </a-form-model-item>
-
+    <a-form-model-item ref="gse" label="gse" prop="gse">
+      <a-input v-model="form.gse" />
+    </a-form-model-item>
     <a-form-model-item
       ref="absolutePath"
       label="absolutePath"
@@ -122,8 +124,8 @@
       <a-input v-model="form.absolutePath" />
     </a-form-model-item>
 
-    <a-form-model-item ref="gse" label="gse" prop="gse">
-      <a-input v-model="form.gse" />
+    <a-form-model-item ref="description" label="description" prop="description">
+      <a-input v-model="form.description" />
     </a-form-model-item>
     <a-form-model-item :wrapper-col="{ span: 14, offset: 4 }">
       <a-button type="primary" @click="onSubmit">更新癌症研究</a-button>
@@ -162,18 +164,18 @@ export default {
         gse: undefined,
       },
       rules: {
-        cancer: [
-          { required: true, message: "请输入Term名称", trigger: "change" },
-        ],
-        study: [
-          { required: true, message: "请输入Term名称", trigger: "change" },
-        ],
-        dataOrigin: [
-          { required: true, message: "请输入Term名称", trigger: "change" },
-        ],
-        dataCategory: [
-          { required: true, message: "请输入Term名称", trigger: "change" },
-        ],
+        // cancer: [
+        //   { required: true, message: "请输入Term名称", trigger: "change" },
+        // ],
+        // study: [
+        //   { required: true, message: "请输入Term名称", trigger: "change" },
+        // ],
+        // dataOrigin: [
+        //   { required: true, message: "请输入Term名称", trigger: "change" },
+        // ],
+        // dataCategory: [
+        //   { required: true, message: "请输入Term名称", trigger: "change" },
+        // ],
       },
     };
   },
@@ -183,17 +185,25 @@ export default {
       let data = resp.data.data;
       this.form.absolutePath = data.absolutePath;
       this.form.gse = data.gse;
-      this.cancerList = [data.cancer];
-      this.form.cancer = data.cancer.name;
+      if (data.cancer) {
+        this.cancerList = [data.cancer];
+        this.form.cancer = data.cancer.name;
+      }
 
-      this.studyList = [data.study];
-      this.form.study = data.study.name;
+      if (data.study) {
+        this.studyList = [data.study];
+        this.form.study = data.study.name;
+      }
 
-      this.dataOriginList = [data.dataOrigin];
-      this.form.dataOrigin = data.dataOrigin.name;
+      if (data.dataOrigin) {
+        this.dataOriginList = [data.dataOrigin];
+        this.form.dataOrigin = data.dataOrigin.name;
+      }
 
-      this.dataCategoryList = [data.dataCategory];
-      this.form.dataCategory = data.dataCategory.name;
+      if (data.dataCategory) {
+        this.dataCategoryList = [data.dataCategory];
+        this.form.dataCategory = data.dataCategory.name;
+      }
 
       if (data.analysisSoftware) {
         this.analysisSoftwareList = [data.analysisSoftware];
@@ -240,8 +250,10 @@ export default {
             this.$notification["success"]({
               message: "更新建成功!" + resp.data.message,
             });
-            let cancerStudy = resp.data.data
-            this.$router.push("/cancer/cancer_detial?cancerId="+cancerStudy.cancerId+"&studyId="+cancerStudy.studyId+"&dataOriginId="+cancerStudy.dataOriginId+"&dataCategoryId="+cancerStudy.dataCategoryId);
+            // let cancerStudy = resp.data.data;
+            this.$router.push(
+              "/cancer/cancer_detial"
+            );
           });
         } else {
           // console.log("error submit!!");

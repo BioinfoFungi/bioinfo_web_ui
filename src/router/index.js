@@ -134,19 +134,21 @@ const routes = [
                 component: () => import(/* webpackChunkName: "cancer_list" */ '../views/cancer/codeList.vue'),
               },
             ]
-          },  {
-            path: "/component",
-            meta: { title: '注释文件', icon: 'dashboard' },
-            component: () => import(/* webpackChunkName: "Empty" */ '../layout/Empty.vue'),
-            children: [
-              {
-                path: '/cancer/Annotation',
-                name: 'cancer_study_annotation',
-                meta: { title: '注释文件', icon: 'dashboard', parentPath: "/cancer", display: true },
-                component: () => import(/* webpackChunkName: "cancer_list" */ '../views/cancer/Annotation.vue'),
-              },
-            ]
-          },{
+          },  
+          // {
+          //   path: "/component",
+          //   meta: { title: '注释文件', icon: 'dashboard' },
+          //   component: () => import(/* webpackChunkName: "Empty" */ '../layout/Empty.vue'),
+          //   children: [
+          //     {
+          //       path: '/cancer/Annotation',
+          //       name: 'cancer_study_annotation',
+          //       meta: { title: '注释文件', icon: 'dashboard', parentPath: "/cancer", display: true },
+          //       component: () => import(/* webpackChunkName: "cancer_list" */ '../views/cancer/Annotation.vue'),
+          //     },
+          //   ]
+          // },
+          {
             path: "/component",
             meta: { title: '任务管理', icon: 'dashboard' },
             component: () => import(/* webpackChunkName: "Empty" */ '../layout/Empty.vue'),

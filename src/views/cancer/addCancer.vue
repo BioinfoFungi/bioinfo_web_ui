@@ -113,15 +113,22 @@
         </a-select-option>
       </a-select>
     </a-form-model-item>
-
-    <a-form-model-item ref="absolutePath" label="absolutePath" prop="absolutePath">
-      <a-input
-        v-model="form.absolutePath" />
+    <a-form-model-item ref="gse" label="gse" prop="gse">
+      <a-input v-model="form.gse" />
     </a-form-model-item>
-
-     <a-form-model-item ref="gse" label="gse" prop="gse">
-      <a-input
-        v-model="form.gse" />
+    <a-form-model-item
+      ref="absolutePath"
+      label="absolutePath"
+      prop="absolutePath"
+    >
+      <a-input v-model="form.absolutePath" />
+    </a-form-model-item>
+    <a-form-model-item
+      ref="description"
+      label="description"
+      prop="description"
+    >
+      <a-input v-model="form.description" />
     </a-form-model-item>
     <a-form-model-item :wrapper-col="{ span: 14, offset: 4 }">
       <a-button type="primary" @click="onSubmit">添加癌症研究</a-button>
@@ -146,32 +153,32 @@ export default {
       value: null,
       users: [],
       cancerList: [],
-      studyList:[],
-      dataOriginList:[],
-      dataCategoryList:[],
-      analysisSoftwareList:[],
+      studyList: [],
+      dataOriginList: [],
+      dataCategoryList: [],
+      analysisSoftwareList: [],
       form: {
         cancer: undefined,
-        study:undefined,
-        dataOrigin:undefined,
-        dataCategory:undefined,
-        analysisSoftware:undefined,
-        absolutePath:undefined,
-        gse:undefined
+        study: undefined,
+        dataOrigin: undefined,
+        dataCategory: undefined,
+        analysisSoftware: undefined,
+        absolutePath: undefined,
+        gse: undefined,
       },
       rules: {
-        cancer: [
-          { required: true, message: "请输入Term名称", trigger: "change" },
-        ],
-        study: [
-          { required: true, message: "请输入Term名称", trigger: "change" },
-        ],
-        dataOrigin: [
-          { required: true, message: "请输入Term名称", trigger: "change" },
-        ],
-        dataCategory: [
-          { required: true, message: "请输入Term名称", trigger: "change" },
-        ],
+        // description: [
+        //   { required: true, message: "输入描述", trigger: "change" },
+        // ],
+        // study: [
+        //   { required: true, message: "请输入Term名称", trigger: "change" },
+        // ],
+        // dataOrigin: [
+        //   { required: true, message: "请输入Term名称", trigger: "change" },
+        // ],
+        // dataCategory: [
+        //   { required: true, message: "请输入Term名称", trigger: "change" },
+        // ],
       },
     };
   },
@@ -220,14 +227,16 @@ export default {
     onSubmit() {
       this.$refs.ruleForm.validate((valid) => {
         if (valid) {
-          CancerStudyAPi.add(this.form).then(resp=>{
+          CancerStudyAPi.add(this.form).then((resp) => {
             this.$notification["success"]({
               message: "添加建成功!" + resp.data.message,
             });
-            let cancerStudy = resp.data.data
+            // let cancerStudy = resp.data.data;
             // console.log(cancerStudy)
-            this.$router.push("/cancer/cancer_detial?cancerId="+cancerStudy.cancerId+"&studyId="+cancerStudy.studyId+"&dataOriginId="+cancerStudy.dataOriginId+"&dataCategoryId="+cancerStudy.dataCategoryId);
-          })
+            this.$router.push(
+              "/cancer/cancer_detial"
+            );
+          });
         } else {
           // console.log("error submit!!");
           return false;

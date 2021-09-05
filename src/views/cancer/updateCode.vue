@@ -253,7 +253,7 @@ export default {
     this.absolutePath();
     CodeAPi.findById(cancerStudyId, { more: true }).then((resp) => {
       let data = resp.data.data;
-      console.log(data);
+      // console.log(data);
       this.form.codeType = data.codeType;
       this.form.taskType = data.taskType;
       this.form.haveParentId = data.haveParentId;

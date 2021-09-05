@@ -9,6 +9,9 @@
       @close="onClose"
     >
       <div v-if="CancerStudyDetial">
+        <a-form-item label="description">
+          <a-input :value="CancerStudyDetial.description" />
+        </a-form-item>
         <a-form-item label="createDate">
           <a-input :value="CancerStudyDetial.createDate" />
         </a-form-item>
