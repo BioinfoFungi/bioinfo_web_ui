@@ -11,6 +11,7 @@ DataOriginApi.page = (params) =>{
     })
 }
 
+
 DataOriginApi.del = (id) => {
     return service({
         url: `${baseUrl}/del/${id}`,
@@ -18,5 +19,19 @@ DataOriginApi.del = (id) => {
     })
 }
 
+DataOriginApi.add = (params) => {
+    return service({
+        url: baseUrl,
+        data: params,
+        method: 'post'
+    })
+}
+DataOriginApi.update = (id,params) => {
+    return service({
+        url: `${baseUrl}/update/${id}`,
+        data: params,
+        method: 'post'
+    })
+}
 
 export default DataOriginApi

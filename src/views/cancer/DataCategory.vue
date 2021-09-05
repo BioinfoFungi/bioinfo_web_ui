@@ -1,17 +1,39 @@
 <template>
   <div>
-    <a-input-search placeholder="input search text" style="width: 200px" @search="onSearch" />
+    <a-modal v-model="visibleDialog" title="DataCategory" @ok="addOrUpdate">
+      <a-form-model ref="ruleForm" :model="form" :rules="rules">
+        <a-form-model-item ref="name" label="name" prop="name">
+          <a-input v-model="form.name" />
+        </a-form-model-item>
+        <a-form-model-item ref="enName" label="enName" prop="enName">
+          <a-input v-model="form.enName" />
+        </a-form-model-item>
+        <a-form-model-item
+          ref="description"
+          label="description"
+          prop="description"
+        >
+          <a-input v-model="form.description" />
+        </a-form-model-item>
+      </a-form-model>
+    </a-modal>
+    <a-button @click="addInput">添加</a-button>
+    <a-input-search
+      placeholder="input search text"
+      style="width: 200px"
+      @search="onSearch"
+    />
 
     <a-table
       :columns="columns"
-      :row-key="record => record.id"
+      :row-key="(record) => record.id"
       :data-source="data"
       :pagination="false"
       :loading="loading"
       @change="handleTableChange"
     >
-      <div slot="name" slot-scope="name,record">
-        <a href="javascript:;" @click="detial(record.id)">{{name}}</a>
+      <div slot="name" slot-scope="name, record">
+        <a href="javascript:;" @click="detial(record.id)">{{ name }}</a>
       </div>
       <span slot="action" slot-scope="text, record">
         <!-- <a href="javascript:;">Invite 一 {{record.name}}</a>
@@ -20,9 +42,9 @@
         <!-- <a-divider type="vertical" /> -->
         <!-- <a href="javascript:;" @click="updateProject(record.id)">编辑</a> -->
         <a-divider type="vertical" />
-        <a href="javascript:;" @click="updateProject(record.id)">编辑</a>
+        <a href="javascript:;" @click="updateInput(record)">编辑</a>
         <a-divider type="vertical" />
-        <a href="javascript:;" @click="delProject(record.id)">删除</a>
+        <a href="javascript:;" @click="del(record.id)">删除</a>
         <!-- <a href="javascript:;" @click="articleSettings(record.id)">设置</a>
         <a-divider type="vertical" />
         <a href="javascript:;" @click="deleteArticleById(record.id)">删除文章</a>-->
@@ -35,7 +57,7 @@
       <!-- :scroll="{ x: 1500, }" -->
       <!-- <template slot="name" slot-scope="name">{{ name.first }} {{ name.last }}</template> -->
       <template slot="footer">
-        <div class="page-wrapper" :style="{ textAlign: 'right'}">
+        <div class="page-wrapper" :style="{ textAlign: 'right' }">
           <a-pagination
             class="pagination"
             :current="pagination.page"
@@ -61,28 +83,28 @@ const columns = [
   {
     title: "研究名称",
     dataIndex: "name",
-    scopedSlots: { customRender: "name" }
+    scopedSlots: { customRender: "name" },
   },
   {
     title: "英文名称",
-    dataIndex: "enName"
+    dataIndex: "enName",
   },
 
   {
     title: "创建日期",
-    dataIndex: "createDate"
-  }
+    dataIndex: "createDate",
+  },
   //   {
   //     title: "截止日期",
   //     dataIndex: "deadline"
   //   },
-  //   {
-  //     title: "Action",
-  //     key: "action",
-  //     fixed: "right",
-  //     //   width: 200,
-  //     scopedSlots: { customRender: "action" }
-  //   }
+    {
+      title: "Action",
+      key: "action",
+      fixed: "right",
+      //   width: 200,
+      scopedSlots: { customRender: "action" }
+    }
 ];
 
 export default {
@@ -92,7 +114,7 @@ export default {
         page: 1,
         size: 10,
         sort: null,
-        keyword: null
+        keyword: null,
       },
       queryParam: {
         page: 0,
@@ -100,11 +122,22 @@ export default {
         sort: null,
         keyword: null,
         categoryId: null,
-        status: null
+        status: null,
       },
       data: [],
       loading: false,
-      columns
+      columns,
+      visibleDialog: false,
+      isUpdate: false,
+      form: {
+        name: undefined,
+        enName: undefined,
+        description: undefined,
+      },
+      rules: {
+        enName: [{ required: true, message: "请输入名称", trigger: "change" }],
+        name: [{ required: true, message: "请输入名称", trigger: "change" }],
+      },
     };
   },
   mounted() {
@@ -123,7 +156,7 @@ export default {
       this.queryParam.sort = this.pagination.sort;
       this.queryParam.keyword = this.pagination.keyword;
       this.loading = true;
-      DataCategory.page(this.queryParam).then(resp => {
+      DataCategory.page(this.queryParam).then((resp) => {
         // console.log(resp);
 
         this.data = resp.data.data.content;
@@ -131,31 +164,75 @@ export default {
         this.loading = false;
       });
     },
-    updateProject(id) {
-      this.$router.push({
-        name: "cancer_cancer_study",
-        query: { projectId: id }
-      });
-    },
-    delProject(id) {
-      DataCategory.del(id).then(resp => {
-        this.$notification["success"]({
-          message: resp.data.data.name + ":删除成功!"
-        });
-        this.loadData();
-      });
-    },
     detial(id) {
       this.$router.push({
         name: "cancer_cancer_detial",
-        query: { dataCategoryId: id }
+        query: { dataCategoryId: id },
+      });
+    },
+    del(id) {
+      let loadData = this.loadData;
+      let notification = this.$notification["success"];
+      this.$confirm({
+        title: "删除癌症数据",
+        content: "您确定要删除该癌症数据吗?",
+        onOk() {
+          DataCategory.del(id).then((resp) => {
+            loadData();
+            notification({
+              message: "删除成功!" + resp.data.message,
+            });
+          });
+        },
+        onCancel() {},
       });
     },
     onSearch(value) {
       this.pagination.keyword = value;
       this.loadData();
       //   console.log(value);
-    }
-  }
+    },
+    addInput() {
+      this.form = {};
+      this.visibleDialog = true;
+      this.isUpdate = false;
+    },
+    updateInput(record) {
+      this.visibleDialog = true;
+      this.isUpdate = true;
+      this.form = record;
+    },
+    add() {
+      DataCategory.add(this.form).then((resp) => {
+        this.$notification["success"]({
+          message: "添加" + resp.data.message,
+        });
+        this.visibleDialog = false;
+        this.loadData();
+      });
+    },
+    update() {
+      DataCategory.update(this.form.id, this.form).then((resp) => {
+        this.$notification["success"]({
+          message: "添加" + resp.data.message,
+        });
+        this.visibleDialog = false;
+        this.loadData();
+      });
+    },
+    addOrUpdate() {
+      this.$refs.ruleForm.validate((valid) => {
+        if (valid) {
+          if (this.isUpdate) {
+            this.update();
+          } else {
+            this.add();
+          }
+        } else {
+          return false;
+        }
+      });
+    },
+  },
 };
 </script>

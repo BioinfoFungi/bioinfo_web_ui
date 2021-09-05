@@ -18,5 +18,19 @@ StudyApi.del = (id) => {
     })
 }
 
+StudyApi.add = (params) => {
+    return service({
+        url: baseUrl,
+        data: params,
+        method: 'post'
+    })
+}
+StudyApi.update = (id,params) => {
+    return service({
+        url: `${baseUrl}/update/${id}`,
+        data: params,
+        method: 'post'
+    })
+}
 
 export default StudyApi
