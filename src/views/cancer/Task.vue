@@ -37,6 +37,7 @@
       :data-source="data"
       :pagination="false"
       :loading="loading"
+      :scroll="{ x: 'calc(700px + 50%)' }"
       @change="handleTableChange"
     >
       <span slot="isSuccess" slot-scope="text">
@@ -97,7 +98,7 @@ const task_columns = [
   {
     title: "Action",
     key: "action",
-    // fixed: "right",
+    fixed: "right",
     //   width: 200,
     scopedSlots: { customRender: "action" },
   },
@@ -126,7 +127,7 @@ export default {
       visible: false,
       TaskDetail: undefined,
       Log: undefined,
-      setIntervaStatus:undefined,
+      setIntervaStatus: undefined,
     };
   },
   //   beforeRouteEnter(to, from, next) {
@@ -203,23 +204,24 @@ export default {
       //   console.log(data);
       this.visible = true;
     },
-    loadLog(id){
+    loadLog(id) {
       TaskApi.log({ taskId: id }).then((resp) => {
         // console.log(resp.data.data);
-        this.Log=resp.data.data
+        this.Log = resp.data.data;
       });
     },
     showLog(id) {
       this.visible = true;
-      let loadLogFun = this.loadLog
-      loadLogFun(id)
-      this.setIntervaStatus = setInterval(function(){  loadLogFun(id) }, 1000);
-     
+      let loadLogFun = this.loadLog;
+      loadLogFun(id);
+      this.setIntervaStatus = setInterval(function () {
+        loadLogFun(id);
+      }, 1000);
     },
-    
+
     onClose() {
       this.visible = false;
-      clearInterval(this.setIntervaStatus)
+      clearInterval(this.setIntervaStatus);
     },
     runTask(id) {
       TaskApi.runOne(id).then((resp) => {

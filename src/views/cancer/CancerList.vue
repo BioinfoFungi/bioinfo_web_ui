@@ -161,6 +161,12 @@ export default {
         this.loading = false;
       });
     },
+    detial(id) {
+      this.$router.push({
+        name: "cancer_cancer_detial",
+        query: { cancerId: id },
+      });
+    },
     del(id) {
       let loadData = this.loadData;
       let notification = this.$notification["success"];
@@ -203,7 +209,7 @@ export default {
       });
     },
     update() {
-      CancerAPi.update(this.form.id,this.form).then((resp) => {
+      CancerAPi.update(this.form.id, this.form).then((resp) => {
         this.$notification["success"]({
           message: "添加" + resp.data.message,
         });
@@ -226,5 +232,4 @@ export default {
     },
   },
 };
-
 </script>

@@ -30,13 +30,14 @@
     </a-drawer>
 
     <a-button @click="createTSVFile">导出CSV</a-button>
-       <a-button @click="initTSV">导入CSV</a-button>
+    <a-button @click="initTSV">导入CSV</a-button>
     <a-table
       :columns="columns"
       :row-key="(record) => record.id"
       :data-source="data"
       :pagination="false"
       :loading="loading"
+      :scroll="{ x: 1500 }"
       @change="handleTableChange"
     >
       <!-- <div slot="name" slot-scope="name,record">
@@ -141,7 +142,7 @@ const columns = [
   {
     title: "Action",
     key: "action",
-    // fixed: "right",
+    fixed: "right",
     //   width: 200,
     scopedSlots: { customRender: "action" },
   },
@@ -292,14 +293,15 @@ export default {
           document.body.removeChild(a);
         };
       });
-    },initTSV(){
-      CodeAPi.init(null).then(resp=>{
+    },
+    initTSV() {
+      CodeAPi.init(null).then((resp) => {
         // console.log(resp)
         this.$notification["success"]({
-            message: "文件不存在" + resp.data.message,
-          });
-      })
-    }
+          message: "文件不存在" + resp.data.message,
+        });
+      });
+    },
   },
 };
 </script>

@@ -26,7 +26,7 @@ const routes = [
         component: () => import(/* webpackChunkName: "Home" */ '../views/Home.vue'),
         meta: { title: '主页', icon: 'home' },
 
-      },   {
+      }, {
         path: '/explore',
         name: 'explore',
         // route level code-splitting
@@ -34,6 +34,15 @@ const routes = [
         // which is lazy-loaded when the route is visited.
         component: () => import(/* webpackChunkName: "Home" */ '../views/Explore.vue'),
         meta: { title: '探索', icon: 'home' },
+
+      }, {
+        path: '/codeEdit',
+        name: 'codeEdit',
+        // route level code-splitting
+        // this generates a separate chunk (about.[hash].js) for this route
+        // which is lazy-loaded when the route is visited.
+        component: () => import(/* webpackChunkName: "Home" */ '../views/code/edit.vue'),
+        meta: { title: '代码编辑', icon: 'home' },
 
       },
       //  {
@@ -134,7 +143,7 @@ const routes = [
                 component: () => import(/* webpackChunkName: "cancer_list" */ '../views/cancer/codeList.vue'),
               },
             ]
-          },  
+          },
           // {
           //   path: "/component",
           //   meta: { title: '注释文件', icon: 'dashboard' },
@@ -205,6 +214,12 @@ const routes = [
             component: () => import(/* webpackChunkName: "Empty" */ '../layout/Empty.vue'),
             children: [
               {
+                path: '/RNA/organize',
+                name: 'file_organize',
+                meta: { title: '文件归档', icon: 'dashboard', parentPath: "/RNA", display: true },
+                component: () => import(/* webpackChunkName: "file_organize" */ '../views/file/organize.vue'),
+              },
+              {
                 path: '/RNA/init',
                 name: 'RNA_init',
                 meta: { title: '初始化', icon: 'dashboard', parentPath: "/RNA", display: true },
@@ -213,7 +228,7 @@ const routes = [
             ]
           }
         ]
-      },{
+      }, {
         path: '/project',
         name: 'Project',
         meta: { title: '项目', icon: 'dashboard' },
@@ -252,42 +267,15 @@ const routes = [
                 name: 'Project_content',
                 meta: { title: '项目内容编辑', icon: 'dashboard', parentPath: "/project" },
                 component: () => import(/* webpackChunkName: "Project_detial" */ '../views/project/content.vue'),
-              }
-            ]
-          }
-        ]
-      },  {
-        path: '/file',
-        name: 'FILE',
-        meta: { title: '文件管理', icon: 'dashboard' },
-        component: () => import(/* webpackChunkName: "Second" */ '../layout/Second.vue'),
-        redirect: "/file/organize",
-        children: [
-          {
-            path: "/component",
-            meta: { title: '文件管理', icon: 'dashboard' },
-            component: () => import(/* webpackChunkName: "Empty" */ '../layout/Empty.vue'),
-            children: [
-              {
-                path: '/file/organize',
-                name: 'file_organize',
-                meta: { title: '文件归档', icon: 'dashboard', parentPath: "/file", display: true },
-                component: () => import(/* webpackChunkName: "file_organize" */ '../views/file/organize.vue'),
               }, {
-                path: '/file/cancer_study',
-                name: 'file_cancer_study',
-                meta: { title: '资源文件', icon: 'dashboard', parentPath: "/file", display: true },
-                component: () => import(/* webpackChunkName: "file_cancer_study" */ '../views/file/CancerStudyList.vue'),
-              }, {
-                path: '/file/attachment',
+                path: '/project/attachment',
                 name: 'file_attachment',
-                meta: { title: '附件管理', icon: 'dashboard', parentPath: "/file", display: true },
+                meta: { title: '附件管理', icon: 'dashboard', parentPath: "/project", display: true },
                 component: () => import(/* webpackChunkName: "file_attachment" */ '../views/file/attachment.vue'),
               }
             ]
           }
         ]
-
       }, {
         path: '/user',
         name: 'User',
