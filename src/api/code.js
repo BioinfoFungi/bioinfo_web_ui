@@ -78,4 +78,27 @@ CodeApi.init = (path) => {
         method: 'get',
     })
 }
+
+CodeApi.files = (path) => {
+    return service({
+        url: `${baseUrl}/file`,
+        params:{path:path},
+        method: 'get',
+    })
+}
+CodeApi.getContent = (path) => {
+    return service({
+        url: `${baseUrl}/file/content`,
+        params:{path:path},
+        method: 'get',
+    })
+}
+
+CodeApi.saveContent = (params) => {
+    return service({
+        url: `${baseUrl}/file/save`,
+        data: params,
+        method: 'post',
+    })
+}
 export default CodeApi
