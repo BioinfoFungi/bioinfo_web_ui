@@ -49,4 +49,18 @@ TaskApi.del = (id) => {
 }
 
 
+TaskApi.findById = (id) => {
+    return service({
+        url: `${baseUrl}/findById/${id}`,
+        method: 'get'
+    })
+}
+
+
+TaskApi.getObjMap = (id) => {
+    return service({
+        url: `${baseUrl}/getObjMap/${id}`,
+        method: 'get'
+    })
+}
 export default TaskApi
