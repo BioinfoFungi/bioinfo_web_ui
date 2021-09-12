@@ -56,26 +56,25 @@ CodeApi.findById = (id,params) => {
         method: 'get'
     })
 }
-CodeApi.listAllAnnTask = () => {
+CodeApi.listAll = () => {
     return service({
-        url: `${baseUrl}/listAllAnnTask`,
+        url: `${baseUrl}/listAll`,
         method: 'get'
     })
 }
 
+CodeApi.init = (param) => {
+    return service({
+        url: `${baseUrl}/init`,
+        params:param,
+        method: 'get',
+    })
+}
 CodeApi.createTSVFile = () => {
     return service({
         url: `${baseUrl}/createTSVFile`,
         method: 'post',
         responseType: 'blob'
-    })
-}
-
-CodeApi.init = (path) => {
-    return service({
-        url: `${baseUrl}/init`,
-        params:{path:path},
-        method: 'get',
     })
 }
 

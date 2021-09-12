@@ -10,6 +10,14 @@ CancerStudyApi.page = (params,more=false) =>{
         method: 'get'
     })
 }
+
+CancerStudyApi.pageByCodeId = (codeId,params,more=false) =>{
+    return service({
+        url: `${baseUrl}/pageByCodeId/${codeId}?more=${more}`,
+        params: params,
+        method: 'get'
+    })
+}
 CancerStudyApi.list = (params,more=false) =>{
     return service({
         url: `${baseUrl}/list?more=${more}`,
@@ -56,6 +64,14 @@ CancerStudyApi.update = (id,params) => {
     })
 }
 
+
+CancerStudyApi.init = (param) => {
+    return service({
+        url: `${baseUrl}/init`,
+        params:param,
+        method: 'get',
+    })
+}
 
 CancerStudyApi.findById = (id,params) => {
     return service({

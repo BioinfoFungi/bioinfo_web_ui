@@ -42,10 +42,7 @@
           <a-form-item label="uuid">
             <a-input :value="CancerStudyDetial.uuid" />
           </a-form-item>
-          <a-form-item
-            label="原始数据"
-            v-if="CancerStudyDetial.absolutePath != ''"
-          >
+          <a-form-item label="原始数据">
             <a-input :value="CancerStudyDetial.absolutePath" />
           </a-form-item>
           <a
@@ -54,27 +51,7 @@
             v-if="CancerStudyDetial.status"
             >下载</a
           >
-          <div v-if="CancerStudyDetial.parentId != ''">
-            <a-form-item label="expr">
-              <a-input :value="CancerStudyDetial.expr" />
-            </a-form-item>
-            <a
-              href="javascript:;"
-              @click="downlaod(CancerStudyDetial.exprRelative)"
-              v-if="CancerStudyDetial.exprStatus"
-              >下载</a
-            >
 
-            <a-form-item label="metadata">
-              <a-input :value="CancerStudyDetial.metadata" />
-            </a-form-item>
-            <a
-              href="javascript:;"
-              @click="downlaod(CancerStudyDetial.metadataRelative)"
-              v-if="CancerStudyDetial.metadataStatus"
-              >下载</a
-            >
-          </div>
           <a-divider />
         </div>
       </a-drawer>
@@ -106,20 +83,6 @@
           <!-- <a href="javascript:;" @click="updateProject(record.id)">编辑</a> -->
           <a href="javascript:;" @click="checkFileExist(record.id)"> 检测 </a>
 
-          <a-divider type="vertical" v-if="record.exprStatus" />
-          <a
-            href="javascript:;"
-            @click="downlaod(record.exprRelative)"
-            v-if="record.exprStatus"
-            >表达矩阵</a
-          >
-          <a-divider type="vertical" v-if="record.metadataRelative" />
-          <a
-            href="javascript:;"
-            @click="downlaod(record.metadataRelative)"
-            v-if="record.metadataStatus"
-            >样品信息</a
-          >
           <a-divider type="vertical" v-if="record.status" />
 
           <a
@@ -373,6 +336,23 @@ export default {
       let download_url = JSON.parse(localStorage.getItem("global_config"));
       // window.location.href = download_url.download_url + "/" + path;
       window.open(download_url.download_url + "/" + path);
+    },
+    checkFileExist(id) {
+      let loadData = this.loadData;
+      let notification = this.$notification["success"];
+      let notification_error = this.$notification["error"];
+      CancerStudyAPi.checkFileExist(id).then((resp) => {
+        loadData();
+        if (resp.data.data.status) {
+          notification({
+            message: "文件存在：" + resp.data.data.absolutePath,
+          });
+        } else {
+          notification_error({
+            message: "文件不存在" + resp.data.data.absolutePath,
+          });
+        }
+      });
     },
   },
 };

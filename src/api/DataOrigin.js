@@ -34,4 +34,19 @@ DataOriginApi.update = (id,params) => {
     })
 }
 
+
+DataOriginApi.init = (param) => {
+    return service({
+        url: `${baseUrl}/init`,
+        params:param,
+        method: 'get',
+    })
+}
+DataOriginApi.createTSVFile = () => {
+    return service({
+        url: `${baseUrl}/createTSVFile`,
+        method: 'post',
+        responseType: 'blob'
+    })
+}
 export default DataOriginApi

@@ -139,7 +139,7 @@ const routes = [
               }, {
                 path: '/cancer/codeList',
                 name: 'code_list',
-                meta: { title: 'CodeList', icon: 'dashboard', parentPath: "/cancer", display: true },
+                meta: { title: 'Code列表', icon: 'dashboard', parentPath: "/cancer", display: true },
                 component: () => import(/* webpackChunkName: "cancer_list" */ '../views/cancer/codeList.vue'),
               },
             ]

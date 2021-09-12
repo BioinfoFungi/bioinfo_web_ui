@@ -9,6 +9,26 @@
       @close="onClose"
     >
       <div v-if="CancerStudyDetial">
+        <a-form-model-item label="codeOutput">
+          <a-input :value="CancerStudyDetial.codeOutput" />
+        </a-form-model-item>
+        <a-form-item label="cancer">
+          <a-input :value="JSON.stringify(CancerStudyDetial.cancer)" />
+        </a-form-item>
+        <a-form-item label="dataCategory">
+          <a-input :value="JSON.stringify(CancerStudyDetial.dataCategory)" />
+        </a-form-item>
+        <a-form-item label="dataOrigin">
+          <a-input :value="JSON.stringify(CancerStudyDetial.dataOrigin)" />
+        </a-form-item>
+        <a-form-item label="study">
+          <a-input :value="JSON.stringify(CancerStudyDetial.study)" />
+        </a-form-item>
+        <a-form-item label="analysisSoftware">
+          <a-input
+            :value="JSON.stringify(CancerStudyDetial.analysisSoftware)"
+          />
+        </a-form-item>
         <a-form-item label="fileName">
           <a-input :value="CancerStudyDetial.fileName" />
         </a-form-item>
@@ -17,6 +37,9 @@
         </a-form-item>
         <a-form-item label="absolutePath">
           <a-input :value="CancerStudyDetial.absolutePath" />
+        </a-form-item>
+        <a-form-item label="relativePath">
+          <a-input :value="CancerStudyDetial.relativePath" />
         </a-form-item>
         <a-form-item label="location">
           <a-input :value="CancerStudyDetial.location" />
@@ -30,7 +53,8 @@
     </a-drawer>
 
     <a-button @click="createTSVFile">导出CSV</a-button>
-    <a-button @click="initTSV">导入CSV</a-button>
+    <a-button @click="initTSV(false)">导入CSV</a-button>
+    <a-button @click="initTSV(true)">清空导入CSV</a-button>
     <a-table
       :columns="columns"
       :row-key="(record) => record.id"
@@ -55,6 +79,8 @@
         }}</a>
         <a-divider type="vertical" />
         <a href="javascript:;" @click="showDrawer(record)">更多</a>
+        <a-divider type="vertical" />
+        <a href="javascript:;" @click="runByCodeId(record.id)">运行所有</a>
         <a-divider type="vertical" />
         <a href="javascript:;" @click="updateCode(record.id)">编辑</a>
         <a-divider type="vertical" />
@@ -90,7 +116,7 @@
 <script>
 import CodeAPi from "@/api/code.js";
 // import TaskApi from "@/api/task.js";
-
+import TaskApi from "@/api/task.js";
 const columns = [
   {
     title: "id",
@@ -100,28 +126,6 @@ const columns = [
     title: "name",
     dataIndex: "name",
     // scopedSlots: { customRender: "cancer" }
-  },
-  {
-    title: "癌症名称",
-    dataIndex: "cancer.name",
-    // scopedSlots: { customRender: "cancer" }
-  },
-
-  {
-    title: "研究名称",
-    dataIndex: "study.name",
-  },
-  {
-    title: "数据来源",
-    dataIndex: "dataOrigin.name",
-  },
-  {
-    title: "数据分类",
-    dataIndex: "dataCategory.name",
-  },
-  {
-    title: "分析软件",
-    dataIndex: "analysisSoftware.name",
   },
   {
     title: "执行脚本",
@@ -244,7 +248,6 @@ export default {
     },
     showDrawer(data) {
       this.CancerStudyDetial = data;
-
       // console.log(data);
       this.visible = true;
     },
@@ -274,7 +277,7 @@ export default {
         query: { objId: id },
       });
     },
-    createTSVFile() {
+       createTSVFile() {
       CodeAPi.createTSVFile().then((res) => {
         var blob = res.data;
         var reader = new FileReader();
@@ -282,7 +285,7 @@ export default {
         reader.onload = function (e) {
           var a = document.createElement("a");
           // 获取文件名fileName
-          // console.log(res)
+          console.log(res);
           // var fileName = res.headers["Content-Disposition"]
           // fileName = fileName[fileName.length - 1];
           // fileName = fileName.replace(/"/g, "");
@@ -294,11 +297,20 @@ export default {
         };
       });
     },
-    initTSV() {
-      CodeAPi.init(null).then((resp) => {
+    initTSV(isEmpty) {
+      CodeAPi.init({ isEmpty: isEmpty }).then((resp) => {
+        // console.log(resp)
+        this.loadData();
+        this.$notification["success"]({
+          message: resp.data.message,
+        });
+      });
+    },
+    runByCodeId(id) {
+      TaskApi.runByCodeId(id).then((resp) => {
         // console.log(resp)
         this.$notification["success"]({
-          message: "文件不存在" + resp.data.message,
+          message: "运行" + resp.data.message,
         });
       });
     },

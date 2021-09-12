@@ -30,7 +30,7 @@
         />
       </div>
     </a-drawer>
-
+    <a-button @click="removeALlTask">removeALlTask</a-button>
     <a-table
       :columns="task_columns"
       :row-key="(record) => record.id"
@@ -235,6 +235,13 @@ export default {
         this.loadData();
         // console.log(resp)
         this.$message.success(resp.data.data.name + "已经结束");
+      });
+    },
+    removeALlTask() {
+      TaskApi.removeALlTask().then((resp) => {
+        this.loadData();
+        // console.log(resp)
+        this.$message.success(resp.data.message);
       });
     },
   },

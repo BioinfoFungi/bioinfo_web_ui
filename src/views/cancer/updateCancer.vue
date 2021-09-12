@@ -127,6 +127,9 @@
     <a-form-model-item ref="description" label="description" prop="description">
       <a-input v-model="form.description" />
     </a-form-model-item>
+    <a-form-model-item ref="param" label="param" prop="param">
+      <a-input v-model="form.param" />
+    </a-form-model-item>
     <a-form-model-item :wrapper-col="{ span: 14, offset: 4 }">
       <a-button type="primary" @click="onSubmit">更新癌症研究</a-button>
       <a-button style="margin-left: 10px" @click="resetForm">重置</a-button>
@@ -162,6 +165,7 @@ export default {
         analysisSoftware: undefined,
         absolutePath: undefined,
         gse: undefined,
+        param: undefined,
       },
       rules: {
         // cancer: [
@@ -185,6 +189,7 @@ export default {
       let data = resp.data.data;
       this.form.absolutePath = data.absolutePath;
       this.form.gse = data.gse;
+      this.form.param = data.param;
       if (data.cancer) {
         this.cancerList = [data.cancer];
         this.form.cancer = data.cancer.name;
@@ -251,9 +256,7 @@ export default {
               message: "更新建成功!" + resp.data.message,
             });
             // let cancerStudy = resp.data.data;
-            this.$router.push(
-              "/cancer/cancer_detial"
-            );
+            this.$router.push("/cancer/cancer_detial");
           });
         } else {
           // console.log("error submit!!");

@@ -123,12 +123,11 @@
     >
       <a-input v-model="form.absolutePath" />
     </a-form-model-item>
-    <a-form-model-item
-      ref="description"
-      label="description"
-      prop="description"
-    >
+    <a-form-model-item ref="description" label="description" prop="description">
       <a-input v-model="form.description" />
+    </a-form-model-item>
+    <a-form-model-item ref="param" label="param" prop="param">
+      <a-input v-model="form.param" />
     </a-form-model-item>
     <a-form-model-item :wrapper-col="{ span: 14, offset: 4 }">
       <a-button type="primary" @click="onSubmit">添加癌症研究</a-button>
@@ -165,6 +164,7 @@ export default {
         analysisSoftware: undefined,
         absolutePath: undefined,
         gse: undefined,
+        param: undefined,
       },
       rules: {
         // description: [
@@ -233,9 +233,7 @@ export default {
             });
             // let cancerStudy = resp.data.data;
             // console.log(cancerStudy)
-            this.$router.push(
-              "/cancer/cancer_detial"
-            );
+            this.$router.push("/cancer/cancer_detial");
           });
         } else {
           // console.log("error submit!!");

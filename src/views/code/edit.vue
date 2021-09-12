@@ -2,20 +2,73 @@
   <a-row :gutter="12">
     <a-col :span="6">
       <a-card :bodyStyle="{ padding: '16px', overflow: 'auto' }">
-        <theme-file
+        <!-- <theme-file
           v-if="files"
           :files="files"
           @listenToSelect="handleSelectFile"
+        /> -->
+        <a-list bordered :data-source="codes">
+          <a-list-item slot="renderItem" slot-scope="item">
+            <a href="javascript:;" @click="handleSelectFile(item)">{{
+              item.id + "-" + item.name
+            }}</a>
+          </a-list-item>
+        </a-list>
+
+        <a-input-search
+          placeholder="input search text"
+          style="width: 200px"
+          @search="onSearch"
         />
+        <a-button @click="clearSearch">清除</a-button>
+        <a-table
+          :columns="columns"
+          :row-key="(record) => record.id"
+          :data-source="cancerStudys"
+          :pagination="false"
+          :loading="loading"
+          @change="handleTableChange"
+        >
+          <span slot="action" slot-scope="text, record">
+            <a href="javascript:;" @click="addToEdit(record)">
+              {{
+                record.cancer
+                  ? record.id
+                  : "" +
+                    record.id +
+                    "-" +
+                    record.gse +
+                    "-" +
+                    record.codeIsSuccess
+              }}
+            </a>
+          </span>
+          <template slot="footer">
+            <div class="page-wrapper" :style="{ textAlign: 'right' }">
+              <a-pagination
+                class="pagination"
+                :current="pagination.page"
+                :total="pagination.total"
+                :defaultPageSize="pagination.size"
+                :pageSizeOptions="['5', '10', '20', '50', '100']"
+                showSizeChanger
+                @showSizeChange="handleTableChange"
+                @change="handleTableChange"
+              />
+            </div>
+          </template>
+        </a-table>
       </a-card>
     </a-col>
 
     <a-col :span="18">
       <a-button @click="runTask">运行</a-button>
       <a-button @click="shutdownTask">结束</a-button>
+      <a-button>{{ code ? code.name : "code" }}</a-button>
       <a-button @click="openDrawer">{{
-        cancerStudyDisplay ? cancerStudyDisplay : "选择对象"
+        cancerStudy ? cancerStudy.id : "选择对象"
       }}</a-button>
+
       <a-button @click="save">保存</a-button>
       <div v-if="task">
         {{ task.threadName }}
@@ -144,34 +197,6 @@
             </a-select-option>
           </a-select>
         </a-form-model-item>
-
-        <a-table
-          :columns="columns"
-          :row-key="(record) => record.id"
-          :data-source="cancerStudys"
-          :pagination="false"
-          :loading="loading"
-          @change="handleTableChange"
-          :scroll="{ x: 750 }"
-        >
-          <div slot="id_link" slot-scope="id, record">
-            <a href="javascript:;" @click="addToEdit(record.id)">{{ id }}</a>
-          </div>
-          <template slot="footer">
-            <div class="page-wrapper" :style="{ textAlign: 'right' }">
-              <a-pagination
-                class="pagination"
-                :current="pagination.page"
-                :total="pagination.total"
-                :defaultPageSize="pagination.size"
-                :pageSizeOptions="['5', '10', '20', '50', '100']"
-                showSizeChanger
-                @showSizeChange="handleTableChange"
-                @change="handleTableChange"
-              />
-            </div>
-          </template>
-        </a-table>
       </a-drawer>
 
       <a-card :bodyStyle="{ padding: '16px' }">
@@ -217,7 +242,7 @@
 <script>
 // @ is an alias to /src
 import CodeAPi from "@/api/code.js";
-import ThemeFile from "./components/ThemeFile";
+// import ThemeFile from "./components/ThemeFile";
 import { codemirror } from "vue-codemirror-lite";
 import CancerStudyAPi from "@/api/CancerStudy.js";
 import TaskApi from "@/api/task.js";
@@ -230,44 +255,44 @@ import AnalysisSoftwareApi from "@/api/analysis_software.js";
 
 const columns = [
   {
-    title: "ID",
-    dataIndex: "id",
-    scopedSlots: { customRender: "id_link" },
+    title: "Action",
+    key: "action",
+    scopedSlots: { customRender: "action" },
   },
-  {
-    title: "癌症名称",
-    dataIndex: "cancer.name",
-    // scopedSlots: { customRender: "cancer" }
-  },
+  // {
+  //   title: "癌症名称",
+  //   dataIndex: "cancer.name",
+  //   // scopedSlots: { customRender: "cancer" }
+  // },
 
-  {
-    title: "研究名称",
-    dataIndex: "study.name",
-  },
-  {
-    title: "数据来源",
-    dataIndex: "dataOrigin.name",
-  },
-  {
-    title: "数据分类",
-    dataIndex: "dataCategory.name",
-  },
-  {
-    title: "处理流程",
-    dataIndex: "analysisSoftware.name",
-  },
-  {
-    title: "基因注释",
-    dataIndex: "analysisSoftware.annotationId",
-  },
-  {
-    title: "GSE",
-    dataIndex: "gse",
-  },
+  // {
+  //   title: "研究名称",
+  //   dataIndex: "study.name",
+  // },
+  // {
+  //   title: "数据来源",
+  //   dataIndex: "dataOrigin.name",
+  // },
+  // {
+  //   title: "数据分类",
+  //   dataIndex: "dataCategory.name",
+  // },
+  // {
+  //   title: "处理流程",
+  //   dataIndex: "analysisSoftware.name",
+  // },
+  // {
+  //   title: "基因注释",
+  //   dataIndex: "analysisSoftware.annotationId",
+  // },
+  // {
+  //   title: "GSE",
+  //   dataIndex: "gse",
+  // },
 ];
 export default {
   components: {
-    ThemeFile,
+    // ThemeFile,
     codemirror,
   },
   // name: 'Home',
@@ -276,12 +301,11 @@ export default {
   // }
   data() {
     return {
-      files: [],
-      file: undefined,
+      codes: [],
+      code: undefined,
       content: "",
       visible: false,
-      cancerStudyId: undefined,
-      cancerStudyDisplay: undefined,
+      cancerStudy: undefined,
       Log: "",
       task: undefined,
       sourceCode: undefined,
@@ -308,7 +332,7 @@ export default {
       cancerStudys: [],
       pagination: {
         page: 1,
-        size: 10,
+        size: 5,
         sort: null,
         keyword: null,
       },
@@ -341,6 +365,8 @@ export default {
           }
           this.$message.info(data.data);
           this.loadTask(this.task.id);
+          this.loadCancerStudy();
+          // console.log("ddd")
         }
         // if (this.task) {
         //
@@ -355,67 +381,49 @@ export default {
   },
   methods: {
     loadFiles() {
-      CodeAPi.files().then((resp) => {
-        this.files = resp.data.data;
+      // CodeAPi.listAll
+      CodeAPi.listAll().then((resp) => {
+        this.codes = resp.data.data;
         // console.log(this.files);
       });
     },
-    handleSelectFile(file) {
-      // const _this = this;
-      if (!file.editable) {
-        this.$message.info("该文件不支持修改！");
-        this.content = "";
-        this.file = {};
-        this.buttonDisabled = true;
-        return;
-      }
-      // if (
-      //   file.name === "settings.yaml" ||
-      //   file.name === "settings.yml" ||
-      //   file.name === "theme.yaml" ||
-      //   file.name === "theme.yml"
-      // ) {
-      //   this.$confirm({
-      //     title: "警告：请谨慎修改该配置文件",
-      //     content: "修改之后可能会产生不可预料的问题！",
-      //     onCancel() {
-      //       _this.content = "";
-      //       _this.file = {};
-      //       _this.buttonDisabled = true;
-      //     },
-      //   });
-      // }
-      CodeAPi.getContent(file.path).then((resp) => {
-        this.content = resp.data.data;
-        this.file = file;
-        // console.log(this.file);
-        // this.buttonDisabled = false;
-      });
-      // themeApi.getContent(this.selectedTheme.id, file.path).then((response) => {
+    handleSelectFile(code) {
+      this.code = code;
+      // console.log(code);
+      this.queryParam.cancerId = code.cancerId;
+      this.queryParam.studyId = code.studyId;
+      this.queryParam.dataOriginId = code.dataOriginId;
+      this.queryParam.dataCategoryId = code.dataCategoryId;
+      this.queryParam.analysisSoftwareId = code.analysisSoftwareId;
+      // this.queryParam.parentId = -1;
 
-      // });
-    },
-    cancerStudyFocus() {
       this.loadCancerStudy();
+      CodeAPi.getContent(code.absolutePath).then((resp) => {
+        this.content = resp.data.data;
+      });
     },
-    cancerStudySearch(input) {
-      this.loadCancerStudy({ keyword: input });
-    },
+    // cancerStudyFocus() {
+    //   this.loadCancerStudy();
+    // },
+    // cancerStudySearch(input) {
+    //   this.loadCancerStudy({ keyword: input });
+    // },
     save() {
-      CodeAPi.saveContent({ path: this.file.path, content: this.content }).then(
-        (resp) => {
-          this.$notification["success"]({
-            message: "保存成功!" + resp.data.message,
-          });
-        }
-      );
+      CodeAPi.saveContent({
+        path: this.code.absolutePath,
+        content: this.content,
+      }).then((resp) => {
+        this.$notification["success"]({
+          message: "保存成功!" + resp.data.message,
+        });
+      });
     },
     onClose() {
       this.visible = false;
     },
     openDrawer() {
       this.visible = true;
-      this.loadCancerStudy();
+      // this.loadCancerStudy();
     },
     loadLog(id) {
       TaskApi.log({ taskId: id }).then((resp) => {
@@ -441,20 +449,41 @@ export default {
         this.task = resp.data.data;
       });
     },
+    runOneTask() {
+      this.Log = "";
+      TaskApi.run({
+        objId: this.cancerStudy.id,
+        codeId: this.code.id,
+      }).then((resp) => {
+        this.$notification["success"]({
+          message: "创建任务成功!" + resp.data.message,
+        });
+        this.showLog(resp.data.data);
+        // this.loadTask(resp.data.data.id);
+        this.task = resp.data.data;
+        console.log(this.task);
+      });
+    },
     runTask() {
-      if (this.cancerStudyId && this.file) {
-        // console.log(this.cancerStudy);
-
-        // console.log(this.file);
-        this.Log = "";
-        TaskApi.run({
-          objId: this.cancerStudyId,
-          path: this.file.path,
-          taskType: "CANCER_STUDY",
-        }).then((resp) => {
-          this.$message.success(resp.data.data.name + "创建成功");
-          this.showLog(resp.data.data);
-          this.loadTask(resp.data.data.id);
+      if (this.cancerStudy && this.code) {
+        // // console.log(this.cancerStudy);
+        if (this.cancerStudy.codeIsSuccess) {
+          let runOneTask = this.runOneTask;
+          this.$confirm({
+            title: "消息",
+            content: "该对象已经成功运行，需要再次运行吗？",
+            onOk() {
+              runOneTask();
+            },
+            onCancel() {},
+          });
+        } else {
+          this.runOneTask();
+        }
+        // this.runOneTask()
+      } else {
+        this.$notification["error"]({
+          message: "cancerStudy and code not null!",
         });
       }
     },
@@ -540,35 +569,51 @@ export default {
       this.queryParam.sort = this.pagination.sort;
       this.queryParam.keyword = this.pagination.keyword;
 
-      const cancerId = this.$route.query.cancerId;
-      const studyId = this.$route.query.studyId;
-      const dataOriginId = this.$route.query.dataOriginId;
-      const dataCategoryId = this.$route.query.dataCategoryId;
-      const analysisSoftwareId = this.$route.query.analysisSoftwareId;
+      // const cancerId = this.$route.query.cancerId;
+      // const studyId = this.$route.query.studyId;
+      // const dataOriginId = this.$route.query.dataOriginId;
+      // const dataCategoryId = this.$route.query.dataCategoryId;
+      // const analysisSoftwareId = this.$route.query.analysisSoftwareId;
 
-      this.queryParam.cancerId = cancerId;
-      this.queryParam.studyId = studyId;
-      this.queryParam.dataOriginId = dataOriginId;
-      this.queryParam.dataCategoryId = dataCategoryId;
-      this.queryParam.analysisSoftwareId = analysisSoftwareId;
+      // this.queryParam.cancerId = cancerId;
+      // this.queryParam.studyId = studyId;
+      // this.queryParam.dataOriginId = dataOriginId;
+      // this.queryParam.dataCategoryId = dataCategoryId;
+      // this.queryParam.analysisSoftwareId = analysisSoftwareId;
       // this.queryParam.parentId = -1;
 
       this.loading = true;
-      CancerStudyAPi.page(this.queryParam, true).then((resp) => {
-        // console.log(resp);
-
-        this.cancerStudys = resp.data.data.content;
-        this.pagination.total = parseInt(resp.data.data.totalElements);
-        this.loading = false;
+      CancerStudyAPi.pageByCodeId(this.code.id, this.queryParam, true).then(
+        (resp) => {
+          this.cancerStudys = resp.data.data.content;
+          // console.log(this.cancerStudys);
+          if (this.cancerStudys.length != 0) {
+            //  console.log(this.cancerStudys[0])
+            this.addToEdit(this.cancerStudys[0]);
+          }
+          this.pagination.total = parseInt(resp.data.data.totalElements);
+          this.loading = false;
+        }
+      );
+    },
+    addToEdit(data) {
+      // console.log(data);
+      this.cancerStudy = data;
+      TaskApi.getObjMap(data.id).then((resp) => {
+        this.objMap = JSON.stringify(resp.data.data);
+        this.$notification["success"]({
+          message: "选择对象" + resp.data.data.id,
+        });
       });
     },
-    addToEdit(id) {
-      // console.log(data);
-      this.cancerStudyDisplay = id;
-      this.cancerStudyId = id;
-      TaskApi.getObjMap(id).then((resp) => {
-        this.objMap = JSON.stringify(resp.data.data);
-      });
+
+    onSearch(value) {
+      this.pagination.page=1
+      this.pagination.keyword = value;
+      this.loadCancerStudy();
+    },  clearSearch() {
+      this.pagination.keyword = null;
+      this.loadData();
     },
   },
 };

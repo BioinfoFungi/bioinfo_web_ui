@@ -25,6 +25,7 @@ AnalysisSoftwareApi.add = (params) => {
         method: 'post'
     })
 }
+
 AnalysisSoftwareApi.update = (id,params) => {
     return service({
         url: `${baseUrl}/update/${id}`,
@@ -32,5 +33,18 @@ AnalysisSoftwareApi.update = (id,params) => {
         method: 'post'
     })
 }
-
+AnalysisSoftwareApi.init = (param) => {
+    return service({
+        url: `${baseUrl}/init`,
+        params:param,
+        method: 'get',
+    })
+}
+AnalysisSoftwareApi.createTSVFile = () => {
+    return service({
+        url: `${baseUrl}/createTSVFile`,
+        method: 'post',
+        responseType: 'blob'
+    })
+}
 export default AnalysisSoftwareApi

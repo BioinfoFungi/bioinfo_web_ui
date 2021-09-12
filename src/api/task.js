@@ -55,7 +55,25 @@ TaskApi.findById = (id) => {
         method: 'get'
     })
 }
-
+TaskApi.runCodes = (params) => {
+    return service({
+        url: `${baseUrl}/runCodes`,
+        data: params,
+        method: 'post'
+    })
+}
+TaskApi.runByCodeId = (id) => {
+    return service({
+        url: `${baseUrl}/runByCodeId/${id}`,
+        method: 'get',
+    })
+}
+TaskApi.removeALlTask = () => {
+    return service({
+        url: `${baseUrl}/removeALlTask`,
+        method: 'get',
+    })
+}
 
 TaskApi.getObjMap = (id) => {
     return service({

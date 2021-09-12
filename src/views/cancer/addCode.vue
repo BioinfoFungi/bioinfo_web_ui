@@ -9,7 +9,13 @@
     <a-form-model-item ref="name" label="name" prop="name">
       <a-input v-model="form.name" />
     </a-form-model-item>
-
+    <a-form-model-item
+      ref="prerequisites"
+      label="prerequisites"
+      prop="prerequisites"
+    >
+      <a-input v-model="form.prerequisites" />
+    </a-form-model-item>
     <a-form-model-item ref="taskType" label="taskType" prop="taskType">
       <a-select
         show-search
@@ -46,114 +52,6 @@
       </a-select>
     </a-form-model-item>
 
-    <a-form-model-item ref="Cancer" label="Cancer" prop="cancer">
-      <a-select
-        show-search
-        placeholder="Select a person"
-        option-filter-prop="children"
-        style="width: 200px"
-        @focus="cancerFocus"
-        v-model="form.cancer"
-        @search="cancerSearch"
-      >
-        <a-select-option
-          :value="item.enName"
-          v-for="item in cancerList"
-          :key="item.id"
-        >
-          {{ item.name }}
-        </a-select-option>
-      </a-select>
-    </a-form-model-item>
-
-    <a-form-model-item ref="Study" label="Study" prop="study">
-      <a-select
-        show-search
-        placeholder="Select a person"
-        option-filter-prop="children"
-        style="width: 200px"
-        @focus="studyFocus"
-        v-model="form.study"
-        @search="studySearch"
-      >
-        <a-select-option
-          :value="item.enName"
-          v-for="item in studyList"
-          :key="item.id"
-        >
-          {{ item.name }}
-        </a-select-option>
-      </a-select>
-    </a-form-model-item>
-
-    <a-form-model-item ref="DataOrigin" label="DataOrigin" prop="dataOrigin">
-      <a-select
-        show-search
-        placeholder="Select a person"
-        option-filter-prop="children"
-        style="width: 200px"
-        @focus="dataOriginFocus"
-        v-model="form.dataOrigin"
-        @search="dataOriginSearch"
-      >
-        <a-select-option
-          :value="item.enName"
-          v-for="item in dataOriginList"
-          :key="item.id"
-        >
-          {{ item.name }}
-        </a-select-option>
-      </a-select>
-    </a-form-model-item>
-
-    <a-form-model-item
-      ref="DataCategory"
-      label="DataCategory"
-      prop="dataCategory"
-    >
-      <a-select
-        show-search
-        placeholder="Select a person"
-        option-filter-prop="children"
-        style="width: 200px"
-        @focus="dataCategoryFocus"
-        v-model="form.dataCategory"
-        @search="dataCategorySearch"
-      >
-        <a-select-option
-          :value="item.enName"
-          v-for="item in dataCategoryList"
-          :key="item.id"
-        >
-          {{ item.name }}
-        </a-select-option>
-      </a-select>
-    </a-form-model-item>
-
-    <a-form-model-item
-      ref="AnalysisSoftware"
-      label="AnalysisSoftware"
-      prop="analysisSoftware"
-    >
-      <a-select
-        show-search
-        placeholder="Select a person"
-        option-filter-prop="children"
-        style="width: 200px"
-        @focus="analysisSoftwareFocus"
-        v-model="form.analysisSoftware"
-        @search="analysisSoftwareSearch"
-      >
-        <a-select-option
-          :value="item.enName"
-          v-for="item in analysisSoftwareList"
-          :key="item.id"
-        >
-          {{ item.name }}
-        </a-select-option>
-      </a-select>
-    </a-form-model-item>
-
     <a-form-model-item
       ref="absolutePath"
       label="absolutePath"
@@ -175,25 +73,119 @@
         </a-select-option>
       </a-select>
     </a-form-model-item>
-    <a-form-model-item label="haveParentId">
-      <a-switch v-model="form.haveParentId" />
+
+    <a-form-model-item ref="Cancer" label="Cancer" prop="cancer">
+      <a-select
+        mode="multiple"
+        show-search
+        placeholder="Select a person"
+        option-filter-prop="children"
+        style="width: 200px"
+        @focus="cancerFocus"
+        v-model="form.cancer"
+        @search="cancerSearch"
+      >
+        <a-select-option
+          :value="item.id"
+          v-for="item in cancerList"
+          :key="item.id"
+        >
+          {{ item.name }}
+        </a-select-option>
+      </a-select>
     </a-form-model-item>
 
-    <a-form-model-item label="haveExpr">
-      <a-switch v-model="form.haveExpr" />
+    <a-form-model-item ref="Study" label="Study" prop="study">
+      <a-select
+        mode="multiple"
+        show-search
+        placeholder="Select a person"
+        option-filter-prop="children"
+        style="width: 200px"
+        @focus="studyFocus"
+        v-model="form.study"
+        @search="studySearch"
+      >
+        <a-select-option
+          :value="item.id"
+          v-for="item in studyList"
+          :key="item.id"
+        >
+          {{ item.name }}
+        </a-select-option>
+      </a-select>
     </a-form-model-item>
 
-    <a-form-model-item label="haveMetadata">
-      <a-switch v-model="form.haveMetadata" />
+    <a-form-model-item ref="DataOrigin" label="DataOrigin" prop="dataOrigin">
+      <a-select
+        mode="multiple"
+        show-search
+        placeholder="Select a person"
+        option-filter-prop="children"
+        style="width: 200px"
+        @focus="dataOriginFocus"
+        v-model="form.dataOrigin"
+        @search="dataOriginSearch"
+      >
+        <a-select-option
+          :value="item.id"
+          v-for="item in dataOriginList"
+          :key="item.id"
+        >
+          {{ item.name }}
+        </a-select-option>
+      </a-select>
     </a-form-model-item>
 
-    <!-- <a-form-model-item
-      ref="absolutePath"
-      label="absolutePath"
-      prop="absolutePath"
+    <a-form-model-item
+      ref="DataCategory"
+      label="DataCategory"
+      prop="dataCategory"
     >
-      <a-input v-model="form.absolutePath" />
-    </a-form-model-item> -->
+      <a-select
+        mode="multiple"
+        show-search
+        placeholder="Select a person"
+        option-filter-prop="children"
+        style="width: 200px"
+        @focus="dataCategoryFocus"
+        v-model="form.dataCategory"
+        @search="dataCategorySearch"
+      >
+        <a-select-option
+          :value="item.id"
+          v-for="item in dataCategoryList"
+          :key="item.id"
+        >
+          {{ item.name }}
+        </a-select-option>
+      </a-select>
+    </a-form-model-item>
+
+    <a-form-model-item
+      ref="AnalysisSoftware"
+      label="AnalysisSoftware"
+      prop="analysisSoftware"
+    >
+      <a-select
+        mode="multiple"
+        show-search
+        placeholder="Select a person"
+        option-filter-prop="children"
+        style="width: 200px"
+        @focus="analysisSoftwareFocus"
+        v-model="form.analysisSoftware"
+        @search="analysisSoftwareSearch"
+      >
+        <a-select-option
+          :value="item.id"
+          v-for="item in analysisSoftwareList"
+          :key="item.id"
+        >
+          {{ item.name }}
+        </a-select-option>
+      </a-select>
+    </a-form-model-item>
 
     <a-form-model-item :wrapper-col="{ span: 14, offset: 4 }">
       <a-button type="primary" @click="onSubmit">添加Code</a-button>
@@ -228,18 +220,17 @@ export default {
       taskTypeList: [],
       files: [],
       form: {
-        cancer: undefined,
-        study: undefined,
-        dataOrigin: undefined,
-        dataCategory: undefined,
-        analysisSoftware: undefined,
+        cancer: [],
+        study: [],
+        dataOrigin: [],
+        dataCategory: [],
+        analysisSoftware: [],
         absolutePath: undefined,
         name: undefined,
         codeType: undefined,
         taskType: undefined,
-        haveParentId:false,
-        haveExpr:false,
-        haveMetadata:false,
+
+        prerequisites: undefined,
       },
       rules: {
         name: [
@@ -267,6 +258,7 @@ export default {
       CancerApi.page(param).then((resp) => {
         let data = resp.data.data.content;
         this.cancerList = data;
+        this.cancerList.push([]);
       });
     },
     loadStudy(param) {
@@ -294,6 +286,7 @@ export default {
       });
     },
     onSubmit() {
+      console.log(this.form)
       this.$refs.ruleForm.validate((valid) => {
         if (valid) {
           CodeAPi.add(this.form).then((resp) => {

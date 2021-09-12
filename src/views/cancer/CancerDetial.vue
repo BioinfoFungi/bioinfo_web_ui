@@ -12,6 +12,9 @@
         <a-form-item label="description">
           <a-input :value="CancerStudyDetial.description" />
         </a-form-item>
+        <a-form-item label="param">
+          <a-input :value="CancerStudyDetial.param" />
+        </a-form-item>
         <a-form-item label="createDate">
           <a-input :value="CancerStudyDetial.createDate" />
         </a-form-item>
@@ -36,27 +39,7 @@
           v-if="CancerStudyDetial.status"
           >下载</a
         >
-        <div>
-          <a-form-item label="expr">
-            <a-input :value="CancerStudyDetial.expr" />
-          </a-form-item>
-          <a
-            href="javascript:;"
-            @click="downlaod(CancerStudyDetial.exprRelative)"
-            v-if="CancerStudyDetial.exprStatus"
-            >下载</a
-          >
 
-          <a-form-item label="metadata">
-            <a-input :value="CancerStudyDetial.metadata" />
-          </a-form-item>
-          <a
-            href="javascript:;"
-            @click="downlaod(CancerStudyDetial.metadataRelative)"
-            v-if="CancerStudyDetial.metadataStatus"
-            >下载</a
-          >
-        </div>
         <a-divider />
 
         <div>
@@ -98,6 +81,8 @@
       </div>
     </a-drawer>
     <a-button @click="createTSVFile">导出CSV</a-button>
+    <a-button @click="initTSV(false)">导入CSV</a-button>
+    <a-button @click="initTSV(true)">清空导入CSV</a-button>
     <a-input-search
       placeholder="input search text"
       style="width: 200px"
@@ -111,7 +96,7 @@
       :pagination="false"
       :loading="loading"
       @change="handleTableChange"
-      :scroll="{ x: 1500 }"
+      :scroll="{ x: 'calc(1500px + 100%)' }"
     >
       <!-- @expand="rowChannge" -->
       <div slot="id_link" slot-scope="id">
@@ -125,21 +110,6 @@
         <!-- <a-divider type="vertical" /> -->
         <!-- <a href="javascript:;" @click="updateProject(record.id)">编辑</a> -->
         <a href="javascript:;" @click="checkFileExist(record.id)"> 检测 </a>
-
-        <a-divider type="vertical" v-if="record.exprStatus" />
-        <a
-          href="javascript:;"
-          @click="downlaod(record.exprRelative)"
-          v-if="record.exprStatus"
-          >表达矩阵</a
-        >
-        <a-divider type="vertical" v-if="record.metadataRelative" />
-        <a
-          href="javascript:;"
-          @click="downlaod(record.metadataRelative)"
-          v-if="record.metadataStatus"
-          >样品信息</a
-        >
         <a-divider type="vertical" v-if="record.status" />
 
         <a
@@ -243,7 +213,7 @@ const columns = [
   },
   {
     title: "基因注释",
-    dataIndex: "analysisSoftware.annotationId",
+    dataIndex: "annotation",
   },
   {
     title: "GSE",
@@ -418,7 +388,7 @@ export default {
     onClose() {
       this.visible = false;
       this.CancerStudyDetial = undefined;
-      this.Log=""
+      this.Log = "";
       if (this.setIntervaStatus) {
         clearInterval(this.setIntervaStatus);
       }
@@ -526,6 +496,15 @@ export default {
       } else {
         this.innerData = [];
       }
+    },
+    initTSV(isEmpty) {
+      CancerStudyAPi.init({ isEmpty: isEmpty }).then((resp) => {
+        // console.log(resp)
+        this.loadData();
+        this.$notification["success"]({
+          message: resp.data.message,
+        });
+      });
     },
   },
 };

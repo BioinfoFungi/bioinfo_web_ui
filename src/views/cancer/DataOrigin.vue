@@ -18,6 +18,9 @@
       </a-form-model>
     </a-modal>
     <a-button @click="addInput">添加</a-button>
+    <a-button @click="createTSVFile">导出CSV</a-button>
+    <a-button @click="initTSV(false)">导入CSV</a-button>
+    <a-button @click="initTSV(true)">清空导入CSV</a-button>
     <a-input-search
       placeholder="input search text"
       style="width: 200px"
@@ -76,10 +79,10 @@
 <script>
 import DataOriginApi from "@/api/DataOrigin.js";
 const columns = [
-  // {
-  //   title: "id",
-  //   dataIndex: "id"
-  // },
+  {
+    title: "id",
+    dataIndex: "id",
+  },
   {
     title: "癌症名称",
     dataIndex: "name",
@@ -98,13 +101,13 @@ const columns = [
   //     title: "截止日期",
   //     dataIndex: "deadline"
   //   },
-    {
-      title: "Action",
-      key: "action",
-      fixed: "right",
-      //   width: 200,
-      scopedSlots: { customRender: "action" }
-    }
+  {
+    title: "Action",
+    key: "action",
+    fixed: "right",
+    //   width: 200,
+    scopedSlots: { customRender: "action" },
+  },
 ];
 
 export default {
@@ -230,6 +233,35 @@ export default {
         } else {
           return false;
         }
+      });
+    },
+    createTSVFile() {
+      DataOriginApi.createTSVFile().then((res) => {
+        var blob = res.data;
+        var reader = new FileReader();
+        reader.readAsDataURL(blob);
+        reader.onload = function (e) {
+          var a = document.createElement("a");
+          // 获取文件名fileName
+          console.log(res);
+          // var fileName = res.headers["Content-Disposition"]
+          // fileName = fileName[fileName.length - 1];
+          // fileName = fileName.replace(/"/g, "");
+          a.download = "export.tsv";
+          a.href = e.target.result;
+          document.body.appendChild(a);
+          a.click();
+          document.body.removeChild(a);
+        };
+      });
+    },
+    initTSV(isEmpty) {
+      DataOriginApi.init({ isEmpty: isEmpty }).then((resp) => {
+        // console.log(resp)
+        this.loadData();
+        this.$notification["success"]({
+          message: resp.data.message,
+        });
       });
     },
   },

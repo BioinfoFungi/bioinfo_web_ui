@@ -32,4 +32,20 @@ CancerApi.update = (id,params) => {
         method: 'post'
     })
 }
+
+
+CancerApi.init = (param) => {
+    return service({
+        url: `${baseUrl}/init`,
+        params:param,
+        method: 'get',
+    })
+}
+CancerApi.createTSVFile = () => {
+    return service({
+        url: `${baseUrl}/createTSVFile`,
+        method: 'post',
+        responseType: 'blob'
+    })
+}
 export default CancerApi
