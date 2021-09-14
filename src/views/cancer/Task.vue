@@ -9,25 +9,26 @@
       @close="onClose"
     >
       <div v-if="TaskDetail">
-        <div>
-          {{ TaskDetail.result }}
-        </div>
-        <a-textarea
-          v-model="TaskDetail.runMsg"
-          placeholder="run log"
-          :auto-size="{ minRows: 3, maxRows: 20 }"
-        />
-      </div>
-
-      <div v-if="Log">
         <!-- <div>
           {{ TaskDetail.result }}
         </div> -->
-        <a-textarea
-          v-model="Log"
-          placeholder="run log"
-          :auto-size="{ minRows: 3, maxRows: 20 }"
-        />
+        <a-form-item label="sourceCode">
+          <a-textarea
+            v-model="TaskDetail.sourceCode"
+            placeholder="run log"
+            :auto-size="{ minRows: 3, maxRows: 20 }"
+          />
+        </a-form-item>
+      </div>
+
+      <div v-if="Log">
+        <a-form-item label="Log">
+          <a-textarea
+            v-model="Log"
+            placeholder="run log"
+            :auto-size="{ minRows: 3, maxRows: 20 }"
+          />
+        </a-form-item>
       </div>
     </a-drawer>
     <a-button @click="removeALlTask">removeALlTask</a-button>
@@ -50,7 +51,7 @@
         <a-divider type="vertical" />
         <a href="javascript:;" @click="showLog(record.id)">Log </a>
         <a-divider type="vertical" />
-        <a href="javascript:;" @click="showDrawer(record)">结果</a>
+        <a href="javascript:;" @click="showDrawer(record)">更多</a>
         <a-divider type="vertical" />
         <a href="javascript:;" @click="delTask(record.id)">删除</a>
       </span>
@@ -201,7 +202,7 @@ export default {
     },
     showDrawer(data) {
       this.TaskDetail = data;
-      //   console.log(data);
+      console.log(data);
       this.visible = true;
     },
     loadLog(id) {
