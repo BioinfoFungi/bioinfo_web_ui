@@ -16,9 +16,9 @@ ENUMApi.codeType = () =>{
         method: 'get'
     })
 }
-ENUMApi.taskType = () =>{
+ENUMApi.crudType = () =>{
     return service({
-        url: `${baseUrl}/taskType`,
+        url: `${baseUrl}/crudType`,
         method: 'get'
     })
 }

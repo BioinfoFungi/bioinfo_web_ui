@@ -10,6 +10,13 @@ TaskApi.page = (params) =>{
         method: 'get'
     })
 }
+TaskApi.listAll = (CRUD,params) =>{
+    return service({
+        url: `${baseUrl}/listAll/${CRUD}`,
+        params: params,
+        method: 'get'
+    })
+}
 
 TaskApi.run = (params) =>{
     return service({

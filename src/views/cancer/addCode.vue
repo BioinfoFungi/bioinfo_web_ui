@@ -16,17 +16,18 @@
     >
       <a-input v-model="form.prerequisites" />
     </a-form-model-item>
-    <a-form-model-item ref="taskType" label="taskType" prop="taskType">
+
+    <a-form-model-item ref="crudType" label="crudType" prop="crudType">
       <a-select
         show-search
         placeholder="Select a person"
         option-filter-prop="children"
         style="width: 200px"
-        v-model="form.taskType"
+        v-model="form.crudType"
       >
         <a-select-option
           :value="item.key"
-          v-for="item in taskTypeList"
+          v-for="item in crudType"
           :key="item.key"
         >
           {{ item.value }}
@@ -74,119 +75,6 @@
       </a-select>
     </a-form-model-item>
 
-    <a-form-model-item ref="Cancer" label="Cancer" prop="cancer">
-      <a-select
-        mode="multiple"
-        show-search
-        placeholder="Select a person"
-        option-filter-prop="children"
-        style="width: 200px"
-        @focus="cancerFocus"
-        v-model="form.cancer"
-        @search="cancerSearch"
-      >
-        <a-select-option
-          :value="item.id"
-          v-for="item in cancerList"
-          :key="item.id"
-        >
-          {{ item.name }}
-        </a-select-option>
-      </a-select>
-    </a-form-model-item>
-
-    <a-form-model-item ref="Study" label="Study" prop="study">
-      <a-select
-        mode="multiple"
-        show-search
-        placeholder="Select a person"
-        option-filter-prop="children"
-        style="width: 200px"
-        @focus="studyFocus"
-        v-model="form.study"
-        @search="studySearch"
-      >
-        <a-select-option
-          :value="item.id"
-          v-for="item in studyList"
-          :key="item.id"
-        >
-          {{ item.name }}
-        </a-select-option>
-      </a-select>
-    </a-form-model-item>
-
-    <a-form-model-item ref="DataOrigin" label="DataOrigin" prop="dataOrigin">
-      <a-select
-        mode="multiple"
-        show-search
-        placeholder="Select a person"
-        option-filter-prop="children"
-        style="width: 200px"
-        @focus="dataOriginFocus"
-        v-model="form.dataOrigin"
-        @search="dataOriginSearch"
-      >
-        <a-select-option
-          :value="item.id"
-          v-for="item in dataOriginList"
-          :key="item.id"
-        >
-          {{ item.name }}
-        </a-select-option>
-      </a-select>
-    </a-form-model-item>
-
-    <a-form-model-item
-      ref="DataCategory"
-      label="DataCategory"
-      prop="dataCategory"
-    >
-      <a-select
-        mode="multiple"
-        show-search
-        placeholder="Select a person"
-        option-filter-prop="children"
-        style="width: 200px"
-        @focus="dataCategoryFocus"
-        v-model="form.dataCategory"
-        @search="dataCategorySearch"
-      >
-        <a-select-option
-          :value="item.id"
-          v-for="item in dataCategoryList"
-          :key="item.id"
-        >
-          {{ item.name }}
-        </a-select-option>
-      </a-select>
-    </a-form-model-item>
-
-    <a-form-model-item
-      ref="AnalysisSoftware"
-      label="AnalysisSoftware"
-      prop="analysisSoftware"
-    >
-      <a-select
-        mode="multiple"
-        show-search
-        placeholder="Select a person"
-        option-filter-prop="children"
-        style="width: 200px"
-        @focus="analysisSoftwareFocus"
-        v-model="form.analysisSoftware"
-        @search="analysisSoftwareSearch"
-      >
-        <a-select-option
-          :value="item.id"
-          v-for="item in analysisSoftwareList"
-          :key="item.id"
-        >
-          {{ item.name }}
-        </a-select-option>
-      </a-select>
-    </a-form-model-item>
-
     <a-form-model-item :wrapper-col="{ span: 14, offset: 4 }">
       <a-button type="primary" @click="onSubmit">添加Code</a-button>
       <a-button style="margin-left: 10px" @click="resetForm">重置</a-button>
@@ -194,12 +82,8 @@
   </a-form-model>
 </template>
 <script>
-import CancerApi from "@/api/cancer.js";
 import FileApi from "@/api/file.js";
-import StudyAPi from "@/api/Study.js";
-import DataOriginApi from "@/api/DataOrigin.js";
-import DataCategoryApi from "@/api/data_category.js";
-import AnalysisSoftwareApi from "@/api/analysis_software.js";
+
 import ENUMApi from "@/api/ENUM.js";
 import CodeAPi from "@/api/code.js";
 export default {
@@ -211,27 +95,17 @@ export default {
       projectStatuses: [],
       value: null,
       users: [],
-      cancerList: [],
-      studyList: [],
-      dataOriginList: [],
-      dataCategoryList: [],
-      analysisSoftwareList: [],
       codeTypeList: [],
-      taskTypeList: [],
+      crudType: [],
       files: [],
       form: {
-        cancer: [],
-        study: [],
-        dataOrigin: [],
-        dataCategory: [],
-        analysisSoftware: [],
         absolutePath: undefined,
         name: undefined,
         codeType: undefined,
-        taskType: undefined,
-
+        crudType: undefined,
         prerequisites: undefined,
       },
+      codeId: undefined,
       rules: {
         name: [
           { required: true, message: "请输入Term名称", trigger: "change" },
@@ -240,11 +114,20 @@ export default {
     };
   },
   mounted() {
+    this.codeId = this.$route.query.codeId;
+    if (this.codeId) {
+      CodeAPi.findById(this.codeId).then((resp) => {
+        let data = resp.data.data;
+        // console.log(data);
+        this.form = data;
+      });
+    }
+    // console.log(this.codeId);
     ENUMApi.codeType().then((resp) => {
       this.codeTypeList = resp.data.data;
     });
-    ENUMApi.taskType().then((resp) => {
-      this.taskTypeList = resp.data.data;
+    ENUMApi.crudType().then((resp) => {
+      this.crudType = resp.data.data;
       // console.log(this.taskTypeList )
     });
     // UserAPi.listAll().then((resp) => {
@@ -254,47 +137,26 @@ export default {
     // this.loadCancer();
   },
   methods: {
-    loadCancer(param) {
-      CancerApi.page(param).then((resp) => {
-        let data = resp.data.data.content;
-        this.cancerList = data;
-        this.cancerList.push([]);
-      });
-    },
-    loadStudy(param) {
-      StudyAPi.page(param).then((resp) => {
-        let data = resp.data.data.content;
-        this.studyList = data;
-      });
-    },
-    loadDataOrigin(param) {
-      DataOriginApi.page(param).then((resp) => {
-        let data = resp.data.data.content;
-        this.dataOriginList = data;
-      });
-    },
-    loadDataCategory(param) {
-      DataCategoryApi.page(param).then((resp) => {
-        let data = resp.data.data.content;
-        this.dataCategoryList = data;
-      });
-    },
-    loadAnalysisSoftware(param) {
-      AnalysisSoftwareApi.page(param).then((resp) => {
-        let data = resp.data.data.content;
-        this.analysisSoftwareList = data;
-      });
-    },
     onSubmit() {
-      console.log(this.form)
+      // console.log(this.form);
       this.$refs.ruleForm.validate((valid) => {
         if (valid) {
-          CodeAPi.add(this.form).then((resp) => {
-            this.$notification["success"]({
-              message: "添加建成功!" + resp.data.message,
+          if (this.codeId) {
+            CodeAPi.update(this.codeId, this.form).then((resp) => {
+              this.$notification["success"]({
+                message: "更新成功!" + resp.data.message,
+              });
+              // let cancerStudy = resp.data.data
+              this.$router.push("/cancer/codeList");
             });
-            this.$router.push("/cancer/codeList");
-          });
+          } else {
+            CodeAPi.add(this.form).then((resp) => {
+              this.$notification["success"]({
+                message: "添加成功!" + resp.data.message,
+              });
+              this.$router.push("/cancer/codeList");
+            });
+          }
         } else {
           // console.log("error submit!!");
           return false;

@@ -5,236 +5,158 @@
         <!-- <theme-file
           v-if="files"
           :files="files"
-          @listenToSelect="handleSelectFile"
+          @listenToSelect="codeSelect"
         /> -->
-        <a-list bordered :data-source="codes">
+        <!-- <a-list bordered :data-source="codes">
           <a-list-item slot="renderItem" slot-scope="item">
-            <a href="javascript:;" @click="handleSelectFile(item)">{{
+            <a href="javascript:;" @click="codeSelect(item)">{{
               item.id + "-" + item.name
             }}</a>
           </a-list-item>
-        </a-list>
+        </a-list> -->
 
-        <a-input-search
+        <!-- <a-input-search
           placeholder="input search text"
           style="width: 200px"
           @search="onSearch"
         />
-        <a-button @click="clearSearch">清除</a-button>
+        <a-button @click="clearSearch">清除</a-button> -->
         <a-table
-          :columns="columns"
+          :columns="codeColumns"
           :row-key="(record) => record.id"
-          :data-source="cancerStudys"
+          :data-source="codes"
           :pagination="false"
           :loading="loading"
-          @change="handleTableChange"
+          @change="codeTableChange"
         >
           <span slot="action" slot-scope="text, record">
-            <a href="javascript:;" @click="addToEdit(record)">
-              {{
-                record.cancer
-                  ? record.id
-                  : "" +
-                    record.id +
-                    "-" +
-                    record.gse +
-                    "-" +
-                    record.codeIsSuccess
-              }}
+            <a href="javascript:;" @click="codeSelect(record)">
+              {{ "["+record.crudType+record.name+"]"}}
             </a>
           </span>
           <template slot="footer">
             <div class="page-wrapper" :style="{ textAlign: 'right' }">
               <a-pagination
                 class="pagination"
-                :current="pagination.page"
-                :total="pagination.total"
-                :defaultPageSize="pagination.size"
+                :current="codePagination.page"
+                :total="codePagination.total"
+                :defaultPageSize="codePagination.size"
                 :pageSizeOptions="['5', '10', '20', '50', '100']"
                 showSizeChanger
-                @showSizeChange="handleTableChange"
-                @change="handleTableChange"
+                @showSizeChange="codeTableChange"
+                @change="codeTableChange"
               />
             </div>
           </template>
         </a-table>
       </a-card>
     </a-col>
+    <a-drawer
+      :title="code? code.crudType:'crudType'"
+      placement="right"
+      :closable="false"
+      :visible="visible"
+      width="50%"
+      @close="onClose"
+    >
+      <a-table
+        :columns="objsColumns"
+        :row-key="(record) => record.id"
+        :data-source="objs"
+        :pagination="false"
+        :loading="loading"
+        @change="objsTableChange"
+      >
+        <span slot="action" slot-scope="text, record">
+          <a href="javascript:;" @click="objSelect(record.id)">
+            {{ record.id }}
+          </a>
+        </span>
+        <template slot="footer">
+          <div class="page-wrapper" :style="{ textAlign: 'right' }">
+            <a-pagination
+              class="pagination"
+              :current="objsPagination.page"
+              :total="objsPagination.total"
+              :defaultPageSize="objsPagination.size"
+              :pageSizeOptions="['5', '10', '20', '50', '100']"
+              showSizeChanger
+              @showSizeChange="objsTableChange"
+              @change="objsTableChange"
+            />
+          </div>
+        </template>
+      </a-table>
+    </a-drawer>
 
     <a-col :span="18">
-      <a-button @click="runTask">运行</a-button>
-      <a-button @click="shutdownTask">结束</a-button>
-      <a-button>{{ code ? code.name : "code" }}</a-button>
-      <a-button @click="openDrawer">{{
-        cancerStudy ? cancerStudy.id : "选择对象"
-      }}</a-button>
-
-      <a-button @click="save">保存</a-button>
-      <div v-if="task">
-        {{ task.threadName }}
-        {{ task.taskStatus }}
-        {{ task.name }}
-      </div>
-      <a-form-item v-if="objMap">
-        <a-textarea v-model="objMap" :auto-size="{ minRows: 3, maxRows: 20 }" />
-      </a-form-item>
-      <a-drawer
-        title="癌症研究"
-        placement="right"
-        :closable="false"
-        :visible="visible"
-        width="50%"
-        @close="onClose"
-      >
-        <a-form-model-item ref="Cancer" label="Cancer" prop="cancer">
-          <a-select
-            show-search
-            placeholder="Select a person"
-            option-filter-prop="children"
-            style="width: 200px"
-            @focus="cancerFocus"
-            v-model="form.cancer"
-            @search="cancerSearch"
+      <div v-if="obj">
+        <a-descriptions bordered size="small" :column="2" >
+          <a-descriptions-item label="code">
+            <span v-if="code">{{ code.id }}</span></a-descriptions-item
           >
-            <a-select-option
-              :value="item.enName"
-              v-for="item in cancerList"
-              :key="item.id"
-            >
-              {{ item.name }}
-            </a-select-option>
-          </a-select>
-        </a-form-model-item>
-
-        <a-form-model-item ref="Study" label="Study" prop="study">
-          <a-select
-            show-search
-            placeholder="Select a person"
-            option-filter-prop="children"
-            style="width: 200px"
-            @focus="studyFocus"
-            v-model="form.study"
-            @search="studySearch"
+          <a-descriptions-item label="obj">
+            <a-button @click="openDrawer">{{ obj.id }}</a-button>
+          </a-descriptions-item>
+          <a-descriptions-item
+            v-for="(item, index) in fields"
+            :key="index"
+            :label="item"
           >
-            <a-select-option
-              :value="item.enName"
-              v-for="item in studyList"
-              :key="item.id"
-            >
-              {{ item.name }}
-            </a-select-option>
-          </a-select>
-        </a-form-model-item>
-
-        <a-form-model-item
-          ref="DataOrigin"
-          label="DataOrigin"
-          prop="dataOrigin"
-        >
-          <a-select
-            show-search
-            placeholder="Select a person"
-            option-filter-prop="children"
-            style="width: 200px"
-            @focus="dataOriginFocus"
-            v-model="form.dataOrigin"
-            @search="dataOriginSearch"
-          >
-            <a-select-option
-              :value="item.enName"
-              v-for="item in dataOriginList"
-              :key="item.id"
-            >
-              {{ item.name }}
-            </a-select-option>
-          </a-select>
-        </a-form-model-item>
-
-        <a-form-model-item
-          ref="DataCategory"
-          label="DataCategory"
-          prop="dataCategory"
-        >
-          <a-select
-            show-search
-            placeholder="Select a person"
-            option-filter-prop="children"
-            style="width: 200px"
-            @focus="dataCategoryFocus"
-            v-model="form.dataCategory"
-            @search="dataCategorySearch"
-          >
-            <a-select-option
-              :value="item.enName"
-              v-for="item in dataCategoryList"
-              :key="item.id"
-            >
-              {{ item.name }}
-            </a-select-option>
-          </a-select>
-        </a-form-model-item>
-
-        <a-form-model-item
-          ref="AnalysisSoftware"
-          label="AnalysisSoftware"
-          prop="analysisSoftware"
-        >
-          <a-select
-            show-search
-            placeholder="Select a person"
-            option-filter-prop="children"
-            style="width: 200px"
-            @focus="analysisSoftwareFocus"
-            v-model="form.analysisSoftware"
-            @search="analysisSoftwareSearch"
-          >
-            <a-select-option
-              :value="item.enName"
-              v-for="item in analysisSoftwareList"
-              :key="item.id"
-            >
-              {{ item.name }}
-            </a-select-option>
-          </a-select>
-        </a-form-model-item>
-      </a-drawer>
-
-      <a-card :bodyStyle="{ padding: '16px' }">
-        <a-form layout="vertical">
-          <a-form-item>
+            {{ obj[item] }}
+          </a-descriptions-item>
+          <a-descriptions-item label="option" span="2">
+            <span v-if="!codeViewStatue">
+              <a-button @click="save">保存</a-button>
+              <a-button @click="runTask">运行</a-button>
+              <a-button @click="shutdownTask">结束</a-button>
+            </span>
+            <span v-if="task">
+              <a-button
+                v-if="codeViewStatue"
+                @click="
+                  () => {
+                    this.content = this.sourceCode;
+                    codeViewStatue = false;
+                  }
+                "
+                >source code</a-button
+              >
+              <a-button
+                v-if="!codeViewStatue"
+                @click="
+                  () => {
+                    this.content = this.task.generateCode;
+                    codeViewStatue = true;
+                  }
+                "
+                >generate code</a-button
+              >
+            </span>
+          </a-descriptions-item>
+          <a-descriptions-item label="edit" :span="2">
             <codemirror
               v-model="content"
               :options="codemirrorOptions"
             ></codemirror>
-          </a-form-item>
-          <a-form-item>
+          </a-descriptions-item>
+          <a-descriptions-item label="log" :span="2">
             <a-textarea
               v-model="Log"
               placeholder="run log"
               :auto-size="{ minRows: 3, maxRows: 20 }"
             />
-          </a-form-item>
-          <a-form-item v-if="task">
-            <a-textarea
-              v-model="task.sourceCode"
-              placeholder="run log"
-              :auto-size="{ minRows: 3, maxRows: 20 }"
-            />
-          </a-form-item>
-          <!-- <a-form-item>
-            <ReactiveButton
-              @click="handlerSaveContent"
-              @callback="saveErrored = false"
-              :loading="saving"
-              :errored="saveErrored"
-              :disabled="buttonDisabled"
-              text="保存"
-              loadedText="保存成功"
-              erroredText="保存失败"
-            ></ReactiveButton>
-          </a-form-item> -->
-        </a-form>
-      </a-card>
+          </a-descriptions-item>
+          <a-descriptions-item label="picture" :span="2">
+            <div
+              class="svgJson"
+              v-for="(item, index) in svgJson"
+              :key="index"
+              v-html="item"
+            ></div>
+          </a-descriptions-item>
+        </a-descriptions>
+      </div>
     </a-col>
   </a-row>
 </template>
@@ -247,48 +169,24 @@ import { codemirror } from "vue-codemirror-lite";
 import CancerStudyAPi from "@/api/CancerStudy.js";
 import TaskApi from "@/api/task.js";
 
-import CancerApi from "@/api/cancer.js";
-import StudyAPi from "@/api/Study.js";
-import DataOriginApi from "@/api/DataOrigin.js";
-import DataCategoryApi from "@/api/data_category.js";
-import AnalysisSoftwareApi from "@/api/analysis_software.js";
-
-const columns = [
+const objsColumns = [
   {
-    title: "Action",
+    title: "action",
     key: "action",
     scopedSlots: { customRender: "action" },
   },
-  // {
-  //   title: "癌症名称",
-  //   dataIndex: "cancer.name",
-  //   // scopedSlots: { customRender: "cancer" }
-  // },
+  {
+    title: "gse",
+    dataIndex: "gse",
+  },
+];
 
-  // {
-  //   title: "研究名称",
-  //   dataIndex: "study.name",
-  // },
-  // {
-  //   title: "数据来源",
-  //   dataIndex: "dataOrigin.name",
-  // },
-  // {
-  //   title: "数据分类",
-  //   dataIndex: "dataCategory.name",
-  // },
-  // {
-  //   title: "处理流程",
-  //   dataIndex: "analysisSoftware.name",
-  // },
-  // {
-  //   title: "基因注释",
-  //   dataIndex: "analysisSoftware.annotationId",
-  // },
-  // {
-  //   title: "GSE",
-  //   dataIndex: "gse",
-  // },
+const codeColumns = [
+  {
+    title: "action",
+    key: "action",
+    scopedSlots: { customRender: "action" },
+  },
 ];
 export default {
   components: {
@@ -303,23 +201,21 @@ export default {
     return {
       codes: [],
       code: undefined,
-      content: "",
+      objs: [],
+      obj: undefined,
+      sourceCode: "",
+      codeViewStatue: false,
+      content: this.sourceCode,
       visible: false,
       cancerStudy: undefined,
       Log: "",
       task: undefined,
-      sourceCode: undefined,
       codemirrorOptions: {
         tabSize: 4,
         mode: "text/html",
         lineNumbers: true,
         line: true,
       },
-      cancerList: [],
-      studyList: [],
-      dataOriginList: [],
-      dataCategoryList: [],
-      analysisSoftwareList: [],
       form: {
         cancer: undefined,
         study: undefined,
@@ -327,28 +223,43 @@ export default {
         dataCategory: undefined,
         analysisSoftware: undefined,
       },
-      columns,
+
+      objsColumns,
+      codeColumns,
       loading: false,
       cancerStudys: [],
-      pagination: {
+      objsPagination: {
         page: 1,
         size: 5,
         sort: null,
         keyword: null,
       },
-      queryParam: {
+      objsQueryParam: {
         page: 0,
         size: 10,
         sort: null,
         keyword: null,
-        categoryId: null,
-        status: null,
       },
+      codePagination: {
+        page: 1,
+        size: 5,
+        sort: null,
+        keyword: null,
+      },
+      codeQueryParam: {
+        page: 0,
+        size: 10,
+        sort: null,
+        keyword: null,
+      },
+
       objMap: undefined,
+      svgJson: [],
+      fields: [],
     };
   },
   mounted() {
-    this.loadFiles();
+    this.loadCode();
     if (this.$websock) {
       this.$websock.onmessage = (e) => {
         let data = JSON.parse(e.data);
@@ -363,11 +274,20 @@ export default {
               clearInterval(setIntervaStatus);
             }, 2000);
           }
-          this.$message.info(data.data);
-          this.loadTask(this.task.id);
-          this.loadCancerStudy();
+          // console.log(data);
+          this.$message.info(data.message);
+          // this.loadTask(this.task.id);
+          // this.loadCancerStudy();
           // console.log("ddd")
         }
+        if (data.data) {
+          let svgJson = JSON.parse(data.data.svgJson);
+          // console.log(svgJson);
+          this.svgJson = svgJson;
+          this.task = data.data;
+          this.findbyId(this.code.crudType, data.data.objId);
+        }
+
         // if (this.task) {
         //
         // }
@@ -380,34 +300,81 @@ export default {
     }
   },
   methods: {
-    loadFiles() {
-      // CodeAPi.listAll
-      CodeAPi.listAll().then((resp) => {
-        this.codes = resp.data.data;
-        // console.log(this.files);
+    loadCode() {
+      this.codeQueryParam.page = this.codePagination.page - 1;
+      this.codeQueryParam.size = this.codePagination.size;
+      this.codeQueryParam.sort = this.codePagination.sort;
+      CodeAPi.page(this.codeQueryParam).then((resp) => {
+        this.codes = resp.data.data.content;
+        this.codePagination.total = parseInt(resp.data.data.totalElements);
       });
     },
-    handleSelectFile(code) {
-      this.code = code;
-      // console.log(code);
-      this.queryParam.cancerId = code.cancerId;
-      this.queryParam.studyId = code.studyId;
-      this.queryParam.dataOriginId = code.dataOriginId;
-      this.queryParam.dataCategoryId = code.dataCategoryId;
-      this.queryParam.analysisSoftwareId = code.analysisSoftwareId;
-      // this.queryParam.parentId = -1;
+    codeTableChange(page, pageSize) {
+      this.codePagination.page = page;
+      this.codePagination.size = pageSize;
+      this.loadCode();
+    },
+    loadObjs(crudType) {
+      console.log(crudType)
+      this.objsQueryParam.page = this.objsPagination.page - 1;
+      this.objsQueryParam.size = this.objsPagination.size;
+      this.objsQueryParam.sort = this.objsPagination.sort;
+      CancerStudyAPi.page(crudType, this.objsQueryParam).then((resp) => {
+        // console.log(resp);
+        this.objs = resp.data.data.content;
+        // console.log(this.objs);
+        this.objsPagination.total = parseInt(resp.data.data.totalElements);
+        this.loading = false;
+      });
+    },
+    loadLog(id) {
+      TaskApi.log({ taskId: id }).then((resp) => {
+        // console.log(resp.data.data);
+        this.Log = resp.data.data;
+      });
+    },
+    objsTableChange(page, pageSize) {
+      this.objsPagination.page = page;
+      this.objsPagination.size = pageSize;
+      this.loadObjs(this.code.crudType);
+      // this.loadCancerStudy();
+    },
 
-      this.loadCancerStudy();
-      CodeAPi.getContent(code.absolutePath).then((resp) => {
-        this.content = resp.data.data;
+    loadFields(CRUD) {
+      CancerStudyAPi.getFields(CRUD).then((resp) => {
+        // console.log(resp);
+        this.fields = resp.data.data;
       });
     },
-    // cancerStudyFocus() {
-    //   this.loadCancerStudy();
-    // },
-    // cancerStudySearch(input) {
-    //   this.loadCancerStudy({ keyword: input });
-    // },
+    codeSelect(code) {
+      this.code = code;
+      // console.log(code)
+      this.obj = undefined;
+      this.task = undefined;
+      this.Log = "";
+      this.svgJson = [];
+      CodeAPi.getContent(code.absolutePath).then((resp) => {
+        this.sourceCode = resp.data.data;
+        this.content = this.sourceCode;
+      });
+      this.loadObjs(code.crudType);
+      this.loadFields(code.crudType);
+      this.visible = true;
+    },
+    objSelect(id) {
+      // this.obj = obj;
+      this.task = undefined;
+      this.visible = false;
+      this.Log = "";
+      this.svgJson = [];
+      this.findbyId(this.code.crudType, id);
+    },
+    findbyId(CRUD, id) {
+      CancerStudyAPi.findById(CRUD, { id: id }).then((resp) => {
+        // console.log(resp);
+        this.obj = resp.data.data;
+      });
+    },
     save() {
       CodeAPi.saveContent({
         path: this.code.absolutePath,
@@ -419,18 +386,18 @@ export default {
       });
     },
     onClose() {
-      this.visible = false;
+      if (this.obj) {
+        this.visible = false;
+      } else {
+        this.code = undefined;
+        this.visible = false;
+      }
     },
     openDrawer() {
       this.visible = true;
       // this.loadCancerStudy();
     },
-    loadLog(id) {
-      TaskApi.log({ taskId: id }).then((resp) => {
-        // console.log(resp.data.data);
-        this.Log = resp.data.data;
-      });
-    },
+
     showLog(data) {
       // this.visible = true;
       let loadLogFun = this.loadLog;
@@ -465,28 +432,23 @@ export default {
       });
     },
     runTask() {
-      if (this.cancerStudy && this.code) {
-        // // console.log(this.cancerStudy);
-        if (this.cancerStudy.codeIsSuccess) {
-          let runOneTask = this.runOneTask;
-          this.$confirm({
-            title: "消息",
-            content: "该对象已经成功运行，需要再次运行吗？",
-            onOk() {
-              runOneTask();
-            },
-            onCancel() {},
-          });
-        } else {
-          this.runOneTask();
-        }
-        // this.runOneTask()
-      } else {
-        this.$notification["error"]({
-          message: "cancerStudy and code not null!",
+      if (this.obj && this.code) {
+        CancerStudyAPi.addTask("GSE", {
+          id: this.obj.id,
+          codeId: this.code.id,
+        }).then((resp) => {
+          // console.log(resp)
+          // this.loadData();
+          this.showLog(resp.data.data);
+          // this.loadTask(objId);
+          // let svgJson = JSON.parse(resp.data.data.svgJson);
+          // // console.log(svgJson)
+          // this.svgJson=svgJson;
+          this.$message.success(resp.data.data.name + "创建成功");
         });
       }
     },
+
     shutdownTask() {
       TaskApi.shutdown(this.task.id).then((resp) => {
         // this.loadData();
@@ -494,124 +456,13 @@ export default {
         this.$message.success(resp.data.data.name + "已经结束");
       });
     },
-    loadCancer(param) {
-      CancerApi.page(param).then((resp) => {
-        let data = resp.data.data.content;
-        this.cancerList = data;
-      });
-    },
-    loadStudy(param) {
-      StudyAPi.page(param).then((resp) => {
-        let data = resp.data.data.content;
-        this.studyList = data;
-      });
-    },
-    loadDataOrigin(param) {
-      DataOriginApi.page(param).then((resp) => {
-        let data = resp.data.data.content;
-        this.dataOriginList = data;
-      });
-    },
-    loadDataCategory(param) {
-      DataCategoryApi.page(param).then((resp) => {
-        let data = resp.data.data.content;
-        this.dataCategoryList = data;
-      });
-    },
-    loadAnalysisSoftware(param) {
-      AnalysisSoftwareApi.page(param).then((resp) => {
-        let data = resp.data.data.content;
-        this.analysisSoftwareList = data;
-      });
-    },
-    cancerFocus() {
-      this.loadCancer();
-    },
-    cancerSearch(input) {
-      this.loadCancer({ keyword: input });
-    },
-
-    studyFocus() {
-      this.loadStudy();
-    },
-    studySearch(input) {
-      this.loadStudy({ keyword: input });
-    },
-
-    dataOriginFocus() {
-      this.loadDataOrigin();
-    },
-    dataOriginSearch(input) {
-      this.loadDataOrigin({ keyword: input });
-    },
-
-    dataCategoryFocus() {
-      this.loadDataCategory();
-    },
-    dataCategorySearch(input) {
-      this.loadDataCategory({ keyword: input });
-    },
-
-    analysisSoftwareFocus() {
-      this.loadAnalysisSoftware();
-    },
-    analysisSoftwareSearch(input) {
-      this.loadAnalysisSoftware({ keyword: input });
-    },
-    handleTableChange(page, pageSize) {
-      this.pagination.page = page;
-      this.pagination.size = pageSize;
-      this.loadCancerStudy();
-    },
-    loadCancerStudy() {
-      this.queryParam.page = this.pagination.page - 1;
-      this.queryParam.size = this.pagination.size;
-      this.queryParam.sort = this.pagination.sort;
-      this.queryParam.keyword = this.pagination.keyword;
-
-      // const cancerId = this.$route.query.cancerId;
-      // const studyId = this.$route.query.studyId;
-      // const dataOriginId = this.$route.query.dataOriginId;
-      // const dataCategoryId = this.$route.query.dataCategoryId;
-      // const analysisSoftwareId = this.$route.query.analysisSoftwareId;
-
-      // this.queryParam.cancerId = cancerId;
-      // this.queryParam.studyId = studyId;
-      // this.queryParam.dataOriginId = dataOriginId;
-      // this.queryParam.dataCategoryId = dataCategoryId;
-      // this.queryParam.analysisSoftwareId = analysisSoftwareId;
-      // this.queryParam.parentId = -1;
-
-      this.loading = true;
-      CancerStudyAPi.pageByCodeId(this.code.id, this.queryParam, true).then(
-        (resp) => {
-          this.cancerStudys = resp.data.data.content;
-          // console.log(this.cancerStudys);
-          if (this.cancerStudys.length != 0) {
-            //  console.log(this.cancerStudys[0])
-            this.addToEdit(this.cancerStudys[0]);
-          }
-          this.pagination.total = parseInt(resp.data.data.totalElements);
-          this.loading = false;
-        }
-      );
-    },
-    addToEdit(data) {
-      // console.log(data);
-      this.cancerStudy = data;
-      TaskApi.getObjMap(data.id).then((resp) => {
-        this.objMap = JSON.stringify(resp.data.data);
-        this.$notification["success"]({
-          message: "选择对象" + resp.data.data.id,
-        });
-      });
-    },
 
     onSearch(value) {
-      this.pagination.page=1
+      this.pagination.page = 1;
       this.pagination.keyword = value;
       this.loadCancerStudy();
-    },  clearSearch() {
+    },
+    clearSearch() {
       this.pagination.keyword = null;
       this.loadData();
     },

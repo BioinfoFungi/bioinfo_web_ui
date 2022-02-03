@@ -61,3 +61,19 @@ cat("$[1]analysisSoftware:","metadata","\n")
 #cat("$update:true","\n")
 if(exists("gse_download"))cat(paste0("gse_download:",gse_download,"\n"),append=T, file="/tmp/bioinfo-4231101742447146590.output")
 if(exists("metadata"))cat(paste0("metadata:",metadata,"\n"),append=T, file="/tmp/bioinfo-4231101742447146590.output")
+
+
+
+hgd_inline
+
+plot_svg <- function(code){
+    pic <- hgd_inline(code)
+    cat(paste0("\n---start---\n",pic,"\n---end---\n"),file="a.html",append=T)
+}
+plot_svg({plot(0)})
+
+
+library(httpgd)
+pic <- hgd_inline({plot.new();plot(0)})
+
+cat(paste0("\n---start---\n",pic,"\n---end---\n"),file="a.html",append=T)

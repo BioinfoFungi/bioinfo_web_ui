@@ -102,6 +102,21 @@ const routes = [
                 name: 'cancer_cancer_detial',
                 meta: { title: '癌症分析', icon: 'dashboard', parentPath: "/cancer", display: false },
                 component: () => import(/* webpackChunkName: "cancer_detial" */ '../views/cancer/CancerDetial.vue'),
+              },{
+                path: '/cancer/GSE',
+                name: 'cancer_gse',
+                meta: { title: 'GSE', icon: 'dashboard', parentPath: "/cancer", display: true },
+                component: () => import(/* webpackChunkName: "cancer_gse" */ '../views/cancer/GSE.vue'),
+              },{
+                path: '/cancer/GPL',
+                name: 'cancer_gpl',
+                meta: { title: 'GPL', icon: 'dashboard', parentPath: "/cancer", display: true },
+                component: () => import(/* webpackChunkName: "cancer_gpl" */ '../views/cancer/GPL.vue'),
+              },{
+                path: '/cancer/GSM',
+                name: 'cancer_gsm',
+                meta: { title: 'GSM', icon: 'dashboard', parentPath: "/cancer", display: true },
+                component: () => import(/* webpackChunkName: "cancer_gsm" */ '../views/cancer/GSM.vue'),
               }
             ]
           }, {

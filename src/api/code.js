@@ -56,9 +56,9 @@ CodeApi.findById = (id,params) => {
         method: 'get'
     })
 }
-CodeApi.listAll = () => {
+CodeApi.listByCrudType = (CRUD) => {
     return service({
-        url: `${baseUrl}/listAll`,
+        url: `${baseUrl}/${CRUD}/listAll`,
         method: 'get'
     })
 }

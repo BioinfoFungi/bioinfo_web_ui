@@ -5,49 +5,30 @@
       placement="right"
       :closable="false"
       :visible="visible"
-      width="50%"
+      width="80%"
       @close="onClose"
     >
-      <div v-if="CancerStudyDetial">
-        <a-form-item label="description">
-          <a-input :value="CancerStudyDetial.description" />
-        </a-form-item>
-        <a-form-item label="param">
-          <a-input :value="CancerStudyDetial.param" />
-        </a-form-item>
-        <a-form-item label="createDate">
-          <a-input :value="CancerStudyDetial.createDate" />
-        </a-form-item>
-        <a-form-item label="fileName">
-          <a-input :value="CancerStudyDetial.fileName" />
-        </a-form-item>
-        <a-form-item label="fileType">
-          <a-input :value="CancerStudyDetial.fileType" />
-        </a-form-item>
-        <a-form-item label="location">
-          <a-input :value="CancerStudyDetial.location" />
-        </a-form-item>
-        <a-form-item label="uuid">
-          <a-input :value="CancerStudyDetial.uuid" />
-        </a-form-item>
-        <a-form-item label="原始数据">
-          <a-input :value="CancerStudyDetial.absolutePath" />
-        </a-form-item>
-        <a
-          href="javascript:;"
-          @click="downlaod(CancerStudyDetial.relativePath)"
-          v-if="CancerStudyDetial.status"
-          >下载</a
+      <div v-if="obj">
+        <a-descriptions
+          title="Data"
+          bordered
+          size="small"
+          :column="2"
         >
-
-        <a-divider />
-
+          <a-descriptions-item
+            v-for="(item, index) in fields"
+            :key="index"
+            :label="item"
+          >
+            {{ obj[item] }}
+          </a-descriptions-item>
+        </a-descriptions>
         <div>
           <a-button
             type="link"
             v-for="item in codeList"
             :key="item.id"
-            @click="runTask(CancerStudyDetial.id, item.id)"
+            @click="addTask(obj.id, item.id)"
           >
             {{ item.name }}
           </a-button>
@@ -62,9 +43,7 @@
             :row-key="(record) => record.id"
           >
             <span slot="action" slot-scope="text, record">
-              <a href="javascript:;" @click="runTaskById(record.id)"
-                >运行任务</a
-              >
+              <a href="javascript:;" @click="runTask(record.id)">运行任务</a>
               <a-divider type="vertical" />
               <a href="javascript:;" @click="showLog(record)">LOG</a>
             </span>
@@ -76,8 +55,13 @@
           placeholder="run log"
           :auto-size="{ minRows: 3, maxRows: 20 }"
         />
-
-        <a-button @click="moreInfo(CancerStudyDetial.id)">查看更多</a-button>
+        <div
+          class="svgJson"
+          v-for="(item, index) in svgJson"
+          :key="index"
+          v-html="item"
+        ></div>
+        <a-button @click="moreInfo(obj.id)">查看更多</a-button>
       </div>
     </a-drawer>
     <a-button @click="createTSVFile">导出CSV</a-button>
@@ -119,7 +103,7 @@
           >原始数据</a
         >
         <a-divider type="vertical" />
-        <a href="javascript:;" @click="showDrawer(record)">更多</a>
+        <a href="javascript:;" @click="showDrawer(record.id)">更多</a>
         <a-divider type="vertical" />
         <a href="javascript:;" @click="updateCancerStudy(record.id)">编辑</a>
         <a-divider type="vertical" />
@@ -166,12 +150,16 @@ const task_columns = [
     dataIndex: "taskStatus",
   },
   {
-    title: "name",
-    dataIndex: "name",
+    title: "codeId",
+    dataIndex: "codeId",
   },
   {
-    title: "isSuccess",
-    dataIndex: "isSuccess",
+    title: "objId",
+    dataIndex: "objId",
+  },
+  {
+    title: "name",
+    dataIndex: "name",
   },
   {
     title: "Action",
@@ -188,6 +176,10 @@ const columns = [
     dataIndex: "id",
     scopedSlots: { customRender: "id_link" },
     fixed: "left",
+  },
+  {
+    title: "GSE",
+    dataIndex: "gse",
   },
   {
     title: "癌症名称",
@@ -215,10 +207,7 @@ const columns = [
     title: "基因注释",
     dataIndex: "annotation",
   },
-  {
-    title: "GSE",
-    dataIndex: "gse",
-  },
+
   {
     title: "parentId",
     dataIndex: "parentId",
@@ -260,17 +249,19 @@ export default {
       },
       data: [],
       tasks: [],
+      fields: [],
       loading: false,
       columns,
       task_columns,
       cancerId: null,
       visible: false,
-      CancerStudyDetial: undefined,
+      obj: undefined,
       codeList: [],
       taskList: [],
       Log: "",
       setIntervaStatus: undefined,
       currentLogName: undefined,
+      svgJson: [],
     };
   },
   //   beforeRouteEnter(to, from, next) {
@@ -286,14 +277,23 @@ export default {
   //   },
   mounted() {
     this.loadData();
+    this.loadFields();
     if (this.$websock) {
-      this.$websock.onmessage = () => {
-        // let data = JSON.parse(e.data);
-        // console.log(data)
-        this.loadData();
-        if (this.CancerStudyDetial) {
-          this.loadTask(this.CancerStudyDetial.id);
+      this.$websock.onmessage = (e) => {
+        let data = JSON.parse(e.data);
+        if (data.msgType == "NOTIFY") {
+          this.$message.success(data.message);
         }
+        // this.loadData();
+        if (this.obj) {
+          this.loadTask(data.data.objId);
+        }
+        this.findbyId(data.data.objId);
+
+        // console.log(data)
+        let svgJson = JSON.parse(data.data.svgJson);
+        // console.log(svgJson)
+        this.svgJson = svgJson;
       };
     }
   },
@@ -323,12 +323,24 @@ export default {
       // this.queryParam.parentId = -1;
 
       this.loading = true;
-      CancerStudyAPi.page(this.queryParam, true).then((resp) => {
+      CancerStudyAPi.page("GSE", this.queryParam, true).then((resp) => {
         // console.log(resp);
 
         this.data = resp.data.data.content;
         this.pagination.total = parseInt(resp.data.data.totalElements);
         this.loading = false;
+      });
+    },
+    loadFields() {
+      CancerStudyAPi.getFields("GSE").then((resp) => {
+        console.log(resp);
+        this.fields = resp.data.data;
+      });
+    },
+    findbyId(id) {
+      CancerStudyAPi.findById("GSE", { id: id }).then((resp) => {
+        // console.log(resp);
+        this.obj = resp.data.data;
       });
     },
     updateProject(id) {
@@ -369,29 +381,32 @@ export default {
       });
     },
     loadTask(id) {
-      TaskApi.page({ objId: id, taskType: "CANCER_STUDY" }).then((resp) => {
-        this.taskList = resp.data.data.content;
+      TaskApi.listAll("GSE", { id: id }).then((resp) => {
+        this.taskList = resp.data.data;
+        // console.log(resp)
       });
     },
-    loadCode(id) {
-      CodeApi.findByCan(id).then((resp) => {
+    loadCode() {
+      CodeApi.listByCrudType("GSE").then((resp) => {
         // console.log(resp);
         this.codeList = resp.data.data;
       });
     },
-    showDrawer(data) {
+    showDrawer(id) {
       this.visible = true;
-      this.CancerStudyDetial = data;
-      this.loadCode(data.id);
-      this.loadTask(data.id);
+      this.findbyId(id);
+      this.loadCode();
+      this.loadTask(id);
     },
     onClose() {
       this.visible = false;
-      this.CancerStudyDetial = undefined;
+      this.obj = undefined;
       this.Log = "";
       if (this.setIntervaStatus) {
         clearInterval(this.setIntervaStatus);
       }
+      this.svgJson = [];
+      this.loadData();
     },
     checkFileExist(id) {
       let loadData = this.loadData;
@@ -434,29 +449,51 @@ export default {
         loadLogFun(data.id);
       }, 1000);
     },
-    runTaskById(id) {
-      TaskApi.runOne(id).then((resp) => {
-        this.loadData();
-        this.$message.success(resp.data.data.name + "运行成功");
-        this.loadTask(this.CancerStudyDetial.id);
+    runTask(id) {
+      CancerStudyAPi.runTask("GSE", { id: id }).then((resp) => {
+        // console.log(resp)/
+
         this.showLog(resp.data.data);
+        this.loadTask(resp.data.data.objId);
+        // let svgJson = JSON.parse(resp.data.data.svgJson);
+        // // console.log(svgJson)
+        // this.svgJson=svgJson;
+        this.$message.success(resp.data.data.name + "运行！ ");
       });
+      // TaskApi.runOne(id).then((resp) => {
+      //   this.loadData();
+      //   this.$message.success(resp.data.data.name + "运行成功");
+      //   this.loadTask(this.obj.id);
+      //   this.showLog(resp.data.data);
+      // });
     },
-    runTask(cancerStudyId, codeId) {
+    addTask(cancerStudyId, codeId) {
       // console.log(cancerStudyId, codeId);
-      TaskApi.run({
-        objId: cancerStudyId,
-        codeId: codeId,
-        taskType: "CANCER_STUDY",
-      }).then((resp) => {
-        this.loadTask(cancerStudyId);
-        this.$message.success(resp.data.data.name + "创建成功");
-        this.showLog(resp.data.data);
-        this.loadCode(cancerStudyId);
-        //  this.$notification["success"]({
-        //     message: "运行成功!" + resp.data.message,
-        //   });
-      });
+      CancerStudyAPi.addTask("GSE", { id: cancerStudyId, codeId: codeId }).then(
+        (resp) => {
+          // console.log(resp)
+          // this.loadData();
+          this.showLog(resp.data.data);
+          this.loadTask(cancerStudyId);
+          // let svgJson = JSON.parse(resp.data.data.svgJson);
+          // // console.log(svgJson)
+          // this.svgJson=svgJson;
+          this.$message.success(resp.data.data.name + "创建成功");
+        }
+      );
+      // TaskApi.run({
+      //   objId: cancerStudyId,
+      //   codeId: codeId,
+      //   taskType: "CANCER_STUDY",
+      // }).then((resp) => {
+      //   this.loadTask(cancerStudyId);
+      //   this.$message.success(resp.data.data.name + "创建成功");
+      //   this.showLog(resp.data.data);
+      //   this.loadCode(cancerStudyId);
+      //   //  this.$notification["success"]({
+      //   //     message: "运行成功!" + resp.data.message,
+      //   //   });
+      // });
     },
     downlaod(path) {
       let download_url = JSON.parse(localStorage.getItem("global_config"));
@@ -498,7 +535,10 @@ export default {
       }
     },
     initTSV(isEmpty) {
-      CancerStudyAPi.init({ isEmpty: isEmpty ,path:"/home/wangyang/Downloads/series.tsv"}).then((resp) => {
+      CancerStudyAPi.init("GSE", {
+        isEmpty: isEmpty,
+        path: "/home/wangyang/Downloads/series.tsv",
+      }).then((resp) => {
         // console.log(resp)
         this.loadData();
         this.$notification["success"]({
@@ -509,3 +549,9 @@ export default {
   },
 };
 </script>
+
+<style>
+.svgJson svg {
+  width: 100%;
+}
+</style>

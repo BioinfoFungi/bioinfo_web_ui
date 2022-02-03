@@ -3,9 +3,9 @@ const baseUrl = '/api/cancer_study'
 
 const CancerStudyApi = {}
 
-CancerStudyApi.page = (params,more=false) =>{
+CancerStudyApi.page = (CRUD,params,more=false) =>{
     return service({
-        url: `${baseUrl}?more=${more}`,
+        url: `${baseUrl}/${CRUD}?more=${more}`,
         params: params,
         method: 'get'
     })
@@ -65,9 +65,9 @@ CancerStudyApi.update = (id,params) => {
 }
 
 
-CancerStudyApi.init = (param) => {
+CancerStudyApi.init = (CRUD,param) => {
     return service({
-        url: `${baseUrl}/init`,
+        url: `${baseUrl}/init/${CRUD}`,
         params:param,
         method: 'get',
     })
@@ -81,7 +81,34 @@ CancerStudyApi.findById = (id,params) => {
     })
 }
 
+CancerStudyApi.addTask = (CRUD,params) => {
+    return service({
+        url: `${baseUrl}/addTask/${CRUD}`,
+        params:params,
+        method: 'get'
+    })
+}
 
+CancerStudyApi.runTask = (CRUD,params) => {
+    return service({
+        url: `${baseUrl}/runTask/${CRUD}`,
+        params:params,
+        method: 'get'
+    })
+}
+CancerStudyApi.findById = (CRUD,params) => {
+    return service({
+        url: `${baseUrl}/${CRUD}/findById`,
+        params:params,
+        method: 'get'
+    })
+}
+CancerStudyApi.getFields = (CRUD) => {
+    return service({
+        url: `${baseUrl}/${CRUD}/getFields`,
+        method: 'get'
+    })
+}
 CancerStudyApi.createTSVFile = () => {
     return service({
         url: `${baseUrl}/createTSVFile`,
@@ -89,4 +116,5 @@ CancerStudyApi.createTSVFile = () => {
         responseType: 'blob'
     })
 }
+
 export default CancerStudyApi

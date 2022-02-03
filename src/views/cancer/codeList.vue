@@ -132,8 +132,8 @@ const columns = [
     dataIndex: "codeType",
   },
   {
-    title: "任务类型",
-    dataIndex: "taskType",
+    title: "crudType",
+    dataIndex: "crudType",
   },
   {
     title: "大小",
@@ -225,7 +225,7 @@ export default {
     },
     updateCode(id) {
       this.$router.push({
-        name: "update_code",
+        name: "code_add",
         query: { codeId: id },
       });
     },

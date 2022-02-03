@@ -188,6 +188,9 @@ const columns = [
     dataIndex: "id",
     scopedSlots: { customRender: "id_link" },
     fixed: "left",
+  },{
+    title: "GPL",
+    dataIndex: "gpl",
   },
   {
     title: "癌症名称",
@@ -215,10 +218,7 @@ const columns = [
     title: "基因注释",
     dataIndex: "annotation",
   },
-  {
-    title: "GSE",
-    dataIndex: "gse",
-  },
+  
   {
     title: "parentId",
     dataIndex: "parentId",
@@ -323,7 +323,7 @@ export default {
       // this.queryParam.parentId = -1;
 
       this.loading = true;
-      CancerStudyAPi.page(this.queryParam, true).then((resp) => {
+      CancerStudyAPi.page("GPL",this.queryParam, true).then((resp) => {
         // console.log(resp);
 
         this.data = resp.data.data.content;
@@ -498,7 +498,7 @@ export default {
       }
     },
     initTSV(isEmpty) {
-      CancerStudyAPi.init({ isEmpty: isEmpty ,path:"/home/wangyang/Downloads/series.tsv"}).then((resp) => {
+      CancerStudyAPi.init("GPL",{ isEmpty: isEmpty ,path:"/home/wangyang/Downloads/platform.tsv"}).then((resp) => {
         // console.log(resp)
         this.loadData();
         this.$notification["success"]({
