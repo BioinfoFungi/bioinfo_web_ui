@@ -264,8 +264,8 @@ export default {
     this.loadData();
   },
   watch: {
-    checkedKeys(val) {
-      console.log("onCheck", val);
+    checkedKeys() {
+      // console.log("onCheck", val);
     },
   },
   methods: {

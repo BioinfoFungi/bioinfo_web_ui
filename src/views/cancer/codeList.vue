@@ -1,101 +1,123 @@
 <template>
   <div>
-    <a-drawer
-      title="癌症研究"
-      placement="right"
-      :closable="false"
-      :visible="visible"
-      width="520"
-      @close="onClose"
+    <objForm
+      ref="objForm"
+      :CRUD="CRUD"
+      @loadData="loadData"
+      :isUpdate="isUpdate"
+      v-slot="{ form }"
     >
-      <div v-if="CancerStudyDetial">
-        <a-form-model-item label="codeOutput">
-          <a-input :value="CancerStudyDetial.codeOutput" />
-        </a-form-model-item>
-        <a-form-item label="cancer">
-          <a-input :value="JSON.stringify(CancerStudyDetial.cancer)" />
-        </a-form-item>
-        <a-form-item label="dataCategory">
-          <a-input :value="JSON.stringify(CancerStudyDetial.dataCategory)" />
-        </a-form-item>
-        <a-form-item label="dataOrigin">
-          <a-input :value="JSON.stringify(CancerStudyDetial.dataOrigin)" />
-        </a-form-item>
-        <a-form-item label="study">
-          <a-input :value="JSON.stringify(CancerStudyDetial.study)" />
-        </a-form-item>
-        <a-form-item label="analysisSoftware">
-          <a-input
-            :value="JSON.stringify(CancerStudyDetial.analysisSoftware)"
-          />
-        </a-form-item>
-        <a-form-item label="fileName">
-          <a-input :value="CancerStudyDetial.fileName" />
-        </a-form-item>
-        <a-form-item label="fileType">
-          <a-input :value="CancerStudyDetial.fileType" />
-        </a-form-item>
-        <a-form-item label="absolutePath">
-          <a-input :value="CancerStudyDetial.absolutePath" />
-        </a-form-item>
-        <a-form-item label="relativePath">
-          <a-input :value="CancerStudyDetial.relativePath" />
-        </a-form-item>
-        <a-form-item label="location">
-          <a-input :value="CancerStudyDetial.location" />
-        </a-form-item>
-        <a-form-item label="uuid">
-          <a-input :value="CancerStudyDetial.uuid" />
-        </a-form-item>
-        <a-button @click="showLog(CancerStudyDetial.id)">查看日志</a-button>
-        <a-button>重新下载</a-button>
-      </div>
-    </a-drawer>
+      <a-form-model-item ref="name" label="name" prop="name">
+        <a-input v-model="form.name" />
+      </a-form-model-item>
 
-    <a-button @click="createTSVFile">导出CSV</a-button>
-    <a-button @click="initTSV(false)">导入CSV</a-button>
-    <a-button @click="initTSV(true)">清空导入CSV</a-button>
+      <a-form-model-item
+        ref="prerequisites"
+        label="prerequisites"
+        prop="prerequisites"
+      >
+        <a-input v-model="form.prerequisites" />
+      </a-form-model-item>
+
+      <a-form-model-item ref="crudType" label="crudType" prop="crudType">
+        <a-select
+          show-search
+          placeholder="Select a person"
+          option-filter-prop="children"
+          style="width: 200px"
+          v-model="form.crudType"
+        >
+          <a-select-option
+            :value="item.value"
+            v-for="item in crudType"
+            :key="item.key"
+          >
+            {{ item.value }}
+          </a-select-option>
+        </a-select>
+      </a-form-model-item>
+
+      <a-form-model-item ref="codeType" label="codeType" prop="codeType">
+        <a-select
+          show-search
+          placeholder="Select a person"
+          option-filter-prop="children"
+          style="width: 200px"
+          v-model="form.codeType"
+        >
+          <a-select-option
+            :value="item.value"
+            v-for="item in codeType"
+            :key="item.key"
+          >
+            {{ item.value }}
+          </a-select-option>
+        </a-select>
+      </a-form-model-item>
+      <a-switch default-checked @change="()=>{isCreateFile=!isCreateFile}" />
+
+      <a-form-model-item ref="fileName" label="fileName" prop="fileName">
+         <a-input v-if="isCreateFile" v-model="form.fileName" />
+        <a-select
+          v-if="!isCreateFile"
+          show-search
+          placeholder="Select a person"
+          option-filter-prop="children"
+          v-model="form.fileName"
+        >
+          <a-select-option
+            :value="item.fileName"
+            v-for="item in files"
+            :key="item.fileName"
+          >
+            {{ item.fileName }}
+          </a-select-option>
+        </a-select>
+      </a-form-model-item>
+    </objForm>
+    <taskDrawer ref="taskDrawer" :CRUD="CRUD"> </taskDrawer>
+
+    <div>
+      <a-button @click="addForm">添加</a-button>
+      <a-button @click="createTSVFile">导出CSV</a-button>
+      <a-button @click="initTSV(false)">导入CSV</a-button>
+      <a-button @click="initTSV(true)">清空导入CSV</a-button>
+      <a-input-search
+        placeholder="input search text"
+        style="width: 200px"
+        @search="onSearch"
+      />
+    </div>
     <a-table
       :columns="columns"
       :row-key="(record) => record.id"
       :data-source="data"
       :pagination="false"
       :loading="loading"
-      :scroll="{ x: 1500 }"
       @change="handleTableChange"
     >
-      <!-- <div slot="name" slot-scope="name,record">
-        <a href="javascript:;" @click="detial(record.id)">{{record}}</a>
-      </div> -->
+      <!-- :scroll="{ x: 'calc(100px + 100%)' }" -->
+      <div slot="id" slot-scope="id">
+        <a href="javascript:;">{{ id }}</a>
+      </div>
 
       <span slot="action" slot-scope="text, record">
-        <!-- <a href="javascript:;">Invite 一 {{record.name}}</a>
-        <a-divider type="vertical" />-->
-        <!-- <a href="javascript:;" @click="generateHtml(record.id)">生成HTML</a> -->
-        <!-- <a-divider type="vertical" /> -->
-        <!-- <a href="javascript:;" @click="updateProject(record.id)">编辑</a> -->
-        <a href="javascript:;" @click="checkFileExist(record.id)">{{
-          record.status
-        }}</a>
+        <!-- <a href="javascript:;" @click="checkFileExist(record.id)"> 检测 </a> -->
+        <a-divider type="vertical" v-if="record.status" />
+        <!-- <a
+          href="javascript:;"
+          @click="downlaod(record.relativePath)"
+          v-if="record.status"
+          >原始数据</a
+        > -->
         <a-divider type="vertical" />
-        <a href="javascript:;" @click="showDrawer(record)">更多</a>
+        <a href="javascript:;" @click="more(record.id)">更多</a>
         <a-divider type="vertical" />
-        <a href="javascript:;" @click="runByCodeId(record.id)">运行所有</a>
+        <a href="javascript:;" @click="updateForm(record.id)">编辑</a>
         <a-divider type="vertical" />
-        <a href="javascript:;" @click="updateCode(record.id)">编辑</a>
-        <a-divider type="vertical" />
-        <a href="javascript:;" @click="delCancerStudy(record.id)">删除</a>
-        <!-- <a href="javascript:;" @click="articleSettings(record.id)">设置</a>
-        <a-divider type="vertical" />
-        <a href="javascript:;" @click="deleteArticleById(record.id)">删除文章</a>-->
-        <!-- <a href="javascript:;" class="ant-dropdown-link">
-        More actions
-        <a-icon type="down" />
-        </a>-->
+        <a href="javascript:;" @click="delById(record.id)">删除</a>
       </span>
 
-      <!-- :scroll="{ x: 1500, }" -->
-      <!-- <template slot="name" slot-scope="name">{{ name.first }} {{ name.last }}</template> -->
       <template slot="footer">
         <div class="page-wrapper" :style="{ textAlign: 'right' }">
           <a-pagination
@@ -113,22 +135,21 @@
     </a-table>
   </div>
 </template>
+
 <script>
-import CodeAPi from "@/api/code.js";
-// import TaskApi from "@/api/task.js";
-import TaskApi from "@/api/task.js";
 const columns = [
   {
-    title: "id",
+    title: "ID",
     dataIndex: "id",
+    scopedSlots: { customRender: "id" },
+    fixed: "left",
   },
   {
     title: "name",
     dataIndex: "name",
-    // scopedSlots: { customRender: "cancer" }
   },
   {
-    title: "执行脚本",
+    title: "codeType",
     dataIndex: "codeType",
   },
   {
@@ -136,29 +157,45 @@ const columns = [
     dataIndex: "crudType",
   },
   {
-    title: "大小",
-    dataIndex: "size",
-  },
-  {
-    title: "日期",
-    dataIndex: "createDate",
+    title: "relativePath",
+    dataIndex: "relativePath",
   },
   {
     title: "Action",
     key: "action",
-    fixed: "right",
+    // fixed: "right",
     //   width: 200,
+    fixed: "right",
     scopedSlots: { customRender: "action" },
   },
 ];
-
+import CancerStudyAPi from "@/api/CancerStudy.js";
+import taskDrawer from "./components/task-drawer.vue";
+import objForm from "./components/obj-form.vue";
+import ENUMApi from "@/api/ENUM.js";
+import FileApi from "@/api/file.js";
 export default {
+  components: {
+    taskDrawer,
+    objForm,
+  },
+  props: {
+    // isUpdate: {
+    //   type: Boolean,
+    //   required: true,
+    // },
+    // CRUD: {
+    //   type: String,
+    //   required: true,
+    // },
+  },
   data() {
     return {
       pagination: {
         page: 1,
         size: 10,
         sort: null,
+        keyword: null,
       },
       queryParam: {
         page: 0,
@@ -169,74 +206,96 @@ export default {
         status: null,
       },
       data: [],
-      tasks: [],
       loading: false,
+      isUpdate: false,
       columns,
-      cancerId: null,
-      visible: false,
-      CancerStudyDetial: undefined,
+      CRUD: "CODE",
+      crudType: [],
+      codeType: [],
+      files: [],
+      isCreateFile:false
     };
   },
-  //   beforeRouteEnter(to, from, next) {
-  //     // Get post id from query
-  //     const cancerId = to.query.cancerId;
-
-  //     next(vm => {
-  //       if (cancerId) {
-  //         vm.cancerId = cancerId;
-  //         vm.loadData(cancerId);
-  //       }
-  //     });
-  //   },
   mounted() {
     this.loadData();
   },
   methods: {
-    handleTableChange(page, pageSize) {
-      this.pagination.page = page;
-      this.pagination.size = pageSize;
-      this.loadData();
-    },
     loadData() {
       this.queryParam.page = this.pagination.page - 1;
       this.queryParam.size = this.pagination.size;
       this.queryParam.sort = this.pagination.sort;
+      this.queryParam.keywords = this.pagination.keywords;
 
-      const cancerId = this.$route.query.cancerId;
-      const studyId = this.$route.query.studyId;
-      const dataOriginId = this.$route.query.dataOriginId;
-      const dataCategoryId = this.$route.query.dataCategoryId;
-      const analysisSoftwareId = this.$route.query.analysisSoftwareId;
+      // const cancerId = this.$route.query.cancerId;
+      // const studyId = this.$route.query.studyId;
+      // const dataOriginId = this.$route.query.dataOriginId;
+      // const dataCategoryId = this.$route.query.dataCategoryId;
+      // const analysisSoftwareId = this.$route.query.analysisSoftwareId;
 
-      this.queryParam.cancerId = cancerId;
-      this.queryParam.studyId = studyId;
-      this.queryParam.dataOriginId = dataOriginId;
-      this.queryParam.dataCategoryId = dataCategoryId;
-      this.queryParam.analysisSoftwareId = analysisSoftwareId;
+      // this.queryParam.cancerId = cancerId;
+      // this.queryParam.studyId = studyId;
+      // this.queryParam.dataOriginId = dataOriginId;
+      // this.queryParam.dataCategoryId = dataCategoryId;
+      // this.queryParam.analysisSoftwareId = analysisSoftwareId;
+      // // this.queryParam.parentId = -1;
 
       this.loading = true;
-      CodeAPi.page(this.queryParam, true).then((resp) => {
-        // console.log(resp);
-
+      CancerStudyAPi.page(this.CRUD, this.queryParam, true).then((resp) => {
         this.data = resp.data.data.content;
         this.pagination.total = parseInt(resp.data.data.totalElements);
         this.loading = false;
       });
     },
-    updateCode(id) {
-      this.$router.push({
-        name: "code_add",
-        query: { codeId: id },
+    handleTableChange(page, pageSize) {
+      this.pagination.page = page;
+      this.pagination.size = pageSize;
+      this.loadData();
+    },
+    onSearch(value) {
+      this.pagination.keywords = value;
+      this.loadData();
+    },
+    createTSVFile() {
+      CancerStudyAPi.createTSVFile(this.CRUD).then((res) => {
+        let fileName = this.CRUD;
+        var blob = res.data;
+        var reader = new FileReader();
+        reader.readAsDataURL(blob);
+        reader.onload = function (e) {
+          var a = document.createElement("a");
+          // 获取文件名fileName
+          //   console.log(res);
+          // var fileName = res.headers["Content-Disposition"]
+          // fileName = fileName[fileName.length - 1];
+          // fileName = fileName.replace(/"/g, "");
+          a.download = fileName + ".tsv";
+          a.href = e.target.result;
+          document.body.appendChild(a);
+          a.click();
+          document.body.removeChild(a);
+        };
       });
     },
-    delCancerStudy(id) {
+    initTSV(isEmpty) {
+      CancerStudyAPi.init(this.CRUD, {
+        isEmpty: isEmpty,
+        name: this.CRUD + ".tsv",
+      }).then((resp) => {
+        this.loadData();
+        this.$notification["success"]({
+          message: resp.data.message,
+        });
+      });
+    },
+    delById(id) {
       let loadData = this.loadData;
+      let CRUD = this.CRUD;
       let notification = this.$notification["success"];
       this.$confirm({
-        title: "删除Code数据",
-        content: "您确定要删除该Code数据吗?",
+        title: "删除癌症数据",
+        content: "您确定要删除该癌症数据吗?",
         onOk() {
-          CodeAPi.del(id).then((resp) => {
+          CancerStudyAPi.delById(CRUD, { id: id }).then((resp) => {
             loadData();
             notification({
               message: "删除成功!" + resp.data.message,
@@ -246,74 +305,41 @@ export default {
         onCancel() {},
       });
     },
-    showDrawer(data) {
-      this.CancerStudyDetial = data;
-      // console.log(data);
-      this.visible = true;
-    },
-    onClose() {
-      this.visible = false;
-    },
-    checkFileExist(id) {
-      let loadData = this.loadData;
-      let notification = this.$notification["success"];
-      let notification_error = this.$notification["error"];
-      CodeAPi.checkFileExist(id).then((resp) => {
-        loadData();
-        if (resp.data.data.status) {
-          notification({
-            message: "文件存在：" + resp.data.data.absolutePath,
-          });
-        } else {
-          notification_error({
-            message: "文件不存在" + resp.data.data.absolutePath,
-          });
-        }
+    loadCodeSelect() {
+      ENUMApi.codeType().then((resp) => {
+        this.codeType = resp.data.data;
       });
-    },
-    showLog(id) {
-      this.$router.push({
-        name: "cancer_study_task",
-        query: { objId: id },
+      ENUMApi.crudType().then((resp) => {
+        this.crudType = resp.data.data;
+        // console.log(this.taskTypeList )
       });
-    },
-       createTSVFile() {
-      CodeAPi.createTSVFile().then((res) => {
-        var blob = res.data;
-        var reader = new FileReader();
-        reader.readAsDataURL(blob);
-        reader.onload = function (e) {
-          var a = document.createElement("a");
-          // 获取文件名fileName
-          console.log(res);
-          // var fileName = res.headers["Content-Disposition"]
-          // fileName = fileName[fileName.length - 1];
-          // fileName = fileName.replace(/"/g, "");
-          a.download = "export.tsv";
-          a.href = e.target.result;
-          document.body.appendChild(a);
-          a.click();
-          document.body.removeChild(a);
-        };
-      });
-    },
-    initTSV(isEmpty) {
-      CodeAPi.init({ isEmpty: isEmpty }).then((resp) => {
+      FileApi.list("code").then((resp) => {
         // console.log(resp)
-        this.loadData();
-        this.$notification["success"]({
-          message: resp.data.message,
-        });
+        this.files = resp.data.data;
       });
     },
-    runByCodeId(id) {
-      TaskApi.runByCodeId(id).then((resp) => {
-        // console.log(resp)
-        this.$notification["success"]({
-          message: "运行" + resp.data.message,
-        });
-      });
+    addForm() {
+      this.loadCodeSelect();
+      this.isUpdate = false;
+      this.$refs.objForm.onShow(-1);
+    },
+    updateForm(id) {
+      this.loadCodeSelect();
+      this.isUpdate = true;
+      this.$refs.objForm.onShow(id);
+    },
+    more(id) {
+      this.$refs.taskDrawer.onShow(id);
     },
   },
 };
 </script>
+
+
+<style>
+.svgJson svg {
+  width: 100%;
+}
+</style>
+
+

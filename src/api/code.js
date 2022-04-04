@@ -85,17 +85,17 @@ CodeApi.files = (path) => {
         method: 'get',
     })
 }
-CodeApi.getContent = (path) => {
+CodeApi.getFileContent = (params) => {
     return service({
-        url: `${baseUrl}/file/content`,
-        params:{path:path},
+        url: `${baseUrl}/getFileContent`,
+        params:params,
         method: 'get',
     })
 }
 
-CodeApi.saveContent = (params) => {
+CodeApi.saveFileContent = (id,params) => {
     return service({
-        url: `${baseUrl}/file/save`,
+        url: `${baseUrl}/saveFileContent?id=${id}`,
         data: params,
         method: 'post',
     })

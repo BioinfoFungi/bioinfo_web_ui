@@ -63,7 +63,6 @@ const routes = [
         component: () => import(/* webpackChunkName: "Second" */ '../layout/Second.vue'),
         redirect: "/cancer/list",
         children: [
-
           {
             path: "/component",
             meta: { title: '癌症查询', icon: 'dashboard' },
@@ -100,26 +99,33 @@ const routes = [
               , {
                 path: '/cancer/cancer_detial',
                 name: 'cancer_cancer_detial',
-                meta: { title: '癌症分析', icon: 'dashboard', parentPath: "/cancer", display: false },
+                meta: { title: '癌症分析', icon: 'databases', parentPath: "/cancer", display: false },
                 component: () => import(/* webpackChunkName: "cancer_detial" */ '../views/cancer/CancerDetial.vue'),
-              },{
+              }
+            ]
+          },  {
+            path: "/component",
+            meta: { title: 'GEO', icon: 'database' },
+            component: () => import(/* webpackChunkName: "Empty" */ '../layout/Empty.vue'),
+            children: [
+             {
                 path: '/cancer/GSE',
                 name: 'cancer_gse',
                 meta: { title: 'GSE', icon: 'dashboard', parentPath: "/cancer", display: true },
                 component: () => import(/* webpackChunkName: "cancer_gse" */ '../views/cancer/GSE.vue'),
-              },{
+              }, {
                 path: '/cancer/GPL',
                 name: 'cancer_gpl',
                 meta: { title: 'GPL', icon: 'dashboard', parentPath: "/cancer", display: true },
                 component: () => import(/* webpackChunkName: "cancer_gpl" */ '../views/cancer/GPL.vue'),
-              },{
+              }, {
                 path: '/cancer/GSM',
                 name: 'cancer_gsm',
                 meta: { title: 'GSM', icon: 'dashboard', parentPath: "/cancer", display: true },
                 component: () => import(/* webpackChunkName: "cancer_gsm" */ '../views/cancer/GSM.vue'),
               }
             ]
-          }, {
+          },{
             path: "/component",
             meta: { title: '癌症管理', icon: 'dashboard' },
             component: () => import(/* webpackChunkName: "Empty" */ '../layout/Empty.vue'),
@@ -141,20 +147,22 @@ const routes = [
             meta: { title: '代码管理', icon: 'dashboard' },
             component: () => import(/* webpackChunkName: "Empty" */ '../layout/Empty.vue'),
             children: [
+              // {
+              //   path: '/cancer/addCode',
+              //   name: 'code_add',
+              //   meta: { title: '添加Code', icon: 'dashboard', parentPath: "/cancer", display: true },
+              //   component: () => import(/* webpackChunkName: "cancer_list" */ '../views/cancer/addCode.vue'),
+              // },
+              //  {
+              //   path: '/cancer/updateCode',
+              //   name: 'update_code',
+              //   meta: { title: '更新Code', icon: 'dashboard', parentPath: "/cancer", display: false },
+              //   component: () => import(/* webpackChunkName: "cancer_list" */ '../views/cancer/updateCode.vue'),
+              // }, 
               {
-                path: '/cancer/addCode',
-                name: 'code_add',
-                meta: { title: '添加Code', icon: 'dashboard', parentPath: "/cancer", display: true },
-                component: () => import(/* webpackChunkName: "cancer_list" */ '../views/cancer/addCode.vue'),
-              }, {
-                path: '/cancer/updateCode',
-                name: 'update_code',
-                meta: { title: '更新Code', icon: 'dashboard', parentPath: "/cancer", display: false },
-                component: () => import(/* webpackChunkName: "cancer_list" */ '../views/cancer/updateCode.vue'),
-              }, {
                 path: '/cancer/codeList',
                 name: 'code_list',
-                meta: { title: 'Code列表', icon: 'dashboard', parentPath: "/cancer", display: true },
+                meta: { title: 'Code', icon: 'dashboard', parentPath: "/cancer", display: true },
                 component: () => import(/* webpackChunkName: "cancer_list" */ '../views/cancer/codeList.vue'),
               },
             ]

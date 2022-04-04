@@ -30,8 +30,8 @@
           @change="codeTableChange"
         >
           <span slot="action" slot-scope="text, record">
-            <a href="javascript:;" @click="codeSelect(record)">
-              {{ "["+record.crudType+record.name+"]"}}
+            <a href="javascript:;" @click="codeSelect(record.id)">
+              {{ "[" + record.crudType + record.name + "]" }}
             </a>
           </span>
           <template slot="footer">
@@ -52,13 +52,18 @@
       </a-card>
     </a-col>
     <a-drawer
-      :title="code? code.crudType:'crudType'"
+      :title="code ? code.crudType : 'crudType'"
       placement="right"
       :closable="false"
       :visible="visible"
       width="50%"
       @close="onClose"
     >
+      <a-input-search
+        placeholder="input search text"
+        style="width: 200px"
+        @search="onSearch"
+      />
       <a-table
         :columns="objsColumns"
         :row-key="(record) => record.id"
@@ -91,7 +96,7 @@
 
     <a-col :span="18">
       <div v-if="obj">
-        <a-descriptions bordered size="small" :column="2" >
+        <a-descriptions bordered size="small" :column="2">
           <a-descriptions-item label="code">
             <span v-if="code">{{ code.id }}</span></a-descriptions-item
           >
@@ -178,6 +183,10 @@ const objsColumns = [
   {
     title: "gse",
     dataIndex: "gse",
+  },
+  {
+    title: "gpl",
+    dataIndex: "gpl",
   },
 ];
 
@@ -314,18 +323,21 @@ export default {
       this.codePagination.size = pageSize;
       this.loadCode();
     },
-    loadObjs(crudType) {
-      console.log(crudType)
+    loadObjs() {
+      // console.log(crudType)
       this.objsQueryParam.page = this.objsPagination.page - 1;
       this.objsQueryParam.size = this.objsPagination.size;
       this.objsQueryParam.sort = this.objsPagination.sort;
-      CancerStudyAPi.page(crudType, this.objsQueryParam).then((resp) => {
-        // console.log(resp);
-        this.objs = resp.data.data.content;
-        // console.log(this.objs);
-        this.objsPagination.total = parseInt(resp.data.data.totalElements);
-        this.loading = false;
-      });
+      this.objsQueryParam.keywords = this.objsPagination.keywords;
+      CancerStudyAPi.page(this.code.crudType, this.objsQueryParam).then(
+        (resp) => {
+          // console.log(resp);
+          this.objs = resp.data.data.content;
+          // console.log(this.objs);
+          this.objsPagination.total = parseInt(resp.data.data.totalElements);
+          this.loading = false;
+        }
+      );
     },
     loadLog(id) {
       TaskApi.log({ taskId: id }).then((resp) => {
@@ -336,7 +348,7 @@ export default {
     objsTableChange(page, pageSize) {
       this.objsPagination.page = page;
       this.objsPagination.size = pageSize;
-      this.loadObjs(this.code.crudType);
+      this.loadObjs();
       // this.loadCancerStudy();
     },
 
@@ -346,19 +358,20 @@ export default {
         this.fields = resp.data.data;
       });
     },
-    codeSelect(code) {
-      this.code = code;
+    codeSelect(id) {
       // console.log(code)
       this.obj = undefined;
       this.task = undefined;
       this.Log = "";
       this.svgJson = [];
-      CodeAPi.getContent(code.absolutePath).then((resp) => {
-        this.sourceCode = resp.data.data;
+      CodeAPi.getFileContent({ id: id }).then((resp) => {
+        this.code = resp.data.data;
+        this.sourceCode = resp.data.data.content;
         this.content = this.sourceCode;
+        this.loadObjs();
+        this.loadFields(this.code.crudType);
       });
-      this.loadObjs(code.crudType);
-      this.loadFields(code.crudType);
+
       this.visible = true;
     },
     objSelect(id) {
@@ -376,8 +389,7 @@ export default {
       });
     },
     save() {
-      CodeAPi.saveContent({
-        path: this.code.absolutePath,
+      CodeAPi.saveFileContent(this.code.id, {
         content: this.content,
       }).then((resp) => {
         this.$notification["success"]({
@@ -416,24 +428,9 @@ export default {
         this.task = resp.data.data;
       });
     },
-    runOneTask() {
-      this.Log = "";
-      TaskApi.run({
-        objId: this.cancerStudy.id,
-        codeId: this.code.id,
-      }).then((resp) => {
-        this.$notification["success"]({
-          message: "创建任务成功!" + resp.data.message,
-        });
-        this.showLog(resp.data.data);
-        // this.loadTask(resp.data.data.id);
-        this.task = resp.data.data;
-        console.log(this.task);
-      });
-    },
     runTask() {
       if (this.obj && this.code) {
-        CancerStudyAPi.addTask("GSE", {
+        CancerStudyAPi.addTask(this.code.crudType, {
           id: this.obj.id,
           codeId: this.code.id,
         }).then((resp) => {
@@ -458,12 +455,12 @@ export default {
     },
 
     onSearch(value) {
-      this.pagination.page = 1;
-      this.pagination.keyword = value;
-      this.loadCancerStudy();
+      this.objsPagination.page = 1;
+      this.objsPagination.keywords = value;
+      this.loadObjs();
     },
     clearSearch() {
-      this.pagination.keyword = null;
+      this.objsPagination.keywords = null;
       this.loadData();
     },
   },

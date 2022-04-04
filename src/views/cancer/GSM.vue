@@ -1,94 +1,32 @@
 <template>
   <div>
-    <a-drawer
-      title="癌症研究"
-      placement="right"
-      :closable="false"
-      :visible="visible"
-      width="50%"
-      @close="onClose"
+    <objForm
+      ref="objForm"
+      :CRUD="CRUD"
+      @loadData="loadData"
+      :isUpdate="isUpdate"
+      v-slot="{ form }"
     >
-      <div v-if="CancerStudyDetial">
-        <a-form-item label="description">
-          <a-input :value="CancerStudyDetial.description" />
-        </a-form-item>
-        <a-form-item label="param">
-          <a-input :value="CancerStudyDetial.param" />
-        </a-form-item>
-        <a-form-item label="createDate">
-          <a-input :value="CancerStudyDetial.createDate" />
-        </a-form-item>
-        <a-form-item label="fileName">
-          <a-input :value="CancerStudyDetial.fileName" />
-        </a-form-item>
-        <a-form-item label="fileType">
-          <a-input :value="CancerStudyDetial.fileType" />
-        </a-form-item>
-        <a-form-item label="location">
-          <a-input :value="CancerStudyDetial.location" />
-        </a-form-item>
-        <a-form-item label="uuid">
-          <a-input :value="CancerStudyDetial.uuid" />
-        </a-form-item>
-        <a-form-item label="原始数据">
-          <a-input :value="CancerStudyDetial.absolutePath" />
-        </a-form-item>
-        <a
-          href="javascript:;"
-          @click="downlaod(CancerStudyDetial.relativePath)"
-          v-if="CancerStudyDetial.status"
-          >下载</a
-        >
+      <a-form-model-item label="gse" prop="gse">
+        <a-input v-model="form.gse" />
+      </a-form-model-item>
+      <a-form-model-item label="gse" prop="gse">
+        <a-input v-model="form.gse" />
+      </a-form-model-item>
+    </objForm>
+    <taskDrawer ref="taskDrawer" :CRUD="CRUD"> </taskDrawer>
 
-        <a-divider />
-
-        <div>
-          <a-button
-            type="link"
-            v-for="item in codeList"
-            :key="item.id"
-            @click="runTask(CancerStudyDetial.id, item.id)"
-          >
-            {{ item.name }}
-          </a-button>
-        </div>
-
-        <div>
-          <a-table
-            :columns="task_columns"
-            :data-source="taskList"
-            bordered
-            :pagination="false"
-            :row-key="(record) => record.id"
-          >
-            <span slot="action" slot-scope="text, record">
-              <a href="javascript:;" @click="runTaskById(record.id)"
-                >运行任务</a
-              >
-              <a-divider type="vertical" />
-              <a href="javascript:;" @click="showLog(record)">LOG</a>
-            </span>
-          </a-table>
-        </div>
-        <span v-if="currentLogName">current Log:{{ currentLogName }}</span>
-        <a-textarea
-          v-model="Log"
-          placeholder="run log"
-          :auto-size="{ minRows: 3, maxRows: 20 }"
-        />
-
-        <a-button @click="moreInfo(CancerStudyDetial.id)">查看更多</a-button>
-      </div>
-    </a-drawer>
-    <a-button @click="createTSVFile">导出CSV</a-button>
-    <a-button @click="initTSV(false)">导入CSV</a-button>
-    <a-button @click="initTSV(true)">清空导入CSV</a-button>
-    <a-input-search
-      placeholder="input search text"
-      style="width: 200px"
-      @search="onSearch"
-    />
-
+    <div>
+      <a-button @click="addForm">添加</a-button>
+      <a-button @click="createTSVFile">导出CSV</a-button>
+      <a-button @click="initTSV(false)">导入CSV</a-button>
+      <a-button @click="initTSV(true)">清空导入CSV</a-button>
+      <a-input-search
+        placeholder="input search text"
+        style="width: 200px"
+        @search="onSearch"
+      />
+    </div>
     <a-table
       :columns="columns"
       :row-key="(record) => record.id"
@@ -96,45 +34,56 @@
       :pagination="false"
       :loading="loading"
       @change="handleTableChange"
-      :scroll="{ x: 'calc(1500px + 100%)' }"
     >
-      <!-- @expand="rowChannge" -->
-      <div slot="id_link" slot-scope="id">
+      <!-- :scroll="{ x: 'calc(100px + 100%)' }" -->
+      <div slot="id" slot-scope="id">
         <a href="javascript:;">{{ id }}</a>
       </div>
-
-      <span slot="action" slot-scope="text, record">
-        <!-- <a href="javascript:;">Invite 一 {{record.name}}</a>
-        <a-divider type="vertical" />-->
-        <!-- <a href="javascript:;" @click="generateHtml(record.id)">生成HTML</a> -->
-        <!-- <a-divider type="vertical" /> -->
-        <!-- <a href="javascript:;" @click="updateProject(record.id)">编辑</a> -->
-        <a href="javascript:;" @click="checkFileExist(record.id)"> 检测 </a>
-        <a-divider type="vertical" v-if="record.status" />
-
+       <div slot="gsm" slot-scope="gsm">
         <a
+          target="_blank"
+          :href="'https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=' + gsm"
+          >{{ gsm }}</a
+        >
+      </div>
+      <div slot="gse" slot-scope="gse">
+        <a
+          target="_blank"
+          :href="'https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=' + gse"
+          >{{ gse }}</a
+        >
+      </div>
+          <div slot="gpl" slot-scope="gpl">
+        <a
+          target="_blank"
+          :href="'https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=' + gpl"
+          >{{ gpl }}</a
+        >
+      </div>
+        <div slot="sra" slot-scope="sra">
+        <a
+          target="_blank"
+          :href="'https://www.ncbi.nlm.nih.gov/sra?term=' + sra"
+          >{{ sra }}</a
+        >
+      </div>
+      <span slot="action" slot-scope="text, record">
+        <!-- <a href="javascript:;" @click="checkFileExist(record.id)"> 检测 </a> -->
+        <a-divider type="vertical" v-if="record.status" />
+        <!-- <a
           href="javascript:;"
           @click="downlaod(record.relativePath)"
           v-if="record.status"
           >原始数据</a
-        >
+        > -->
         <a-divider type="vertical" />
-        <a href="javascript:;" @click="showDrawer(record)">更多</a>
+        <a href="javascript:;" @click="more(record.id)">更多</a>
         <a-divider type="vertical" />
-        <a href="javascript:;" @click="updateCancerStudy(record.id)">编辑</a>
+        <a href="javascript:;" @click="updateForm(record.id)">编辑</a>
         <a-divider type="vertical" />
-        <a href="javascript:;" @click="delCancerStudy(record.id)">删除</a>
-        <!-- <a href="javascript:;" @click="articleSettings(record.id)">设置</a>
-        <a-divider type="vertical" />
-        <a href="javascript:;" @click="deleteArticleById(record.id)">删除文章</a>-->
-        <!-- <a href="javascript:;" class="ant-dropdown-link">
-        More actions
-        <a-icon type="down" />
-        </a>-->
+        <a href="javascript:;" @click="delById(record.id)">删除</a>
       </span>
 
-      <!-- :scroll="{ x: 1500, }" -->
-      <!-- <template slot="name" slot-scope="name">{{ name.first }} {{ name.last }}</template> -->
       <template slot="footer">
         <div class="page-wrapper" :style="{ textAlign: 'right' }">
           <a-pagination
@@ -152,84 +101,42 @@
     </a-table>
   </div>
 </template>
+
 <script>
-import CancerStudyAPi from "@/api/CancerStudy.js";
-import CodeApi from "@/api/code.js";
-import TaskApi from "@/api/task.js";
-const task_columns = [
-  {
-    title: "id",
-    dataIndex: "id",
-  },
-  {
-    title: "taskStatus",
-    dataIndex: "taskStatus",
-  },
-  {
-    title: "name",
-    dataIndex: "name",
-  },
-  {
-    title: "isSuccess",
-    dataIndex: "isSuccess",
-  },
-  {
-    title: "Action",
-    key: "action",
-    // fixed: "right",
-    //   width: 200,
-    fixed: "right",
-    scopedSlots: { customRender: "action" },
-  },
-];
 const columns = [
   {
     title: "ID",
     dataIndex: "id",
-    scopedSlots: { customRender: "id_link" },
+    scopedSlots: { customRender: "id" },
     fixed: "left",
-  },{
-    title: "GPL",
-    dataIndex: "gpl",
+  }, {
+    title: "gsm",
+    dataIndex: "gsm",
+    scopedSlots: { customRender: "gsm" },
   },
   {
     title: "GSE",
     dataIndex: "gse",
-    // scopedSlots: { customRender: "cancer" }
-  },
-
-  {
-    title: "研究名称",
-    dataIndex: "study.name",
+    scopedSlots: { customRender: "gse" },
   },
   {
-    title: "数据来源",
-    dataIndex: "dataOrigin.name",
+    title: "gpl",
+    dataIndex: "gpl",
+    scopedSlots: { customRender: "gpl" },
   },
+ 
   {
-    title: "数据分类",
-    dataIndex: "dataCategory.name",
+    title: "sra",
+    dataIndex: "sra",
+    scopedSlots: { customRender: "sra" },
   },
+  // {
+  //   title: "gseType",
+  //   dataIndex: "gseType",
+  // }, 
   {
-    title: "处理流程",
-    dataIndex: "analysisSoftware.name",
-  },
-  {
-    title: "基因注释",
-    dataIndex: "annotation",
-  },
-  
-  {
-    title: "parentId",
-    dataIndex: "parentId",
-  },
-  {
-    title: "codeId",
-    dataIndex: "codeId",
-  },
-  {
-    title: "大小",
-    dataIndex: "size",
+    title: "species",
+    dataIndex: "species",
   },
   {
     title: "Action",
@@ -240,8 +147,24 @@ const columns = [
     scopedSlots: { customRender: "action" },
   },
 ];
-
+import CancerStudyAPi from "@/api/CancerStudy.js";
+import taskDrawer from "./components/task-drawer.vue";
+import objForm from "./components/obj-form.vue";
 export default {
+  components: {
+    taskDrawer,
+    objForm,
+  },
+  props: {
+    // isUpdate: {
+    //   type: Boolean,
+    //   required: true,
+    // },
+    // CRUD: {
+    //   type: String,
+    //   required: true,
+    // },
+  },
   data() {
     return {
       pagination: {
@@ -259,106 +182,92 @@ export default {
         status: null,
       },
       data: [],
-      tasks: [],
       loading: false,
+      isUpdate: false,
       columns,
-      task_columns,
-      cancerId: null,
-      visible: false,
-      CancerStudyDetial: undefined,
-      codeList: [],
-      taskList: [],
-      Log: "",
-      setIntervaStatus: undefined,
-      currentLogName: undefined,
+      CRUD: "GSM",
     };
   },
-  //   beforeRouteEnter(to, from, next) {
-  //     // Get post id from query
-  //     const cancerId = to.query.cancerId;
-
-  //     next(vm => {
-  //       if (cancerId) {
-  //         vm.cancerId = cancerId;
-  //         vm.loadData(cancerId);
-  //       }
-  //     });
-  //   },
   mounted() {
     this.loadData();
-    if (this.$websock) {
-      this.$websock.onmessage = () => {
-        // let data = JSON.parse(e.data);
-        // console.log(data)
-        this.loadData();
-        if (this.CancerStudyDetial) {
-          this.loadTask(this.CancerStudyDetial.id);
-        }
-      };
-    }
   },
   methods: {
-    handleTableChange(page, pageSize) {
-      this.pagination.page = page;
-      this.pagination.size = pageSize;
-      this.loadData();
-    },
     loadData() {
       this.queryParam.page = this.pagination.page - 1;
       this.queryParam.size = this.pagination.size;
       this.queryParam.sort = this.pagination.sort;
-      this.queryParam.keyword = this.pagination.keyword;
+      this.queryParam.keywords = this.pagination.keywords;
 
-      const cancerId = this.$route.query.cancerId;
-      const studyId = this.$route.query.studyId;
-      const dataOriginId = this.$route.query.dataOriginId;
-      const dataCategoryId = this.$route.query.dataCategoryId;
-      const analysisSoftwareId = this.$route.query.analysisSoftwareId;
+      // const cancerId = this.$route.query.cancerId;
+      // const studyId = this.$route.query.studyId;
+      // const dataOriginId = this.$route.query.dataOriginId;
+      // const dataCategoryId = this.$route.query.dataCategoryId;
+      // const analysisSoftwareId = this.$route.query.analysisSoftwareId;
 
-      this.queryParam.cancerId = cancerId;
-      this.queryParam.studyId = studyId;
-      this.queryParam.dataOriginId = dataOriginId;
-      this.queryParam.dataCategoryId = dataCategoryId;
-      this.queryParam.analysisSoftwareId = analysisSoftwareId;
-      // this.queryParam.parentId = -1;
+      // this.queryParam.cancerId = cancerId;
+      // this.queryParam.studyId = studyId;
+      // this.queryParam.dataOriginId = dataOriginId;
+      // this.queryParam.dataCategoryId = dataCategoryId;
+      // this.queryParam.analysisSoftwareId = analysisSoftwareId;
+      // // this.queryParam.parentId = -1;
 
       this.loading = true;
-      CancerStudyAPi.page("GSM",this.queryParam, true).then((resp) => {
-        // console.log(resp);
-
+      CancerStudyAPi.page(this.CRUD, this.queryParam, true).then((resp) => {
         this.data = resp.data.data.content;
         this.pagination.total = parseInt(resp.data.data.totalElements);
         this.loading = false;
       });
     },
-    updateProject(id) {
-      this.$router.push({
-        name: "cancer_cancer_study",
-        query: { projectId: id },
+    handleTableChange(page, pageSize) {
+      this.pagination.page = page;
+      this.pagination.size = pageSize;
+      this.loadData();
+    },
+    onSearch(value) {
+      this.pagination.keywords = value;
+      this.loadData();
+    },
+    createTSVFile() {
+      CancerStudyAPi.createTSVFile(this.CRUD).then((res) => {
+        let fileName = this.CRUD;
+        var blob = res.data;
+        var reader = new FileReader();
+        reader.readAsDataURL(blob);
+        reader.onload = function (e) {
+          var a = document.createElement("a");
+          // 获取文件名fileName
+          //   console.log(res);
+          // var fileName = res.headers["Content-Disposition"]
+          // fileName = fileName[fileName.length - 1];
+          // fileName = fileName.replace(/"/g, "");
+          a.download = fileName + ".tsv";
+          a.href = e.target.result;
+          document.body.appendChild(a);
+          a.click();
+          document.body.removeChild(a);
+        };
       });
     },
-    delProject(id) {
-      CancerStudyAPi.del(id).then((resp) => {
-        this.$notification["success"]({
-          message: resp.data.data.name + ":删除成功!",
-        });
+    initTSV(isEmpty) {
+      CancerStudyAPi.init(this.CRUD, {
+        isEmpty: isEmpty,
+        name: this.CRUD+".tsv",
+      }).then((resp) => {
         this.loadData();
+        this.$notification["success"]({
+          message: resp.data.message,
+        });
       });
     },
-    updateCancerStudy(id) {
-      this.$router.push({
-        name: "update_cancer_study",
-        query: { cancerStudyId: id },
-      });
-    },
-    delCancerStudy(id) {
+    delById(id) {
       let loadData = this.loadData;
+      let CRUD = this.CRUD;
       let notification = this.$notification["success"];
       this.$confirm({
         title: "删除癌症数据",
         content: "您确定要删除该癌症数据吗?",
         onOk() {
-          CancerStudyAPi.del(id).then((resp) => {
+          CancerStudyAPi.delById(CRUD, { id: id }).then((resp) => {
             loadData();
             notification({
               message: "删除成功!" + resp.data.message,
@@ -368,144 +277,26 @@ export default {
         onCancel() {},
       });
     },
-    loadTask(id) {
-      TaskApi.page({ objId: id, taskType: "CANCER_STUDY" }).then((resp) => {
-        this.taskList = resp.data.data.content;
-      });
+    addForm() {
+      this.isUpdate = false;
+      this.$refs.objForm.onShow(-1);
     },
-    loadCode(id) {
-      CodeApi.findByCan(id).then((resp) => {
-        // console.log(resp);
-        this.codeList = resp.data.data;
-      });
+    updateForm(id) {
+      this.isUpdate = true;
+      this.$refs.objForm.onShow(id);
     },
-    showDrawer(data) {
-      this.visible = true;
-      this.CancerStudyDetial = data;
-      this.loadCode(data.id);
-      this.loadTask(data.id);
-    },
-    onClose() {
-      this.visible = false;
-      this.CancerStudyDetial = undefined;
-      this.Log = "";
-      if (this.setIntervaStatus) {
-        clearInterval(this.setIntervaStatus);
-      }
-    },
-    checkFileExist(id) {
-      let loadData = this.loadData;
-      let notification = this.$notification["success"];
-      let notification_error = this.$notification["error"];
-      CancerStudyAPi.checkFileExist(id).then((resp) => {
-        loadData();
-        if (resp.data.data.status) {
-          notification({
-            message: "文件存在：" + resp.data.data.absolutePath,
-          });
-        } else {
-          notification_error({
-            message: "文件不存在" + resp.data.data.absolutePath,
-          });
-        }
-      });
-    },
-    moreInfo(id) {
-      this.$router.push({
-        name: "cancer_study_task",
-        query: { objId: id },
-      });
-    },
-    loadLog(id) {
-      TaskApi.log({ taskId: id }).then((resp) => {
-        // console.log(resp.data.data);
-        this.Log = resp.data.data;
-      });
-    },
-    showLog(data) {
-      this.visible = true;
-      let loadLogFun = this.loadLog;
-      loadLogFun(data.id);
-      this.currentLogName = data.name;
-      if (this.setIntervaStatus) {
-        clearInterval(this.setIntervaStatus);
-      }
-      this.setIntervaStatus = setInterval(function () {
-        loadLogFun(data.id);
-      }, 1000);
-    },
-    runTaskById(id) {
-      TaskApi.runOne(id).then((resp) => {
-        this.loadData();
-        this.$message.success(resp.data.data.name + "运行成功");
-        this.loadTask(this.CancerStudyDetial.id);
-        this.showLog(resp.data.data);
-      });
-    },
-    runTask(cancerStudyId, codeId) {
-      // console.log(cancerStudyId, codeId);
-      TaskApi.run({
-        objId: cancerStudyId,
-        codeId: codeId,
-        taskType: "CANCER_STUDY",
-      }).then((resp) => {
-        this.loadTask(cancerStudyId);
-        this.$message.success(resp.data.data.name + "创建成功");
-        this.showLog(resp.data.data);
-        this.loadCode(cancerStudyId);
-        //  this.$notification["success"]({
-        //     message: "运行成功!" + resp.data.message,
-        //   });
-      });
-    },
-    downlaod(path) {
-      let download_url = JSON.parse(localStorage.getItem("global_config"));
-      window.location.href = download_url.download_url + "/" + path;
-    },
-    createTSVFile() {
-      CancerStudyAPi.createTSVFile().then((res) => {
-        var blob = res.data;
-        var reader = new FileReader();
-        reader.readAsDataURL(blob);
-        reader.onload = function (e) {
-          var a = document.createElement("a");
-          // 获取文件名fileName
-          console.log(res);
-          // var fileName = res.headers["Content-Disposition"]
-          // fileName = fileName[fileName.length - 1];
-          // fileName = fileName.replace(/"/g, "");
-          a.download = "export.tsv";
-          a.href = e.target.result;
-          document.body.appendChild(a);
-          a.click();
-          document.body.removeChild(a);
-        };
-      });
-    },
-    onSearch(value) {
-      this.pagination.keyword = value;
-      this.loadData();
-    },
-    rowChannge(expand, record) {
-      // console.log(expand, record);
-      if (expand) {
-        CancerStudyAPi.list({ parentId: record.id }).then((resp) => {
-          // console.log(resp);
-          this.innerData = resp.data.data;
-        });
-      } else {
-        this.innerData = [];
-      }
-    },
-    initTSV(isEmpty) {
-      CancerStudyAPi.init("GSM",{ isEmpty: isEmpty ,path:"/home/wangyang/Downloads/sample.tsv"}).then((resp) => {
-        // console.log(resp)
-        this.loadData();
-        this.$notification["success"]({
-          message: resp.data.message,
-        });
-      });
+    more(id) {
+      this.$refs.taskDrawer.onShow(id);
     },
   },
 };
 </script>
+
+
+<style>
+.svgJson svg {
+  width: 100%;
+}
+</style>
+
+

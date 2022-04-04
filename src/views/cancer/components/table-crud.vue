@@ -7,12 +7,8 @@
       :isUpdate="isUpdate"
       v-slot="{ form }"
     >
-      <a-form-model-item label="gse" prop="gse">
-        <a-input v-model="form.gse" />
-      </a-form-model-item>
-      <a-form-model-item label="gse" prop="gse">
-        <a-input v-model="form.gse" />
-      </a-form-model-item>
+        <slot name="objForm" v-bind:form="form"></slot>
+
     </objForm>
     <taskDrawer ref="taskDrawer" :CRUD="CRUD"> </taskDrawer>
 
@@ -46,29 +42,11 @@
           >{{ gse }}</a
         >
       </div>
-      <div slot="pubMed" slot-scope="pubMed">
-        <a
-          target="_blank"
-          :href="'https://pubmed.ncbi.nlm.nih.gov/' + pubMed"
-          >{{ pubMed }}</a
-        >
-      </div>
-        <div slot="sra" slot-scope="sra">
-        <a
-          target="_blank"
-          :href="'https://www.ncbi.nlm.nih.gov/sra?term=' + sra"
-          >{{ sra }}</a
-        >
-      </div>
+
+
       <span slot="action" slot-scope="text, record">
         <!-- <a href="javascript:;" @click="checkFileExist(record.id)"> 检测 </a> -->
         <a-divider type="vertical" v-if="record.status" />
-        <!-- <a
-          href="javascript:;"
-          @click="downlaod(record.relativePath)"
-          v-if="record.status"
-          >原始数据</a
-        > -->
         <a-divider type="vertical" />
         <a href="javascript:;" @click="more(record.id)">更多</a>
         <a-divider type="vertical" />
@@ -96,66 +74,24 @@
 </template>
 
 <script>
-const columns = [
-  {
-    title: "ID",
-    dataIndex: "id",
-    scopedSlots: { customRender: "id" },
-    fixed: "left",
-  },
-  {
-    title: "GSE",
-    dataIndex: "gse",
-    scopedSlots: { customRender: "gse" },
-  },
-  {
-    title: "pubMed",
-    dataIndex: "pubMed",
-    scopedSlots: { customRender: "pubMed" },
-  },
- 
-  {
-    title: "sra",
-    dataIndex: "sra",
-    scopedSlots: { customRender: "sra" },
-  },{
-    title: "sampleCount",
-    dataIndex: "sampleCount",
-  },
-  // {
-  //   title: "gseType",
-  //   dataIndex: "gseType",
-  // }, 
-  {
-    title: "species",
-    dataIndex: "species",
-  },
-  {
-    title: "Action",
-    key: "action",
-    // fixed: "right",
-    //   width: 200,
-    fixed: "right",
-    scopedSlots: { customRender: "action" },
-  },
-];
+
 import CancerStudyAPi from "@/api/CancerStudy.js";
-import taskDrawer from "./components/task-drawer.vue";
-import objForm from "./components/obj-form.vue";
+import taskDrawer from "./task-drawer.vue";
+import objForm from "./obj-form.vue";
 export default {
+  props: {
+    columns: {
+      type: Array,
+      required: true,
+    },
+    CRUD: {
+      type: String,
+      required: true,
+    },
+  },
   components: {
     taskDrawer,
     objForm,
-  },
-  props: {
-    // isUpdate: {
-    //   type: Boolean,
-    //   required: true,
-    // },
-    // CRUD: {
-    //   type: String,
-    //   required: true,
-    // },
   },
   data() {
     return {
@@ -176,8 +112,8 @@ export default {
       data: [],
       loading: false,
       isUpdate: false,
-      columns,
-      CRUD: "GSE",
+      // columns,
+      // CRUD: "GSE",
     };
   },
   mounted() {
@@ -216,7 +152,6 @@ export default {
       this.loadData();
     },
     onSearch(value) {
-      this.pagination.page=1
       this.pagination.keywords = value;
       this.loadData();
     },
@@ -244,7 +179,7 @@ export default {
     initTSV(isEmpty) {
       CancerStudyAPi.init(this.CRUD, {
         isEmpty: isEmpty,
-        name: this.CRUD+".tsv",
+        name: this.CRUD + ".tsv",
       }).then((resp) => {
         this.loadData();
         this.$notification["success"]({

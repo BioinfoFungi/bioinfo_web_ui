@@ -243,7 +243,7 @@ export default {
         reader.onload = function (e) {
           var a = document.createElement("a");
           // 获取文件名fileName
-          console.log(res);
+          // console.log(res);
           // var fileName = res.headers["Content-Disposition"]
           // fileName = fileName[fileName.length - 1];
           // fileName = fileName.replace(/"/g, "");

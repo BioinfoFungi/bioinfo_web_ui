@@ -25,6 +25,7 @@
         style="width: 200px"
         v-model="form.crudType"
       >
+      
         <a-select-option
           :value="item.key"
           v-for="item in crudType"

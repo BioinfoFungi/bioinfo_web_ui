@@ -34,12 +34,7 @@ CancerStudyApi.listByCancerId = (id) =>{
     })
 }
 
-CancerStudyApi.del = (id) => {
-    return service({
-        url: `${baseUrl}/del/${id}`,
-        method: 'get'
-    })
-}
+
 
 CancerStudyApi.checkFileExist = (id) => {
     return service({
@@ -49,20 +44,8 @@ CancerStudyApi.checkFileExist = (id) => {
 }
 
 
-CancerStudyApi.add = (params) => {
-    return service({
-        url: baseUrl,
-        data: params,
-        method: 'post'
-    })
-}
-CancerStudyApi.update = (id,params) => {
-    return service({
-        url: `${baseUrl}/update/${id}`,
-        data: params,
-        method: 'post'
-    })
-}
+
+
 
 
 CancerStudyApi.init = (CRUD,param) => {
@@ -109,12 +92,34 @@ CancerStudyApi.getFields = (CRUD) => {
         method: 'get'
     })
 }
-CancerStudyApi.createTSVFile = () => {
+CancerStudyApi.createTSVFile = (CRUD) => {
     return service({
-        url: `${baseUrl}/createTSVFile`,
+        url: `${baseUrl}/${CRUD}/createTSVFile`,
         method: 'post',
         responseType: 'blob'
     })
 }
+CancerStudyApi.delById = (CRUD,params) => {
+    return service({
+        url: `${baseUrl}/${CRUD}/delById`,
+        params:params,
+        method: 'get'
+    })
+}
 
+CancerStudyApi.add = (CRUD,params) => {
+    return service({
+        url: `${baseUrl}/${CRUD}/add`,
+        data: params,
+        method: 'post'
+    })
+}
+
+CancerStudyApi.update = (CRUD,id,params) => {
+    return service({
+        url: `${baseUrl}/${CRUD}/update?id=${id}`,
+        data: params,
+        method: 'post'
+    })
+}
 export default CancerStudyApi
