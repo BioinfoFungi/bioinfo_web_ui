@@ -27,24 +27,74 @@ const routes = [
         meta: { title: '主页', icon: 'home' },
 
       }, {
-        path: '/explore',
-        name: 'explore',
-        // route level code-splitting
-        // this generates a separate chunk (about.[hash].js) for this route
-        // which is lazy-loaded when the route is visited.
-        component: () => import(/* webpackChunkName: "Home" */ '../views/Explore.vue'),
-        meta: { title: '探索', icon: 'home' },
+        path: '/project',
+        name: 'Project',
+        meta: { title: '项目', icon: 'dashboard' },
 
-      }, {
-        path: '/codeEdit',
-        name: 'codeEdit',
-        // route level code-splitting
-        // this generates a separate chunk (about.[hash].js) for this route
-        // which is lazy-loaded when the route is visited.
-        component: () => import(/* webpackChunkName: "Home" */ '../views/code/edit.vue'),
-        meta: { title: '代码编辑', icon: 'home' },
-
+        component: () => import(/* webpackChunkName: "Second" */ '../layout/Second.vue'),
+        redirect: "/project/list",
+        children: [
+          {
+            path: "/component",
+            meta: { title: '所有项目', icon: 'dashboard' },
+            component: () => import(/* webpackChunkName: "Empty" */ '../layout/Empty.vue'),
+            children: [
+              {
+                path: '/project/list',
+                name: 'Project_list',
+                meta: { title: '项目列表', icon: 'dashboard', parentPath: "/project", display: true },
+                component: () => import(/* webpackChunkName: "Project_list" */ '../views/project/list.vue'),
+              }, {
+                path: '/project/add',
+                name: 'Project_add',
+                meta: { title: '添加项目', icon: 'dashboard', parentPath: "/project", display: true },
+                component: () => import(/* webpackChunkName: "Project_add" */ '../views/project/add.vue'),
+              },
+              {
+                path: '/project/update',
+                name: 'Project_update',
+                meta: { title: '更新项目', icon: 'dashboard', parentPath: "/project" },
+                component: () => import(/* webpackChunkName: "Project_update" */ '../views/project/update.vue'),
+              }, {
+                path: '/project/detial',
+                name: 'Project_detial',
+                meta: { title: '项目细节', icon: 'dashboard', parentPath: "/project" },
+                component: () => import(/* webpackChunkName: "Project_detial" */ '../views/project/detial.vue'),
+              }, {
+                path: '/project/content',
+                name: 'Project_content',
+                meta: { title: '项目内容编辑', icon: 'dashboard', parentPath: "/project" },
+                component: () => import(/* webpackChunkName: "Project_detial" */ '../views/project/content.vue'),
+              }, {
+                path: '/project/attachment',
+                name: 'file_attachment',
+                meta: { title: '附件管理', icon: 'dashboard', parentPath: "/project", display: true },
+                component: () => import(/* webpackChunkName: "file_attachment" */ '../views/file/attachment.vue'),
+              }
+            ]
+          }
+        ]
       },
+      // {
+      //   path: '/explore',
+      //   name: 'explore',
+      //   // route level code-splitting
+      //   // this generates a separate chunk (about.[hash].js) for this route
+      //   // which is lazy-loaded when the route is visited.
+      //   component: () => import(/* webpackChunkName: "Home" */ '../views/Explore.vue'),
+      //   meta: { title: '探索', icon: 'home' },
+
+      // }, 
+      // {
+      //   path: '/codeEdit',
+      //   name: 'codeEdit',
+      //   // route level code-splitting
+      //   // this generates a separate chunk (about.[hash].js) for this route
+      //   // which is lazy-loaded when the route is visited.
+      //   component: () => import(/* webpackChunkName: "Home" */ '../views/code/edit.vue'),
+      //   meta: { title: '代码编辑', icon: 'home' },
+
+      // },
       //  {
       //   path: '/WebSocket',
       //   name: 'WebSocket',
@@ -247,54 +297,6 @@ const routes = [
                 name: 'RNA_init',
                 meta: { title: '初始化', icon: 'dashboard', parentPath: "/RNA", display: true },
                 component: () => import(/* webpackChunkName: "RNA_init" */ '../views/RNA/init.vue'),
-              }
-            ]
-          }
-        ]
-      }, {
-        path: '/project',
-        name: 'Project',
-        meta: { title: '项目', icon: 'dashboard' },
-
-        component: () => import(/* webpackChunkName: "Second" */ '../layout/Second.vue'),
-        redirect: "/project/list",
-        children: [
-          {
-            path: "/component",
-            meta: { title: '所有项目', icon: 'dashboard' },
-            component: () => import(/* webpackChunkName: "Empty" */ '../layout/Empty.vue'),
-            children: [
-              {
-                path: '/project/list',
-                name: 'Project_list',
-                meta: { title: '项目列表', icon: 'dashboard', parentPath: "/project", display: true },
-                component: () => import(/* webpackChunkName: "Project_list" */ '../views/project/list.vue'),
-              }, {
-                path: '/project/add',
-                name: 'Project_add',
-                meta: { title: '添加项目', icon: 'dashboard', parentPath: "/project", display: true },
-                component: () => import(/* webpackChunkName: "Project_add" */ '../views/project/add.vue'),
-              },
-              {
-                path: '/project/update',
-                name: 'Project_update',
-                meta: { title: '更新项目', icon: 'dashboard', parentPath: "/project" },
-                component: () => import(/* webpackChunkName: "Project_update" */ '../views/project/update.vue'),
-              }, {
-                path: '/project/detial',
-                name: 'Project_detial',
-                meta: { title: '项目细节', icon: 'dashboard', parentPath: "/project" },
-                component: () => import(/* webpackChunkName: "Project_detial" */ '../views/project/detial.vue'),
-              }, {
-                path: '/project/content',
-                name: 'Project_content',
-                meta: { title: '项目内容编辑', icon: 'dashboard', parentPath: "/project" },
-                component: () => import(/* webpackChunkName: "Project_detial" */ '../views/project/content.vue'),
-              }, {
-                path: '/project/attachment',
-                name: 'file_attachment',
-                meta: { title: '附件管理', icon: 'dashboard', parentPath: "/project", display: true },
-                component: () => import(/* webpackChunkName: "file_attachment" */ '../views/file/attachment.vue'),
               }
             ]
           }
