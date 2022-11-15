@@ -1,13 +1,21 @@
 <template>
-  <a-layout style="padding: 24px 0; background: #fff">
-    <a-layout-sider width="200" style="background: #fff" v-if="childrenRoutes!=''">
+  <a-layout style="padding: 24px 0; background: #fff"  class="layout-content">
+    <a-layout-sider width="200" style="background: #fff" v-if="childrenRoutes!=''" >
       <a-menu
         mode="inline"
         :default-selected-keys="['1']"
         :default-open-keys="['sub1']"
         style="height: 100%"
       >
-        <a-sub-menu v-for="(item) in childrenRoutes" :key="item.name">
+      <template  v-for="(item) in childrenRoutes" >
+
+
+        <a-menu-item :key="item.name"  v-if="item.path!='/component'">
+          <router-link :to="item.path">{{item.meta.title}}</router-link>
+        </a-menu-item>
+
+
+        <a-sub-menu :key="item.name" v-else>
           <span slot="title">
             <a-icon :type="item.meta.icon" />
             <span>{{item.meta.title}}</span>
@@ -19,6 +27,11 @@
             </a-menu-item>
           </template>
         </a-sub-menu>
+
+      </template>
+      
+       
+
         <!-- <a-sub-menu key="sub1">
                 <span slot="title">
                   <a-icon type="user" />subnav 1

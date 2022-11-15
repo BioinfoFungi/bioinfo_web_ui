@@ -24,12 +24,15 @@
           </a-menu-item>
         </a-sub-menu>
         -->
-        <a-menu-item v-for="item in routes" :key="item.name">
-          <router-link :to="item.path">
+        <template v-for="item in routes">
+          <a-menu-item v-if="item.meta.display!=false"  :key="item.name">
+          <router-link :to="item.path" >
             <a-icon :type="item.meta.icon" />
             <span>{{ item.meta.title }}</span>
           </router-link>
         </a-menu-item>
+        </template>
+    
         <!-- <a-menu-item key="2"><router-link to="/TCGA">TCGA</router-link> </a-menu-item>
         <a-menu-item key="3"><router-link to="/About">About</router-link> </a-menu-item>
         <a-menu-item key="4"><router-link to="/User">User</router-link> </a-menu-item>-->
@@ -37,7 +40,7 @@
 
       <div class="logo">
         <!-- <a-button @click="openHtml()">静态首页</a-button> -->
-        很多时候的发放的
+        <!-- 很多时候的发放的 -->
       </div>
     </a-layout-header>
 
@@ -47,7 +50,7 @@
         <a-breadcrumb-item>List</a-breadcrumb-item>
         <a-breadcrumb-item>App</a-breadcrumb-item>-->
       </a-breadcrumb>
-      <a-layout :style="{ background: '#fff', minHeight: '500px' }">
+      <a-layout >
         <!-- 子路由不为空 -->
         <!-- <ol>
           <li v-for="(item) in childrenRoutes" :key="item.name">
@@ -58,9 +61,9 @@
         <router-view />
       </a-layout>
     </a-layout-content>
-    <a-layout-footer style="text-align: center"
-      >©2021 WANGYANG Bioinformatics analysis</a-layout-footer
-    >
+
+    
+    <a-layout-footer style="text-align: center">©2021 WANGYANG Bioinformatics analysis</a-layout-footer>
   </a-layout>
 </template>
 

@@ -75,6 +75,31 @@ const routes = [
           }
         ]
       },{
+        path: '/tools',
+        name: 'tools',
+        meta: { title: '云工具', icon: 'tool' },
+
+        component: () => import(/* webpackChunkName: "Second" */ '../layout/Second.vue'),
+        redirect: "/tools/tool-list",
+        children: [
+          {
+            path: '/tools/tool-list',
+            name: 'tool-list',
+            meta: { title: '全部', icon: 'dashboard', parentPath: "/tools", display: true },
+            component: () => import(/* webpackChunkName: "tool-list" */ '../views/tools/list.vue'),
+          }, {
+            path: '/tools/tools-draw',
+            name: 'tool-draw',
+            meta: { title: '高级绘图', icon: 'dashboard', parentPath: "/tools", display: true },
+            component: () => import(/* webpackChunkName: "tool-draw" */ '../views/tools/draw.vue'),
+          },
+        ]
+      },{
+        path: '/tools/tool-form',
+        name: 'tool-form',
+        meta: { title: '工具表单', icon: 'dashboard', display: false },
+        component: () => import(/* webpackChunkName: "tool-form" */ '../views/tools/toolForm.vue'),
+      },{
         path: '/snakemake',
         name: 'Snakemake',
         meta: { title: 'Snakemake', icon: 'dashboard' },
