@@ -74,6 +74,56 @@ const routes = [
             ]
           }
         ]
+      },{
+        path: '/snakemake',
+        name: 'Snakemake',
+        meta: { title: 'Snakemake', icon: 'dashboard' },
+
+        component: () => import(/* webpackChunkName: "Second" */ '../layout/Second.vue'),
+        redirect: "/snakemake/list",
+        children: [
+          {
+            path: "/component",
+            meta: { title: '管理', icon: 'dashboard' },
+            component: () => import(/* webpackChunkName: "Empty" */ '../layout/Empty.vue'),
+            children: [
+              {
+                path: '/snakemake/list',
+                name: 'snakemake_list',
+                meta: { title: 'rules', icon: 'dashboard', parentPath: "/snakemake", display: true },
+                component: () => import(/* webpackChunkName: "Project_list" */ '../views/snakemake/list.vue'),
+              }, 
+              {
+                path: '/snakemake/add',
+                name: 'snakemake_add',
+                meta: { title: 'Add rule', icon: 'dashboard', parentPath: "/snakemake", display: true },
+                component: () => import(/* webpackChunkName: "Project_add" */ '../views/snakemake/add.vue'),
+              },
+              {
+                path: '/snakemake/update',
+                name: 'snakemake_update',
+                meta: { title: 'update rule', icon: 'dashboard', parentPath: "/snakemake" },
+                component: () => import(/* webpackChunkName: "Project_update" */ '../views/snakemake/update.vue'),
+              }, 
+              // {
+              //   path: '/project/detial',
+              //   name: 'Project_detial',
+              //   meta: { title: '项目细节', icon: 'dashboard', parentPath: "/project" },
+              //   component: () => import(/* webpackChunkName: "Project_detial" */ '../views/project/detial.vue'),
+              // }, {
+              //   path: '/project/content',
+              //   name: 'Project_content',
+              //   meta: { title: '项目内容编辑', icon: 'dashboard', parentPath: "/project" },
+              //   component: () => import(/* webpackChunkName: "Project_detial" */ '../views/project/content.vue'),
+              // }, {
+              //   path: '/project/attachment',
+              //   name: 'file_attachment',
+              //   meta: { title: '附件管理', icon: 'dashboard', parentPath: "/project", display: true },
+              //   component: () => import(/* webpackChunkName: "file_attachment" */ '../views/file/attachment.vue'),
+              // }
+            ]
+          }
+        ]
       },
       // {
       //   path: '/explore',
