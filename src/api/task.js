@@ -2,7 +2,13 @@ import service from '@/utils/service'
 const baseUrl = '/api/task'
 
 const TaskApi = {}
-
+TaskApi.addTask = (CRUD,params) => {
+    return service({
+        url: `${baseUrl}/addTask/${CRUD}`,
+        params:params,
+        method: 'get'
+    })
+}
 TaskApi.page = (params) =>{
     return service({
         url: `${baseUrl}`,

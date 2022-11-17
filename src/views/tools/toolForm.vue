@@ -11,8 +11,8 @@
                         <a-form-item label="Note">
                             <a-input />
                         </a-form-item>
-                        <a-form-item label="Activity zone" >
-                            <a-select  placeholder="please select your zone">
+                        <a-form-item label="Activity zone">
+                            <a-select placeholder="please select your zone">
                                 <a-select-option value="shanghai">Zone one</a-select-option>
                                 <a-select-option value="beijing">Zone two</a-select-option>
                             </a-select>
@@ -43,66 +43,120 @@
                 </a-card>
             </a-col>
             <a-col :span="12" style="padding-left:0.5rem">
-                <a-card style="width:100%" :tab-list="tabListNoTitle" :active-tab-key="noTitleKey"
-                    @tabChange="key => onTabChange(key, 'noTitleKey')">
-                    <p v-if="noTitleKey === 'article'">
-                        article content
-                    </p>
-                    <p v-else-if="noTitleKey === 'app'">
-                        app content
-                    </p>
-                    <p>
-                        project content
-                    </p>
-                    <!-- <a slot="tabBarExtraContent" href="#">More</a> -->
+                <a-card style="width:100%" :tab-list="tabList" :active-tab-key="tabKey"
+                    @tabChange="key => onTabChange(key, 'tabKey')">
+                    <!-- <span slot="customRender" slot-scope="item">
+                        <a-icon type="home" />{{ item.key }}
+                    </span> -->
+                    <div v-if="tabKey === 'tab1'">
+                        <div class="svgJson" v-for="(item, index) in svgJson" :key="index" v-html="item"></div>
+                    </div>
+                    
+                    {{ contentList[tabKey] }}
                 </a-card>
+
+                <a-card style="width:100%">
+                    
+                </a-card>
+
+
             </a-col>
         </a-row>
+
     </div>
 </template>
 <script>
+import TaskApi from "@/api/task.js";
+import ToolsAPI from "@/api/tools.js";
 export default {
     data() {
         return {
-            form: {},
             tabList: [
                 {
                     key: 'tab1',
-                    // tab: 'tab1',
-                    scopedSlots: { tab: 'customRender' },
+                    tab: '实时预览',
+                    // scopedSlots: { tab: 'customRender' },
                 },
                 {
                     key: 'tab2',
-                    tab: 'tab2',
-                },
-            ],
-            contentList: {
-                tab1: 'content1',
-                tab2: 'content2',
-            },
-            tabListNoTitle: [
-                {
-                    key: 'article',
                     tab: '工具介绍',
-                },
-                {
-                    key: 'app',
+                },{
+                    key: 'tab3',
                     tab: '详细说明',
-                },
-                {
-                    key: 'project',
+                },{
+                    key: 'tab4',
                     tab: '常见问题',
                 },
             ],
-            key: 'tab1',
-            noTitleKey: 'app',
+            contentList: {
+                tab1: '',
+                tab2: 'content2',
+            },
+            tabKey: 'tab1',
+            form: {},
+            CRUD: "TOOLS",
+            tool: {},
+            svgJson: [],
         };
+    }, beforeRouteEnter(to, from, next) {
+        // Get post id from query
+        const toolId = to.query.toolId;
+
+        next(vm => {
+            if (toolId) {
+                vm.toolId = toolId;
+                ToolsAPI.findById(toolId).then((resp) => {
+                    // console.log(resp);
+                    vm.tool = resp.data.data;
+                    console.log(vm.tool)
+                });
+                // ProjectAPi.findById(projectId).then(response => {
+                //   const project = response.data.data;
+                //   // console.log(project);
+                //   vm.form = project;
+                // });
+            }
+        });
+    }, mounted() {
+        // this.loadFields();
+
+        if (this.$websock) {
+            this.$websock.onmessage = (e) => {
+                let data = JSON.parse(e.data);
+                if (data.msgType == "NOTIFY") {
+                    this.$message.success(data.message);
+                    if (this.setIntervaStatus) {
+                        let setIntervaStatus = this.setIntervaStatus;
+                        setTimeout(function () {
+                            clearInterval(setIntervaStatus);
+                        }, 2000);
+                    }
+                }
+
+                let svgJson = JSON.parse(data.data.svgJson);
+                this.svgJson = svgJson;
+                // this.contentList["tab1"]=svgJson
+            };
+        }
     },
     methods: {
         onTabChange(key, type) {
             console.log(key, type);
             this[type] = key;
-        }, handleSubmit() { }
+        }, handleSubmit() {
+            this.addTask(this.tool.id, 1)
+        },
+        addTask(objId, codeId) {
+            TaskApi.addTask(this.CRUD, { id: objId, codeId: codeId }).then(
+                (resp) => {
+                    // this.showLog(resp.data.data);
+                    // this.loadTask(objId);
+                    console.log(resp)
+                    this.tabKey="tab1"
+                    this.$message.success(resp.data.data.name + "创建成功");
+                }
+            );
+        },
     },
 };
 </script>
