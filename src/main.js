@@ -75,7 +75,8 @@ Vue.use(Row);
 Vue.use(Col);
 Vue.use(Checkbox);
 
-
+import formCreate from '@form-create/ant-design-vue'
+Vue.use(formCreate)
 Vue.prototype.$notification = notification;
 Vue.prototype.$message = message;
 Vue.prototype.$confirm = Modal.confirm;

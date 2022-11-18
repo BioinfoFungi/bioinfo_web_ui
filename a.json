@@ -1,0 +1,496 @@
+{
+    "pages": {
+        "/": {
+            "title": "首页",
+            "path": "/",
+            "config": {
+                "bgColor": "",
+                "bgImage": "",
+                "keepAlive": false
+            },
+            "blocks": [
+                {
+                    "_vid": "vid_6ce2498751",
+                    "moduleName": "baseWidgets",
+                    "componentKey": "swipe",
+                    "label": "轮播图",
+                    "adjustPosition": true,
+                    "focus": true,
+                    "styles": {
+                        "display": "flex",
+                        "justifyContent": "flex-start",
+                        "paddingTop": "0",
+                        "paddingRight": "0",
+                        "paddingLeft": "0",
+                        "paddingBottom": "0",
+                        "tempPadding": "0"
+                    },
+                    "hasResize": false,
+                    "props": {
+                        "images": [
+                            "https://img.yzcdn.cn/vant/apple-1.jpg",
+                            "https://img.yzcdn.cn/vant/apple-2.jpg",
+                            ""
+                        ],
+                        "height": "200",
+                        "autoplay": "3000",
+                        "duration": "500",
+                        "indicatorColor": "#1989fa",
+                        "initialSwipe": "0",
+                        "loop": true,
+                        "showIndicators": true,
+                        "stopPropagation": true,
+                        "touchable": true,
+                        "lazyRender": false,
+                        "vertical": false
+                    },
+                    "draggable": true,
+                    "showStyleConfig": false,
+                    "animations": [],
+                    "actions": [],
+                    "events": [
+                        {
+                            "label": "每一页轮播结束后触发",
+                            "value": "change"
+                        }
+                    ],
+                    "model": {},
+                    "focusWithChild": false
+                },
+                {
+                    "_vid": "vid_3e4f124f4a",
+                    "moduleName": "baseWidgets",
+                    "componentKey": "notice-bar",
+                    "label": "通知栏",
+                    "adjustPosition": true,
+                    "focus": false,
+                    "styles": {
+                        "display": "flex",
+                        "justifyContent": "flex-start",
+                        "paddingTop": "0",
+                        "paddingRight": "0",
+                        "paddingLeft": "0",
+                        "paddingBottom": "0",
+                        "tempPadding": "0"
+                    },
+                    "hasResize": false,
+                    "props": {
+                        "leftIcon": "volume-o",
+                        "text": "在代码阅读过程中人们说脏话的频率是衡量代码质量的唯一标准。"
+                    },
+                    "draggable": true,
+                    "showStyleConfig": true,
+                    "animations": [],
+                    "actions": [],
+                    "events": [
+                        {
+                            "label": "点击通知栏时触发",
+                            "value": "click"
+                        },
+                        {
+                            "label": "关闭通知栏时触发",
+                            "value": "close"
+                        },
+                        {
+                            "label": "每当滚动栏重新开始滚动时触发",
+                            "value": "replay"
+                        }
+                    ],
+                    "model": {},
+                    "focusWithChild": false
+                },
+                {
+                    "_vid": "vid_e374820e0b",
+                    "moduleName": "baseWidgets",
+                    "componentKey": "tabbar",
+                    "label": "底部标签栏",
+                    "adjustPosition": true,
+                    "focus": false,
+                    "styles": {
+                        "display": "flex",
+                        "justifyContent": "flex-start",
+                        "paddingTop": "0",
+                        "paddingRight": "0",
+                        "paddingLeft": "0",
+                        "paddingBottom": "0",
+                        "tempPadding": "0"
+                    },
+                    "hasResize": false,
+                    "props": {
+                        "tabs": [
+                            {
+                                "label": "首页",
+                                "value": "home-o",
+                                "component": {
+                                    "key": "tabbar-item",
+                                    "moduleName": "baseWidgets",
+                                    "label": "底部标签栏",
+                                    "props": {
+                                        "icon": {
+                                            "type": "input",
+                                            "label": "图标名称或图片链接",
+                                            "defaultValue": "home-o"
+                                        },
+                                        "iconPrefix": {
+                                            "type": "input",
+                                            "label": "图标类名前缀",
+                                            "tips": "图标类名前缀，同 Icon 组件的 class-prefix 属性",
+                                            "defaultValue": "van-icon"
+                                        },
+                                        "dot": {
+                                            "type": "switch",
+                                            "label": "是否显示图标右上角小红点",
+                                            "defaultValue": false
+                                        },
+                                        "badge": {
+                                            "type": "input",
+                                            "label": "图标右上角徽标的内容",
+                                            "defaultValue": ""
+                                        },
+                                        "url": {
+                                            "type": "input",
+                                            "label": "点击后跳转的链接地址",
+                                            "defaultValue": ""
+                                        },
+                                        "replace": {
+                                            "type": "switch",
+                                            "label": "是否在跳转时替换当前页面历史",
+                                            "defaultValue": false
+                                        }
+                                    },
+                                    "events": [
+                                        {
+                                            "label": "点击左侧按钮时触发",
+                                            "value": "click-left"
+                                        },
+                                        {
+                                            "label": "点击右侧按钮时触发",
+                                            "value": "click-right"
+                                        }
+                                    ],
+                                    "draggable": false
+                                },
+                                "block": {
+                                    "_vid": "vid_b7d0d6a1bb",
+                                    "moduleName": "baseWidgets",
+                                    "componentKey": "tabbar-item",
+                                    "label": "底部标签栏",
+                                    "adjustPosition": true,
+                                    "focus": false,
+                                    "styles": {
+                                        "display": "flex",
+                                        "justifyContent": "flex-start",
+                                        "paddingTop": "0",
+                                        "paddingRight": "0",
+                                        "paddingLeft": "0",
+                                        "paddingBottom": "0",
+                                        "tempPadding": "0"
+                                    },
+                                    "hasResize": false,
+                                    "props": {
+                                        "icon": "home-o",
+                                        "iconPrefix": "van-icon",
+                                        "dot": false,
+                                        "badge": "",
+                                        "url": "",
+                                        "replace": false
+                                    },
+                                    "draggable": false,
+                                    "showStyleConfig": true,
+                                    "animations": [],
+                                    "actions": [],
+                                    "events": [
+                                        {
+                                            "label": "点击左侧按钮时触发",
+                                            "value": "click-left"
+                                        },
+                                        {
+                                            "label": "点击右侧按钮时触发",
+                                            "value": "click-right"
+                                        }
+                                    ],
+                                    "model": {}
+                                }
+                            },
+                            {
+                                "label": "导航",
+                                "value": "apps-o",
+                                "component": {
+                                    "key": "tabbar-item",
+                                    "moduleName": "baseWidgets",
+                                    "label": "底部标签栏",
+                                    "props": {
+                                        "icon": {
+                                            "type": "input",
+                                            "label": "图标名称或图片链接",
+                                            "defaultValue": "home-o"
+                                        },
+                                        "iconPrefix": {
+                                            "type": "input",
+                                            "label": "图标类名前缀",
+                                            "tips": "图标类名前缀，同 Icon 组件的 class-prefix 属性",
+                                            "defaultValue": "van-icon"
+                                        },
+                                        "dot": {
+                                            "type": "switch",
+                                            "label": "是否显示图标右上角小红点",
+                                            "defaultValue": false
+                                        },
+                                        "badge": {
+                                            "type": "input",
+                                            "label": "图标右上角徽标的内容",
+                                            "defaultValue": ""
+                                        },
+                                        "url": {
+                                            "type": "input",
+                                            "label": "点击后跳转的链接地址",
+                                            "defaultValue": ""
+                                        },
+                                        "replace": {
+                                            "type": "switch",
+                                            "label": "是否在跳转时替换当前页面历史",
+                                            "defaultValue": false
+                                        }
+                                    },
+                                    "events": [
+                                        {
+                                            "label": "点击左侧按钮时触发",
+                                            "value": "click-left"
+                                        },
+                                        {
+                                            "label": "点击右侧按钮时触发",
+                                            "value": "click-right"
+                                        }
+                                    ],
+                                    "draggable": false
+                                },
+                                "block": {
+                                    "_vid": "vid_b8bb052e8d",
+                                    "moduleName": "baseWidgets",
+                                    "componentKey": "tabbar-item",
+                                    "label": "底部标签栏",
+                                    "adjustPosition": true,
+                                    "focus": false,
+                                    "styles": {
+                                        "display": "flex",
+                                        "justifyContent": "flex-start",
+                                        "paddingTop": "0",
+                                        "paddingRight": "0",
+                                        "paddingLeft": "0",
+                                        "paddingBottom": "0",
+                                        "tempPadding": "0"
+                                    },
+                                    "hasResize": false,
+                                    "props": {
+                                        "icon": "apps-o",
+                                        "iconPrefix": "van-icon",
+                                        "dot": false,
+                                        "badge": "",
+                                        "url": "",
+                                        "replace": false
+                                    },
+                                    "draggable": false,
+                                    "showStyleConfig": true,
+                                    "animations": [],
+                                    "actions": [],
+                                    "events": [
+                                        {
+                                            "label": "点击左侧按钮时触发",
+                                            "value": "click-left"
+                                        },
+                                        {
+                                            "label": "点击右侧按钮时触发",
+                                            "value": "click-right"
+                                        }
+                                    ],
+                                    "model": {}
+                                }
+                            },
+                            {
+                                "label": "我的",
+                                "value": "user-o",
+                                "component": {
+                                    "key": "tabbar-item",
+                                    "moduleName": "baseWidgets",
+                                    "label": "底部标签栏",
+                                    "props": {
+                                        "icon": {
+                                            "type": "input",
+                                            "label": "图标名称或图片链接",
+                                            "defaultValue": "home-o"
+                                        },
+                                        "iconPrefix": {
+                                            "type": "input",
+                                            "label": "图标类名前缀",
+                                            "tips": "图标类名前缀，同 Icon 组件的 class-prefix 属性",
+                                            "defaultValue": "van-icon"
+                                        },
+                                        "dot": {
+                                            "type": "switch",
+                                            "label": "是否显示图标右上角小红点",
+                                            "defaultValue": false
+                                        },
+                                        "badge": {
+                                            "type": "input",
+                                            "label": "图标右上角徽标的内容",
+                                            "defaultValue": ""
+                                        },
+                                        "url": {
+                                            "type": "input",
+                                            "label": "点击后跳转的链接地址",
+                                            "defaultValue": ""
+                                        },
+                                        "replace": {
+                                            "type": "switch",
+                                            "label": "是否在跳转时替换当前页面历史",
+                                            "defaultValue": false
+                                        }
+                                    },
+                                    "events": [
+                                        {
+                                            "label": "点击左侧按钮时触发",
+                                            "value": "click-left"
+                                        },
+                                        {
+                                            "label": "点击右侧按钮时触发",
+                                            "value": "click-right"
+                                        }
+                                    ],
+                                    "draggable": false
+                                },
+                                "block": {
+                                    "_vid": "vid_6f2dc8d6ef",
+                                    "moduleName": "baseWidgets",
+                                    "componentKey": "tabbar-item",
+                                    "label": "底部标签栏",
+                                    "adjustPosition": true,
+                                    "focus": false,
+                                    "styles": {
+                                        "display": "flex",
+                                        "justifyContent": "flex-start",
+                                        "paddingTop": "0",
+                                        "paddingRight": "0",
+                                        "paddingLeft": "0",
+                                        "paddingBottom": "0",
+                                        "tempPadding": "0"
+                                    },
+                                    "hasResize": false,
+                                    "props": {
+                                        "icon": "user-o",
+                                        "iconPrefix": "van-icon",
+                                        "dot": false,
+                                        "badge": "",
+                                        "url": "",
+                                        "replace": false
+                                    },
+                                    "draggable": false,
+                                    "showStyleConfig": true,
+                                    "animations": [],
+                                    "actions": [],
+                                    "events": [
+                                        {
+                                            "label": "点击左侧按钮时触发",
+                                            "value": "click-left"
+                                        },
+                                        {
+                                            "label": "点击右侧按钮时触发",
+                                            "value": "click-right"
+                                        }
+                                    ],
+                                    "model": {}
+                                }
+                            }
+                        ],
+                        "fixed": true,
+                        "border": true,
+                        "zIndex": "1",
+                        "baseUrl": "/preview/#/",
+                        "activeColor": "#1989fa",
+                        "inactiveColor": "#7d7e80",
+                        "modelValue": "",
+                        "route": false,
+                        "safeAreaInsetBottom": false
+                    },
+                    "draggable": false,
+                    "showStyleConfig": true,
+                    "animations": [],
+                    "actions": [],
+                    "events": [
+                        {
+                            "label": "点击左侧按钮时触发",
+                            "value": "click-left"
+                        },
+                        {
+                            "label": "点击右侧按钮时触发",
+                            "value": "click-right"
+                        }
+                    ],
+                    "model": {},
+                    "focusWithChild": false
+                },
+                {
+                    "_vid": "vid_f2f98e7189",
+                    "moduleName": "baseWidgets",
+                    "componentKey": "stepper",
+                    "label": "表单项类型 - 步进器",
+                    "adjustPosition": true,
+                    "focus": false,
+                    "styles": {
+                        "display": "flex",
+                        "justifyContent": "flex-start",
+                        "paddingTop": "0",
+                        "paddingRight": "0",
+                        "paddingLeft": "0",
+                        "paddingBottom": "0",
+                        "tempPadding": "0"
+                    },
+                    "hasResize": false,
+                    "props": {
+                        "label": "步进器",
+                        "max": 10,
+                        "error-message-align": "left",
+                        "border": true,
+                        "buttonSize": "28px",
+                        "defaultValue": "1",
+                        "inputWidth": "32px",
+                        "longPress": true,
+                        "showInput": true,
+                        "showMinus": true,
+                        "showPlus": true,
+                        "step": "1",
+                        "name": "",
+                        "modelValue": 1,
+                        "min": 0,
+                        "allowEmpty": false,
+                        "decimalLength": "",
+                        "disableInput": false,
+                        "disableMinus": false,
+                        "disablePlus": false,
+                        "disabled": false,
+                        "integer": false,
+                        "placeholder": "",
+                        "theme": ""
+                    },
+                    "draggable": true,
+                    "showStyleConfig": true,
+                    "animations": [],
+                    "actions": [],
+                    "events": [],
+                    "model": {},
+                    "focusWithChild": false
+                }
+            ]
+        }
+    },
+    "models": [],
+    "actions": {
+        "fetch": {
+            "name": "接口请求",
+            "apis": []
+        },
+        "dialog": {
+            "name": "对话框",
+            "handlers": []
+        }
+    }
+}

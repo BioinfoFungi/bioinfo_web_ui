@@ -2,11 +2,11 @@ import service from '@/utils/service'
 const baseUrl = '/api/task'
 
 const TaskApi = {}
-TaskApi.addTask = (CRUD,params) => {
+TaskApi.addTask = (CRUD,taskId,id,codeId,params) => {
     return service({
-        url: `${baseUrl}/addTask/${CRUD}`,
-        params:params,
-        method: 'get'
+        url: `${baseUrl}/addTask/${CRUD}?id=${id}&codeId=${codeId}&taskId=${taskId}`,
+        data:params,
+        method: 'post'
     })
 }
 TaskApi.page = (params) =>{
@@ -46,6 +46,15 @@ TaskApi.runOne = (id) =>{
         method: 'get'
     })
 }
+
+TaskApi.upload = (taskId,params) => {
+    return service({
+        url: `${baseUrl}/upload/${taskId}`,
+        data: params,
+        method: 'post'
+    })
+}
+
 
 TaskApi.shutdown = (id) =>{
     return service({
