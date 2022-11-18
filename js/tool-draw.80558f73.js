@@ -1,0 +1,2 @@
+(window["webpackJsonp"]=window["webpackJsonp"]||[]).push([["tool-draw"],{b68e:function(e,n,t){"use strict";t.r(n);var l=function(){var e=this,n=e.$createElement,t=e._self._c||n;return t("div",[e._v(" 正在开发中..... ")])},o=[],r=t("2877"),u={},a=Object(r["a"])(u,l,o,!1,null,null,null);n["default"]=a.exports}}]);
+//# sourceMappingURL=tool-draw.80558f73.js.map
