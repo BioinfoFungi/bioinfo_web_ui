@@ -87,6 +87,7 @@ export default {
           } else {
             this.API.update(this.updateId, this.form).then(
               (resp) => {
+                console.log(this.form)
                 this.$notification["success"]({
                   message: "更新成功!" + resp.data.message,
                 });

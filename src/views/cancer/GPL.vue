@@ -13,6 +13,9 @@
       <a-form-model-item label="symbol" prop="symbol">
         <a-input v-model="form.symbol" />
       </a-form-model-item>
+      <a-form-model-item label="gpl" prop="gpl">
+        <a-input v-model="form.gpl" />
+      </a-form-model-item>
     </objForm>
     <taskDrawer ref="taskDrawer" :CRUD="CRUD"> </taskDrawer>
 

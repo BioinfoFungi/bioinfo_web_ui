@@ -184,8 +184,8 @@ export default {
             options: {
                 onSubmit: (formData) => {
                     // formData = JSON.stringify(formData)
-                    console.log(formData)
-                    this.addTask(this.tool.id, 1, formData)
+                    console.log(this.tool)
+                    this.addTask(this.tool.id, this.tool.codeId, formData)
                 }
             },
             rule: [

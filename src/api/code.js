@@ -24,7 +24,12 @@ CodeApi.checkFileExist = (id) => {
         method: 'get'
     })
 }
-
+CodeApi.listAll = () => {
+    return service({
+        url: `${baseUrl}/listAll`,
+        method: 'get'
+    })
+}
 
 CodeApi.del = (id) => {
     return service({

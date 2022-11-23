@@ -8,8 +8,17 @@
       v-slot="{ form }"
     >
       <a-form-model-item label="name" prop="name">
-        <a-input v-model="form.name" />
+        <a-input v-model="form.name" />     
       </a-form-model-item>
+
+      <a-form-model-item label="code" prop="code">
+        <a-select  style="width: 120px" v-model="form.codeId">
+          <a-select-option v-for="item in codes" :key="item.id" :value="item.id">
+            {{item.name}}  
+          </a-select-option>
+        </a-select>
+      </a-form-model-item>
+   
     </objForm>
     <taskDrawer ref="taskDrawer" :CRUD="CRUD"> </taskDrawer>
 
@@ -36,7 +45,7 @@
       <div slot="id" slot-scope="id">
         <a href="javascript:;">{{ id }}</a>
       </div>
-      <div slot="name" slot-scope="name,record">
+      <div slot="name" slot-scope="name, record">
         <a href="javascript:;" @click="toolForm(record)">{{ name }}</a>
       </div>
       <!-- <div slot="gse" slot-scope="gse">
@@ -120,6 +129,8 @@ const columns = [
 import dataAPI from "@/api/tools.js";
 import taskDrawer from "./components/task-drawer.vue";
 import objForm from "./components/obj-form.vue";
+import CodeAPi from "@/api/code.js";
+
 export default {
   components: {
     taskDrawer,
@@ -157,6 +168,7 @@ export default {
       columns,
       dataAPI,
       CRUD: "GSE",
+      codes:[]
     };
   },
   mounted() {
@@ -169,7 +181,7 @@ export default {
       this.queryParam.sort = this.pagination.sort;
       this.queryParam.keywords = this.pagination.keywords;
       this.loading = true;
-      dataAPI.page( this.queryParam).then((resp) => {
+      dataAPI.page(this.queryParam).then((resp) => {
         this.data = resp.data.data.content;
         this.pagination.total = parseInt(resp.data.data.totalElements);
         this.loading = false;
@@ -181,7 +193,7 @@ export default {
       this.loadData();
     },
     onSearch(value) {
-      this.pagination.page=1
+      this.pagination.page = 1;
       this.pagination.keywords = value;
       this.loadData();
     },
@@ -207,15 +219,17 @@ export default {
       });
     },
     initTSV(isEmpty) {
-      dataAPI.init(this.CRUD, {
-        isEmpty: isEmpty,
-        name: this.CRUD+".tsv",
-      }).then((resp) => {
-        this.loadData();
-        this.$notification["success"]({
-          message: resp.data.message,
+      dataAPI
+        .init(this.CRUD, {
+          isEmpty: isEmpty,
+          name: this.CRUD + ".tsv",
+        })
+        .then((resp) => {
+          this.loadData();
+          this.$notification["success"]({
+            message: resp.data.message,
+          });
         });
-      });
     },
     delById(id) {
       let loadData = this.loadData;
@@ -240,17 +254,22 @@ export default {
     },
     updateForm(id) {
       this.isUpdate = true;
+      CodeAPi.listAll().then(resp=>{
+        // console.log(resp)
+        this.codes=resp.data.data
+      })
       this.$refs.objForm.onShow(id);
     },
     more(id) {
       this.$refs.taskDrawer.onShow(id);
-    },toolForm(record){
-      console.log(record)
+    },
+    toolForm(record) {
+      console.log(record);
       this.$router.push({
         name: "tool-form",
-        query: { toolId: record.id }
+        query: { toolId: record.id },
       });
-    }
+    },
   },
 };
 </script>
