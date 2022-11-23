@@ -264,7 +264,7 @@ export default {
       this.$refs.taskDrawer.onShow(id);
     },
     toolForm(record) {
-      console.log(record);
+      // console.log(record);
       this.$router.push({
         name: "tool-form",
         query: { toolId: record.id },

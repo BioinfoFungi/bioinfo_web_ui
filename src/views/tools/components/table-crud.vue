@@ -122,7 +122,7 @@ export default {
   },
   mounted() {
     this.loadData();
-    console.log(this.API)
+    // console.log(this.API)
   },
   methods: {
     loadData() {

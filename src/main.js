@@ -74,7 +74,8 @@ Vue.use(List);
 Vue.use(Row);
 Vue.use(Col);
 Vue.use(Checkbox);
-
+import vcolorpicker from 'vcolorpicker'
+Vue.use(vcolorpicker)
 import formCreate from '@form-create/ant-design-vue'
 Vue.use(formCreate)
 Vue.prototype.$notification = notification;
