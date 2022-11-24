@@ -186,6 +186,11 @@ export default {
         this.pagination.total = parseInt(resp.data.data.totalElements);
         this.loading = false;
       });
+    },loadCode(){
+      CodeAPi.listAll().then(resp=>{
+        // console.log(resp)
+        this.codes=resp.data.data
+      })
     },
     handleTableChange(page, pageSize) {
       this.pagination.page = page;
@@ -250,14 +255,12 @@ export default {
     },
     addForm() {
       this.isUpdate = false;
+      this.loadCode()
       this.$refs.objForm.onShow(-1);
     },
     updateForm(id) {
       this.isUpdate = true;
-      CodeAPi.listAll().then(resp=>{
-        // console.log(resp)
-        this.codes=resp.data.data
-      })
+      this.loadCode()
       this.$refs.objForm.onShow(id);
     },
     more(id) {
